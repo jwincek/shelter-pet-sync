@@ -27,3 +27,6 @@ debug.log
 # Local environment overrides
 .env
 .env.local
+
+# Generated distribution build (bin/build-dist.sh).
+/build/
