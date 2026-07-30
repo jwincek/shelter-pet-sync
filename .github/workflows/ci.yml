@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php-lint:
+    name: PHP Coding Standards
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPCS
+        run: composer lint
+
+  validate-config:
+    name: Config Contract Validator
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      # Also enforces version consistency (check 8): the plugin header, the
+      # version constant, readme.txt's Stable tag, package.json and every
+      # block.json must agree. A Stable tag that doesn't match the tagged
+      # release makes WordPress.org serve the wrong code.
+      - name: Validate config contracts
+        run: php bin/validate-config.php
+
+  js-lint:
+    name: JS & CSS Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint JavaScript
+        run: npm run lint:js
+
+      - name: Lint CSS
+        run: npm run lint:css
+
+  build:
+    name: Build distribution zip
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # The script fails if a dev file leaks into the build or a runtime file
+      # goes missing, so this job is a release-packaging regression test and
+      # not merely an artifact producer.
+      - name: Build distribution
+        id: build
+        run: |
+          # pipefail matters: the runner's default shell sets -e but not
+          # pipefail, so without it a failing build would be masked by tail's
+          # exit 0 and this job would report green on a broken package.
+          set -euo pipefail
+          VERSION="$(./bin/build-dist.sh --zip | tail -1)"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Upload zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: shelter-pet-sync-${{ steps.build.outputs.version }}
+          path: build/*.zip
+          if-no-files-found: error
+
+  plugin-check:
+    name: Plugin Check (WordPress.org review suite)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Checked against the BUILT output, not the repo. The repo carries dev
+      # files (bin/, phpcs.xml.dist, dotfiles) that never ship; running the
+      # checks there reports errors users would never hit while missing
+      # whatever the packaging step actually produces.
+      - name: Build distribution
+        run: ./bin/build-dist.sh
+
+      - name: Run Plugin Check
+        uses: WordPress/plugin-check-action@v1
+        with:
+          build-dir: ./build/shelter-pet-sync
+          # Warnings are dominated by PHPCS treating block render.php
+          # template-scope variables as globals — WordPress includes those
+          # files inside a function scope, so they are not. phpcs.xml.dist
+          # already excludes /blocks/* for that sniff; Plugin Check runs its
+          # own ruleset and cannot see that config.
+          ignore-warnings: true

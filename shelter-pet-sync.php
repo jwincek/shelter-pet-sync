@@ -1,11 +1,13 @@
 <?php
 /**
  * Plugin Name: Shelter Pet Sync
+ * Plugin URI: https://github.com/jwincek/shelter-pet-sync
  * Description: Sync adoptable pets from Petstablished with WordPress 6.9 Abilities API, Block Bindings, and Interactivity API.
  * Version: 1.0.0
  * Requires at least: 6.9
  * Requires PHP: 8.1
  * Author: Jerome Wincek
+ * Author URI: https://github.com/jwincek
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: shelter-pet-sync
@@ -214,12 +216,63 @@ function petstablished_sync_init(): void {
 add_action( 'plugins_loaded', 'petstablished_sync_init' );
 
 /**
- * One-time migration from the legacy petstablished_* option and cron
- * names to the neutral petsync_* names (pre-multi-provider cleanup).
- * Idempotent: runs only while the old settings exist and the new ones
+ * Stored-data schema version this build of the plugin expects.
+ *
+ * Bump this whenever stored data (options, post meta, cron hook names) changes
+ * shape, and add the matching entry to petsync_get_migrations(). This is the
+ * plugin's DATA version and is deliberately independent of the release version
+ * in the plugin header — most releases change no stored data at all.
+ */
+define( 'PETSYNC_DB_VERSION', 2 );
+
+/**
+ * The ordered migration list.
+ *
+ * Keyed by the schema version each migration brings the install UP TO. They run
+ * in key order, and only those above the installed version run. Every migration
+ * must be idempotent anyway: a fresh install starts at 0 and runs the whole list,
+ * so each one has to no-op cleanly when there is nothing to convert.
+ *
+ * @return array<int, callable> Migration callables keyed by target version.
+ */
+function petsync_get_migrations(): array {
+	return array(
+		1 => 'petsync_migrate_1_option_names',
+		2 => 'petsync_migrate_2_provider_meta',
+	);
+}
+
+/**
+ * Run any migrations the installed schema version hasn't seen yet.
+ *
+ * Hooked late on `init` so the CPT (priority 10) and its registered meta
+ * (priority 11) both exist before a migration touches pet records.
+ */
+function petsync_maybe_upgrade(): void {
+	$installed = (int) get_option( 'petsync_db_version', 0 );
+
+	if ( $installed >= PETSYNC_DB_VERSION ) {
+		return;
+	}
+
+	foreach ( petsync_get_migrations() as $version => $callback ) {
+		if ( $version > $installed && is_callable( $callback ) ) {
+			call_user_func( $callback );
+		}
+	}
+
+	update_option( 'petsync_db_version', PETSYNC_DB_VERSION, true );
+}
+add_action( 'init', 'petsync_maybe_upgrade', 20 );
+
+/**
+ * Migration 1 — legacy petstablished_* option and cron names to the neutral
+ * petsync_* names (pre-multi-provider cleanup).
+ *
+ * Idempotent: returns early unless the old settings exist and the new ones
  * don't, then removes the old rows.
  */
-function petsync_maybe_migrate_option_names(): void {
+function petsync_migrate_1_option_names(): void {
 	if ( get_option( 'petsync_settings' ) !== false || get_option( 'petstablished_sync_settings' ) === false ) {
 		return;
 	}
@@ -244,4 +297,47 @@ function petsync_maybe_migrate_option_names(): void {
 	$settings = Petstablished_Admin::get_settings();
 	Petstablished_Admin::reschedule_cron( (bool) $settings['auto_sync'], $settings['sync_interval'] );
 }
-add_action( 'init', 'petsync_maybe_migrate_option_names', 5 );
+
+/**
+ * Migration 2 — stamp the provider slug onto pets imported before the sync
+ * became provider-aware.
+ *
+ * Those pets carry `_pet_ps_id` but no `_pet_provider`. The sync now matches on
+ * the pair, so without this backfill it would fail to recognise them and
+ * re-import every pet as a duplicate. Everything imported before this change
+ * came from Petstablished, so that is the correct slug for all of them.
+ *
+ * Scoped to pets that actually carry a `_pet_ps_id`: that meta is the evidence a
+ * pet was imported at all. Pets authored by hand in the editor have no provider
+ * and must not be labelled with one, or a later sync would treat them as records
+ * the API had forgotten.
+ *
+ * Idempotent: only selects pets missing the key, and no-ops on a fresh install.
+ */
+function petsync_migrate_2_provider_meta(): void {
+	$pet_ids = get_posts(
+		array(
+			'post_type'        => 'vcps_pet',
+			'post_status'      => 'any',
+			'numberposts'      => -1,
+			'fields'           => 'ids',
+			'suppress_filters' => false,
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- one-time migration, not a request-path query.
+			'meta_query'       => array(
+				'relation' => 'AND',
+				array(
+					'key'     => '_pet_provider',
+					'compare' => 'NOT EXISTS',
+				),
+				array(
+					'key'     => '_pet_ps_id',
+					'compare' => 'EXISTS',
+				),
+			),
+		)
+	);
+
+	foreach ( $pet_ids as $pet_id ) {
+		update_post_meta( $pet_id, '_pet_provider', Petstablished_Sync::PROVIDER );
+	}
+}

@@ -1,6 +1,6 @@
 === Shelter Pet Sync ===
 Contributors: jeromewincek
-Tags: pets, adoption, animal shelter, rescue, petstablished
+Tags: pets, adoption, animal shelter, rescue, animals
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1

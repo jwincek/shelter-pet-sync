@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] - 2026-06-23
+## [1.0.0] - 2026-07-30
 
 ### Added
 - Initial public release.
+- Pets record which platform they were imported from (`_pet_provider`), and the
+  sync matches records on provider + ID rather than ID alone. Stale-pet pruning
+  is scoped the same way, so a sync only ever drafts pets it imported itself —
+  never hand-authored pets, and never another platform's.
+- Versioned schema rail (`petsync_db_version`) so changes to stored data run
+  once, in order, on upgrade.
 - Batched sync from the Petstablished public API with an admin progress UI and WP-Cron scheduling.
 - `vcps_pet` custom post type with taxonomy filtering (species, breed, age, size, gender, color) and URL-driven compatibility filters.
 - Block library: pet card, listing grid, slider, filters, details, gallery, actions, attributes, health, compatibility, comparison, compare bar, favorites (toggle and modal), adoption CTA, adoption action, adoption fee, breadcrumb, tagline, notifications toast, and back-to-top.

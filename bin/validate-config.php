@@ -91,7 +91,15 @@ foreach ( $it as $f ) {
 		$php_files[] = $f->getPathname();
 	}
 }
-$php_files[] = $root . '/petstablished-sync.php';
+// The main plugin file, resolved from the directory name rather than hardcoded
+// so a future rename can't silently drop it from every check below (it did:
+// this pointed at the pre-rename petstablished-sync.php and was skipped).
+$main_file = $root . '/' . basename( $root ) . '.php';
+if ( ! is_file( $main_file ) ) {
+	$add( 'error', 'config', 'Cannot find the main plugin file at ' . basename( $main_file ) . ' — checks below will not cover it.' );
+} else {
+	$php_files[] = $main_file;
+}
 
 foreach ( $php_files as $path ) {
 	$src = (string) file_get_contents( $path );
@@ -227,6 +235,18 @@ $attr_tax = $entity['attribute_taxonomy'] ?? null;
 if ( $attr_tax && ! in_array( $attr_tax, $registered_tax, true ) ) {
 	$add( 'error', 'taxonomies', "attribute_taxonomy '$attr_tax' is not registered in taxonomies.json." );
 }
+
+// taxonomy_source_map drives every single-value term the sync writes. An
+// unregistered target means wp_set_object_terms() silently writes nothing.
+$tax_source_map = (array) ( $entity['taxonomy_source_map'] ?? [] );
+if ( empty( $tax_source_map ) ) {
+	$add( 'error', 'taxonomies', 'entities.json has no taxonomy_source_map — the sync would assign no single-value taxonomy terms at all.' );
+}
+foreach ( $tax_source_map as $src_key => $tax ) {
+	if ( ! in_array( $tax, $registered_tax, true ) ) {
+		$add( 'error', 'taxonomies', "taxonomy_source_map '$src_key' => '$tax' is not registered in taxonomies.json." );
+	}
+}
 $api_keys = [];
 foreach ( (array) ( $entity['api_fields'] ?? [] ) as $cfg ) {
 	if ( isset( $cfg['api_key'] ) ) {
@@ -299,12 +319,9 @@ if ( preg_match( '/\$computed_sources\s*=\s*array\((.*?)\);/s', $sync_src, $m ) 
 		$consumed[ $k ] = true;
 	}
 }
-// TAXONOMY_SOURCE_MAP keys.
-if ( preg_match( '/TAXONOMY_SOURCE_MAP\s*=\s*array\((.*?)\);/s', $sync_src, $m ) ) {
-	preg_match_all( "/'([a-z_]+)'\s*=>/", $m[1], $tm );
-	foreach ( $tm[1] as $k ) {
-		$consumed[ $k ] = true;
-	}
+// taxonomy_source_map keys (config-driven since the map moved out of PHP).
+foreach ( array_keys( (array) ( $entity['taxonomy_source_map'] ?? [] ) ) as $k ) {
+	$consumed[ $k ] = true;
 }
 // Extra keys listed inside get_consumed_api_keys() (post/taxonomy drivers).
 if ( preg_match( '/function get_consumed_api_keys\(.*?\n\t\}/s', $sync_src, $m ) ) {
@@ -318,6 +335,66 @@ if ( preg_match_all( "/\\\$data\[\s*'([a-z_]+)'\s*\]/", $sync_src, $dm ) ) {
 	foreach ( array_unique( $dm[1] ) as $key ) {
 		if ( ! in_array( $key, $envelope, true ) && ! isset( $consumed[ $key ] ) ) {
 			$add( 'error', 'hash-coverage', "sync reads \$data['$key'] but it is not in get_consumed_api_keys() — changes to it won't trigger a re-sync (stale-display risk)." );
+		}
+	}
+}
+
+// ── Check 8: version consistency across every file that declares one ─────────
+// The plugin header is the single source of truth. Everything else must agree.
+// readme.txt's Stable tag is the one that actually breaks users: if it does not
+// match the tagged release, WordPress.org serves the wrong code or nothing.
+$version_sources = [];
+
+if ( isset( $main_file ) && is_file( $main_file ) ) {
+	$main_src = (string) file_get_contents( $main_file );
+
+	if ( preg_match( '/^\s*\*\s*Version:\s*(\S+)/m', $main_src, $m ) ) {
+		$version_sources[ basename( $main_file ) . ' (header)' ] = $m[1];
+	} else {
+		$add( 'error', 'version', 'No "Version:" header found in ' . basename( $main_file ) . '.' );
+	}
+
+	if ( preg_match( "/define\(\s*'PETSTABLISHED_SYNC_VERSION'\s*,\s*'([^']+)'/", $main_src, $m ) ) {
+		$version_sources[ basename( $main_file ) . ' (PETSTABLISHED_SYNC_VERSION)' ] = $m[1];
+	}
+}
+
+$readme_path = $root . '/readme.txt';
+if ( is_file( $readme_path ) ) {
+	$readme_src = (string) file_get_contents( $readme_path );
+	if ( preg_match( '/^Stable tag:\s*(\S+)/mi', $readme_src, $m ) ) {
+		$version_sources['readme.txt (Stable tag)'] = $m[1];
+	} else {
+		$add( 'error', 'version', 'readme.txt has no "Stable tag:" header — WordPress.org needs it to know which tag to serve.' );
+	}
+} else {
+	$add( 'error', 'version', 'Missing readme.txt — required for WordPress.org.' );
+}
+
+$pkg_path = $root . '/package.json';
+if ( is_file( $pkg_path ) ) {
+	$pkg = json_decode( (string) file_get_contents( $pkg_path ), true );
+	if ( isset( $pkg['version'] ) ) {
+		$version_sources['package.json'] = $pkg['version'];
+	}
+}
+
+// Every block.json carries a version used by core as the asset cache-buster
+// (see wp-includes/blocks.php — absent means WP falls back to its own version,
+// which would not change when the plugin ships a CSS/JS fix).
+foreach ( glob( $root . '/blocks/*/block.json' ) ?: [] as $block_json ) {
+	$block = json_decode( (string) file_get_contents( $block_json ), true );
+	if ( isset( $block['version'] ) ) {
+		$version_sources[ 'blocks/' . basename( dirname( $block_json ) ) . '/block.json' ] = $block['version'];
+	}
+}
+
+$distinct = array_unique( array_values( $version_sources ) );
+if ( count( $distinct ) > 1 ) {
+	$canonical = $version_sources[ basename( $main_file ?? '' ) . ' (header)' ] ?? reset( $distinct );
+	foreach ( $version_sources as $where => $found ) {
+		if ( $found !== $canonical ) {
+			$add( 'error', 'version', "$where declares $found but the plugin header says $canonical — run bin/bump-version.php to resync." );
 		}
 	}
 }

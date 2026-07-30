@@ -158,6 +158,10 @@ function vcps_uninstall_site(): bool {
 	delete_option( 'petsync_last_sync' );
 	delete_option( 'petsync_last_sync_stats' );
 	delete_option( 'petsync_sync_log' );
+	// Schema version — dropped only on the full-delete path, so that the
+	// preserve-by-default path keeps its stored data correctly versioned for
+	// a later reinstall.
+	delete_option( 'petsync_db_version' );
 	// Legacy pre-1.0 option names, in case the rename migration never ran.
 	delete_option( 'petstablished_sync_settings' );
 	delete_option( 'petstablished_last_sync' );

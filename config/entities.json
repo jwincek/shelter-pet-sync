@@ -16,10 +16,16 @@
       },
 
       "fields": {
+        "provider": {
+          "type": "string",
+          "default": "",
+          "show_in_rest": false,
+          "description": "Slug of the shelter platform this pet was imported from. Scopes the sync's identity lookup and stale-pet pruning so one provider's sync never touches another's pets."
+        },
         "ps_id": {
           "type": "string",
           "default": "",
-          "description": "Petstablished numeric ID. Primary lookup key for sync."
+          "description": "Provider's record ID. Primary lookup key for sync, unique only within a provider."
         },
         "api_response": {
           "type": "string",
@@ -59,6 +65,18 @@
         "special_needs":        { "api_key": "has_special_need",    "type": "tristate", "default": "" },
         "hypoallergenic":       { "api_key": "is_hypoallergenic",   "type": "tristate", "default": "" },
         "declawed":             { "api_key": "declawed",            "type": "tristate", "default": "" }
+      },
+
+      "_comment_taxonomy_source_map": "Single-value taxonomy mappings: provider API key -> taxonomy. Sibling of attribute_map below (which maps boolean API keys -> pet_attribute term slugs). Both are consumed by the sync when writing terms, and both feed the change-detection hash via get_consumed_api_keys().",
+      "taxonomy_source_map": {
+        "status":        "pet_status",
+        "animal":        "pet_animal",
+        "primary_breed": "pet_breed",
+        "age":           "pet_age",
+        "sex":           "pet_sex",
+        "size":          "pet_size",
+        "primary_color": "pet_color",
+        "coat_length":   "pet_coat"
       },
 
       "attribute_taxonomy": "pet_attribute",
