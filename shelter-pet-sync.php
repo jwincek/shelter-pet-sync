@@ -1,11 +1,13 @@
 <?php
 /**
  * Plugin Name: Shelter Pet Sync
+ * Plugin URI: https://github.com/jwincek/shelter-pet-sync
  * Description: Sync adoptable pets from Petstablished with WordPress 6.9 Abilities API, Block Bindings, and Interactivity API.
  * Version: 1.0.0
  * Requires at least: 6.9
  * Requires PHP: 8.1
  * Author: Jerome Wincek
+ * Author URI: https://github.com/jwincek
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: shelter-pet-sync
