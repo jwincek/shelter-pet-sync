@@ -18,6 +18,17 @@ class Petstablished_Sync {
 
 	private const API_BASE = 'https://petstablished.com/api/v2/public/pets';
 
+	/**
+	 * Slug identifying the shelter platform this sync imports from.
+	 *
+	 * Stamped onto every imported pet as `_pet_provider` so the identity lookup
+	 * and stale-pet pruning below stay scoped to this provider's records. Record
+	 * IDs are only unique within a provider, so without this scoping a second
+	 * provider's pets could collide on ID or be drafted as "stale" by a sync
+	 * that never saw them.
+	 */
+	public const PROVIDER = 'petstablished';
+
 	private const SESSION_TRANSIENT = 'petsync_sync_session';
 
 	private array $stats = array(
@@ -484,14 +495,25 @@ class Petstablished_Sync {
 		// always produces the same hash regardless of key ordering.
 		$api_hash = $this->compute_api_hash( $data );
 
-		// Find existing pet by Petstablished ID.
+		// Find the existing pet by provider + record ID. Both halves matter:
+		// record IDs are unique only within a provider, so matching on the ID
+		// alone could bind this record to another platform's pet.
 		$existing = get_posts(
 			array(
 				'post_type'   => 'vcps_pet',
 				'post_status' => 'any',
-				'meta_key'    => '_pet_ps_id',
-				'meta_value'  => $ps_id,
 				'numberposts' => 1,
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- identity lookup; both keys are indexed in postmeta.
+				'meta_query'  => array(
+					array(
+						'key'   => '_pet_ps_id',
+						'value' => (string) $ps_id,
+					),
+					array(
+						'key'   => '_pet_provider',
+						'value' => self::PROVIDER,
+					),
+				),
 			)
 		);
 
@@ -642,8 +664,8 @@ class Petstablished_Sync {
 		return array_values(
 			array_unique(
 				array_merge(
-					self::get_retained_api_keys(),              // stored + displayed
-					array_keys( self::TAXONOMY_SOURCE_MAP ),    // taxonomy term sources
+					self::get_retained_api_keys(),                    // stored + displayed
+					array_keys( self::get_taxonomy_source_map() ),    // taxonomy term sources
 					array(
 						'description',                  // → post_content
 						'dont_show_in_public_search',   // → post_status (draft)
@@ -677,14 +699,16 @@ class Petstablished_Sync {
 	 * Write only the essential meta fields.
 	 *
 	 * Display-only data is read from _pet_api_response at hydration time.
-	 * Only the Petstablished ID is stored as individual meta because it's
-	 * the primary lookup key used by the sync to match API records to
-	 * local posts (via meta_key/meta_value query in process_single_pet).
+	 * Only the identity pair is stored as individual meta — the provider slug
+	 * and that provider's record ID — because together they are the lookup key
+	 * the sync uses to match API records to local posts (see the meta_query in
+	 * process_single_pet) and to scope stale-pet pruning.
 	 */
 	private function update_pet_meta( int $post_id, array $data ): void {
 		$ps_id = $data['id'] ?? null;
 		if ( $ps_id ) {
 			update_post_meta( $post_id, '_pet_ps_id', sanitize_text_field( (string) $ps_id ) );
+			update_post_meta( $post_id, '_pet_provider', self::PROVIDER );
 		}
 	}
 
@@ -700,23 +724,23 @@ class Petstablished_Sync {
 	/**
 	 * Single-value taxonomy mappings: raw API key → taxonomy.
 	 *
-	 * Authoritative source for which API keys feed the standard taxonomies;
-	 * also consumed by get_consumed_api_keys() so the change-detection hash
-	 * covers them.
+	 * Lives in entities.json alongside attribute_map, its direct sibling, so a
+	 * future provider can remap which of its fields feed the standard taxonomies
+	 * without touching PHP. Also consumed by get_consumed_api_keys() so the
+	 * change-detection hash covers every key listed here.
+	 *
+	 * @return array<string, string> API key => taxonomy slug.
 	 */
-	private const TAXONOMY_SOURCE_MAP = array(
-		'status'        => 'pet_status',
-		'animal'        => 'pet_animal',
-		'primary_breed' => 'pet_breed',
-		'age'           => 'pet_age',
-		'sex'           => 'pet_sex',
-		'size'          => 'pet_size',
-		'primary_color' => 'pet_color',
-		'coat_length'   => 'pet_coat',
-	);
+	private static function get_taxonomy_source_map(): array {
+		return (array) \Petstablished\Core\Config::get_path(
+			'entities',
+			'entities.vcps_pet.taxonomy_source_map',
+			array()
+		);
+	}
 
 	private function update_pet_taxonomies( int $post_id, array $data ): void {
-		foreach ( self::TAXONOMY_SOURCE_MAP as $api_key => $taxonomy ) {
+		foreach ( self::get_taxonomy_source_map() as $api_key => $taxonomy ) {
 			$value = $data[ $api_key ] ?? '';
 			if ( $value ) {
 				wp_set_object_terms( $post_id, sanitize_text_field( $value ), $taxonomy );
@@ -817,12 +841,22 @@ class Petstablished_Sync {
 		$api_ids = array_column( $api_pets, 'id' );
 		$removed = 0;
 
+		// Scope to this provider's pets. A sync only knows which of its OWN
+		// records disappeared upstream; pets imported from another platform are
+		// legitimately absent from this response and must not be drafted.
 		$local_pets = get_posts(
 			array(
 				'post_type'   => 'vcps_pet',
 				'post_status' => 'publish',
 				'numberposts' => -1,
 				'fields'      => 'ids',
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- provider scoping is required for correctness here.
+				'meta_query'  => array(
+					array(
+						'key'   => '_pet_provider',
+						'value' => self::PROVIDER,
+					),
+				),
 			)
 		);
 
