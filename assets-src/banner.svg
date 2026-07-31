@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 772 250" width="772" height="250" role="img" aria-label="Shelter Pet Sync">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#17A398"/>
+      <stop offset="55%" stop-color="#0E7E76"/>
+      <stop offset="100%" stop-color="#095B55"/>
+    </linearGradient>
+    <linearGradient id="badge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FBBF3C"/>
+      <stop offset="100%" stop-color="#EE9613"/>
+    </linearGradient>
+    <g id="pawmark">
+      <ellipse cx="82"  cy="104" rx="16" ry="21" transform="rotate(-22 82 104)"/>
+      <ellipse cx="112" cy="88"  rx="17" ry="23" transform="rotate(-8 112 88)"/>
+      <ellipse cx="148" cy="88"  rx="17" ry="23" transform="rotate(8 148 88)"/>
+      <ellipse cx="178" cy="104" rx="16" ry="21" transform="rotate(22 178 104)"/>
+      <path d="M130 194 c-27 0 -46 -15 -46 -34 c0 -19 19 -34 46 -34
+               c27 0 46 15 46 34 c0 19 -19 34 -46 34 Z"/>
+    </g>
+  </defs>
+
+  <rect width="772" height="250" fill="url(#bg)"/>
+
+  <!-- Oversized paws as background texture, kept faint and clipped by the edge. -->
+  <g fill="#FFFFFF" opacity="0.055">
+    <use href="#pawmark" transform="translate(600,-34) scale(1.5)"/>
+    <use href="#pawmark" transform="translate(455,96) scale(0.85)"/>
+  </g>
+
+  <!-- Icon mark. -->
+  <g transform="translate(46,44) scale(0.72)">
+    <g fill="#FFFFFF">
+      <use href="#pawmark" transform="translate(-14,-16) scale(0.9) translate(14,16)"/>
+    </g>
+    <circle cx="192" cy="192" r="56" fill="#0B6E67"/>
+    <circle cx="192" cy="192" r="46" fill="url(#badge)"/>
+    <g fill="#FFFFFF" transform="translate(192,192)">
+      <path d="M -11 -25 L 0 -10 L -22 -10 Z"/>
+      <rect x="-15.5" y="-11" width="9" height="30" rx="1.5"/>
+      <path d="M 11 25 L 22 10 L 0 10 Z"/>
+      <rect x="6.5" y="-19" width="9" height="30" rx="1.5"/>
+    </g>
+  </g>
+
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+    <text x="248" y="116" fill="#FFFFFF" font-size="52" font-weight="700" letter-spacing="-0.5">Shelter Pet Sync</text>
+    <text x="250" y="154" fill="#BFF0EA" font-size="20" font-weight="400">Adoptable pets from Petstablished, in WordPress</text>
+    <g font-size="16" font-weight="600" fill="#0B5F59">
+      <rect x="250" y="176" width="120" height="30" rx="15" fill="#BFF0EA" opacity="0.95"/>
+      <text x="310" y="196" text-anchor="middle">21 blocks</text>
+      <rect x="380" y="176" width="150" height="30" rx="15" fill="#BFF0EA" opacity="0.95"/>
+      <text x="455" y="196" text-anchor="middle">No build step</text>
+      <rect x="540" y="176" width="164" height="30" rx="15" fill="#BFF0EA" opacity="0.95"/>
+      <text x="622" y="196" text-anchor="middle">Interactivity API</text>
+    </g>
+  </g>
+</svg>

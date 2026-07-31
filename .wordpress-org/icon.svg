@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Shelter Pet Sync">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#17A398"/>
+      <stop offset="100%" stop-color="#0B6E67"/>
+    </linearGradient>
+    <linearGradient id="badge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FBBF3C"/>
+      <stop offset="100%" stop-color="#EE9613"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="256" height="256" rx="56" fill="url(#bg)"/>
+
+  <!-- Paw, shifted up and left so the badge sits in clear space. -->
+  <g fill="#FFFFFF" transform="translate(-14,-16) scale(0.9) translate(14,16)">
+    <ellipse cx="82"  cy="104" rx="16" ry="21" transform="rotate(-22 82 104)"/>
+    <ellipse cx="112" cy="88"  rx="17" ry="23" transform="rotate(-8 112 88)"/>
+    <ellipse cx="148" cy="88"  rx="17" ry="23" transform="rotate(8 148 88)"/>
+    <ellipse cx="178" cy="104" rx="16" ry="21" transform="rotate(22 178 104)"/>
+    <path d="M130 194
+             c-27 0 -46 -15 -46 -34
+             c0 -19 19 -34 46 -34
+             c27 0 46 15 46 34
+             c0 19 -19 34 -46 34 Z"/>
+  </g>
+
+  <!-- Sync badge: one bold arc with a single arrowhead reads far better at
+       128px than two interlocking arrows, which turn to mush. -->
+  <g>
+    <circle cx="192" cy="192" r="56" fill="#0B6E67"/>
+    <circle cx="192" cy="192" r="46" fill="url(#badge)"/>
+    <!-- Two opposing arrows rather than a circular one: a near-closed arc
+         reads as a plain ring once it is 40px wide, which is the size
+         WordPress.org uses in search rows. -->
+    <g fill="#FFFFFF" transform="translate(192,192)">
+      <path d="M -11 -25 L 0 -10 L -22 -10 Z"/>
+      <rect x="-15.5" y="-11" width="9" height="30" rx="1.5"/>
+      <path d="M 11 25 L 22 10 L 0 10 Z"/>
+      <rect x="6.5" y="-19" width="9" height="30" rx="1.5"/>
+    </g>
+  </g>
+</svg>
