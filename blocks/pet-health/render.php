@@ -29,8 +29,8 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 		?>
 		<div <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?>>
 			<div class="pet-health__placeholder">
-				<p><?php esc_html_e( 'Pet Health', 'shelter-pet-sync' ); ?></p>
-				<small><?php esc_html_e( 'Vaccinations, spay/neuter, and more. Requires pet context.', 'shelter-pet-sync' ); ?></small>
+				<p><?php esc_html_e( 'Pet Health', 'shelter-pets' ); ?></p>
+				<small><?php esc_html_e( 'Vaccinations, spay/neuter, and more. Requires pet context.', 'shelter-pets' ); ?></small>
 			</div>
 		</div>
 		<?php
@@ -57,32 +57,32 @@ $is_cat      = ( $animal_slug === 'cat' );
 $health_defs = array(
 	array(
 		'toggle' => 'showSpayedNeutered',
-		'label'  => __( 'Spayed/Neutered', 'shelter-pet-sync' ),
+		'label'  => __( 'Spayed/Neutered', 'shelter-pets' ),
 		'key'    => 'spayed_neutered',
 	),
 	array(
 		'toggle' => 'showVaccinations',
-		'label'  => __( 'Vaccinations Current', 'shelter-pet-sync' ),
+		'label'  => __( 'Vaccinations Current', 'shelter-pets' ),
 		'key'    => 'shots_current',
 	),
 	array(
 		'toggle' => 'showHousebroken',
-		'label'  => __( 'House Trained', 'shelter-pet-sync' ),
+		'label'  => __( 'House Trained', 'shelter-pets' ),
 		'key'    => 'housebroken',
 	),
 	array(
 		'toggle' => 'showSpecialNeeds',
-		'label'  => __( 'Special Needs', 'shelter-pet-sync' ),
+		'label'  => __( 'Special Needs', 'shelter-pets' ),
 		'key'    => 'special_needs',
 	),
 	array(
 		'toggle' => 'showHypoallergenic',
-		'label'  => __( 'Hypoallergenic', 'shelter-pet-sync' ),
+		'label'  => __( 'Hypoallergenic', 'shelter-pets' ),
 		'key'    => 'hypoallergenic',
 	),
 	array(
 		'toggle'   => 'showDeclawed',
-		'label'    => __( 'Declawed', 'shelter-pet-sync' ),
+		'label'    => __( 'Declawed', 'shelter-pets' ),
 		'key'      => 'declawed',
 		'cat_only' => true,
 	),
@@ -124,7 +124,7 @@ foreach ( $health_defs as $def ) {
 		if ( $detail ) {
 			$label = sprintf(
 				/* translators: 1: "Special Needs" label, 2: detail text (e.g. "FeLV+") */
-				__( '%1$s: %2$s', 'shelter-pet-sync' ),
+				__( '%1$s: %2$s', 'shelter-pets' ),
 				$label,
 				$detail
 			);
@@ -170,9 +170,9 @@ $status_icons = array(
 );
 
 $status_labels = array(
-	'yes'     => __( 'Yes', 'shelter-pet-sync' ),
-	'no'      => __( 'No', 'shelter-pet-sync' ),
-	'unknown' => __( 'Unknown', 'shelter-pet-sync' ),
+	'yes'     => __( 'Yes', 'shelter-pets' ),
+	'no'      => __( 'No', 'shelter-pets' ),
+	'unknown' => __( 'Unknown', 'shelter-pets' ),
 );
 
 $wrapper_attributes = get_block_wrapper_attributes(

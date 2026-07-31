@@ -547,7 +547,7 @@ class Petstablished_Variations {
 					$categories,
 					array(
 						'slug'  => 'petsync',
-						'title' => __( 'Pet Blocks', 'shelter-pet-sync' ),
+						'title' => __( 'Pet Blocks', 'shelter-pets' ),
 						'icon'  => 'pets',
 					)
 				);

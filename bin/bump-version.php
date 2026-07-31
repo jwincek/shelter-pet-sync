@@ -1,6 +1,6 @@
 <?php
 /**
- * Version bumper for Shelter Pet Sync.
+ * Version bumper for Shelter Pets.
  *
  * The plugin version is declared in a lot of places — the header, the
  * PETSTABLISHED_SYNC_VERSION constant, readme.txt's Stable tag, package.json,

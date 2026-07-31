@@ -27,8 +27,8 @@ if ( ! $pet ) {
 $pet_name      = $pet['name'] ?? get_the_title( $post_id );
 $archive_url   = get_post_type_archive_link( 'vcps_pet' );
 $home_url      = home_url( '/' );
-$home_label    = $attributes['homeLabel'] ?? __( 'Home', 'shelter-pet-sync' );
-$archive_label = $attributes['archiveLabel'] ?? __( 'Adoptable Pets', 'shelter-pet-sync' );
+$home_label    = $attributes['homeLabel'] ?? __( 'Home', 'shelter-pets' );
+$archive_label = $attributes['archiveLabel'] ?? __( 'Adoptable Pets', 'shelter-pets' );
 $separator     = $attributes['separator'] ?? '›';
 
 $wrapper_attributes = get_block_wrapper_attributes(
@@ -37,7 +37,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 	)
 );
 ?>
-<nav <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?> aria-label="<?php esc_attr_e( 'Breadcrumb', 'shelter-pet-sync' ); ?>">
+<nav <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?> aria-label="<?php esc_attr_e( 'Breadcrumb', 'shelter-pets' ); ?>">
 	<a href="<?php echo esc_url( $home_url ); ?>" class="pet-details__breadcrumb-item">
 		<?php echo esc_html( $home_label ); ?>
 	</a>

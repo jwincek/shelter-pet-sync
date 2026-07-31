@@ -1,4 +1,4 @@
-# Shelter Pet Sync
+# Shelter Pets
 
 Sync adoptable pets from [Petstablished](https://petstablished.com) into WordPress, built on the modern WordPress 6.9 stack: Abilities API, Block Bindings, and Interactivity API.
 
@@ -10,7 +10,7 @@ Sync adoptable pets from [Petstablished](https://petstablished.com) into WordPre
 
 ## Installation
 
-1. Download or clone this repository into `wp-content/plugins/shelter-pet-sync/`.
+1. Download or clone this repository into `wp-content/plugins/shelter-pets/`.
 2. Activate the plugin in **Plugins → Installed Plugins**.
 3. Go to **Pets → Sync Settings** and enter your Petstablished public key.
 4. Click **Sync Now** to import your adoptable pets.

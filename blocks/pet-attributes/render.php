@@ -29,8 +29,8 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 		?>
 		<div <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?>>
 			<div class="pet-attributes__placeholder">
-				<p><?php esc_html_e( 'Pet Attributes', 'shelter-pet-sync' ); ?></p>
-				<small><?php esc_html_e( 'Breed, age, size, and more. Requires pet context.', 'shelter-pet-sync' ); ?></small>
+				<p><?php esc_html_e( 'Pet Attributes', 'shelter-pets' ); ?></p>
+				<small><?php esc_html_e( 'Breed, age, size, and more. Requires pet context.', 'shelter-pets' ); ?></small>
 			</div>
 		</div>
 		<?php
@@ -79,44 +79,44 @@ $filter_key_map = array(
 $attr_defs = array(
 	array(
 		'toggle' => 'showBreed',
-		'label'  => __( 'Breed', 'shelter-pet-sync' ),
+		'label'  => __( 'Breed', 'shelter-pets' ),
 		'key'    => 'breed',
 	),
 	array(
 		'toggle'       => 'showAge',
-		'label'        => __( 'Age', 'shelter-pet-sync' ),
+		'label'        => __( 'Age', 'shelter-pets' ),
 		'key'          => 'numerical_age',
 		'fallback'     => 'age',
 		'taxonomy_key' => 'age',
 	),
 	array(
 		'toggle' => 'showSex',
-		'label'  => __( 'Sex', 'shelter-pet-sync' ),
+		'label'  => __( 'Sex', 'shelter-pets' ),
 		'key'    => 'sex',
 	),
 	array(
 		'toggle' => 'showSize',
-		'label'  => __( 'Size', 'shelter-pet-sync' ),
+		'label'  => __( 'Size', 'shelter-pets' ),
 		'key'    => 'size',
 	),
 	array(
 		'toggle' => 'showColor',
-		'label'  => __( 'Color', 'shelter-pet-sync' ),
+		'label'  => __( 'Color', 'shelter-pets' ),
 		'key'    => 'color',
 	),
 	array(
 		'toggle' => 'showCoat',
-		'label'  => __( 'Coat', 'shelter-pet-sync' ),
+		'label'  => __( 'Coat', 'shelter-pets' ),
 		'key'    => 'coat',
 	),
 	array(
 		'toggle' => 'showCoatPattern',
-		'label'  => __( 'Coat Pattern', 'shelter-pet-sync' ),
+		'label'  => __( 'Coat Pattern', 'shelter-pets' ),
 		'key'    => 'coat_pattern',
 	),
 	array(
 		'toggle' => 'showWeight',
-		'label'  => __( 'Weight', 'shelter-pet-sync' ),
+		'label'  => __( 'Weight', 'shelter-pets' ),
 		'key'    => 'weight',
 	),
 );

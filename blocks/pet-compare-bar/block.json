@@ -7,7 +7,7 @@
 	"category": "theme",
 	"description": "Sticky bar showing pets selected for comparison.",
 	"keywords": ["pet", "compare", "adoption"],
-	"textdomain": "shelter-pet-sync",
+	"textdomain": "shelter-pets",
 	"attributes": {
 		"position": {
 			"type": "string",

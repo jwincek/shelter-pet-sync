@@ -1,5 +1,5 @@
 {
-	"name": "shelter-pet-sync",
+	"name": "shelter-pets",
 	"version": "1.0.0",
 	"description": "Sync adoptable pets from Petstablished into WordPress.",
 	"private": true,

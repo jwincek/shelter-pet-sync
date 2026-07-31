@@ -388,9 +388,9 @@ class Petstablished_Helpers {
 		$items    = array();
 
 		$checks = array(
-			'is_ok_with_other_dogs' => __( 'dogs', 'shelter-pet-sync' ),
-			'is_ok_with_other_cats' => __( 'cats', 'shelter-pet-sync' ),
-			'is_ok_with_other_kids' => __( 'kids', 'shelter-pet-sync' ),
+			'is_ok_with_other_dogs' => __( 'dogs', 'shelter-pets' ),
+			'is_ok_with_other_cats' => __( 'cats', 'shelter-pets' ),
+			'is_ok_with_other_kids' => __( 'kids', 'shelter-pets' ),
 		);
 
 		$truthy = array( 'yes', '1', 'true' );
@@ -401,6 +401,6 @@ class Petstablished_Helpers {
 			}
 		}
 
-		return $items ? sprintf( /* translators: %s: comma-separated compatibility list */ __( 'Good with %s', 'shelter-pet-sync' ), implode( ', ', $items ) ) : '';
+		return $items ? sprintf( /* translators: %s: comma-separated compatibility list */ __( 'Good with %s', 'shelter-pets' ), implode( ', ', $items ) ) : '';
 	}
 }

@@ -1,4 +1,4 @@
-=== Shelter Pet Sync ===
+=== Shelter Pets ===
 Contributors: jeromewincek
 Tags: pets, adoption, animal shelter, rescue, animals
 Requires at least: 6.9
@@ -8,11 +8,13 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Sync adoptable pets from Petstablished into WordPress with blocks for cards, grids, filters, galleries, favorites, and comparison.
+Adoptable pet listings for animal shelters — blocks for cards, grids, filters, galleries, favorites, and comparison, with sync from Petstablished.
 
 == Description ==
 
-Shelter Pet Sync imports your shelter's adoptable animals from the Petstablished platform into WordPress as a custom post type, then gives you a full set of blocks to display and filter them on the front end.
+Shelter Pets puts your shelter's adoptable animals on your own website as a custom post type, then gives you a full set of blocks to display and filter them on the front end — so the listings live on your domain, get indexed by search engines, and match your theme, rather than sitting inside a third-party embed.
+
+Animals are imported from the Petstablished platform.
 
 Built on the modern WordPress stack — the Abilities API, Block Bindings, and the Interactivity API — so the front end is reactive (favorites, compare, filters, galleries) with no build step required.
 

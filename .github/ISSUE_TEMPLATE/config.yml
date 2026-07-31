@@ -12,7 +12,7 @@
 blank_issues_enabled: true
 contact_links:
   - name: Support & how-to questions
-    url: https://wordpress.org/support/plugin/shelter-pet-sync/
+    url: https://wordpress.org/support/plugin/shelter-pets/
     about: Installation help, configuration, Petstablished API keys, or "how do I …" — the WordPress.org forum is the fastest channel and other users can find the answer later.
 
   - name: Petstablished account & API access

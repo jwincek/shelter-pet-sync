@@ -19,7 +19,26 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SLUG="$(basename "$ROOT")"
+
+# Identify the plugin by its "Plugin Name:" header rather than by the directory
+# name. The checkout directory is NOT reliably the slug: CI clones into a folder
+# named after the repository, so any basename-derived slug silently breaks the
+# moment the repo and the plugin are named differently.
+MAIN_FILE=""
+for candidate in "$ROOT"/*.php; do
+	[[ -f "$candidate" ]] || continue
+	if head -c 8192 "$candidate" | grep -qE '^[[:space:]]*\*?[[:space:]]*Plugin Name:'; then
+		MAIN_FILE="$candidate"
+		break
+	fi
+done
+
+if [[ -z "$MAIN_FILE" ]]; then
+	echo "Error: no PHP file at the repo root carries a 'Plugin Name:' header." >&2
+	exit 1
+fi
+
+SLUG="$(basename "$MAIN_FILE" .php)"
 BUILD_ROOT="$ROOT/build"
 DEST="$BUILD_ROOT/$SLUG"
 
@@ -38,9 +57,9 @@ fi
 
 # The plugin header is the single source of truth for the version
 # (bin/validate-config.php check 8 enforces that everything else agrees).
-VERSION="$(sed -n 's/^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*\([^[:space:]]*\).*/\1/p' "$ROOT/$SLUG.php" | head -1)"
+VERSION="$(sed -n 's/^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*\([^[:space:]]*\).*/\1/p'  "$MAIN_FILE" | head -1)"
 if [[ -z "$VERSION" ]]; then
-	echo "Error: could not read the Version header from $SLUG.php." >&2
+	echo "Error: could not read the Version header from $(basename "$MAIN_FILE")." >&2
 	exit 1
 fi
 

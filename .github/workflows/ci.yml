@@ -97,7 +97,7 @@ jobs:
       - name: Upload zip
         uses: actions/upload-artifact@v4
         with:
-          name: shelter-pet-sync-${{ steps.build.outputs.version }}
+          name: shelter-pets-${{ steps.build.outputs.version }}
           path: build/*.zip
           if-no-files-found: error
 
@@ -119,7 +119,7 @@ jobs:
       - name: Run Plugin Check
         uses: WordPress/plugin-check-action@v1
         with:
-          build-dir: ./build/shelter-pet-sync
+          build-dir: ./build/shelter-pets
           # Warnings are dominated by PHPCS treating block render.php
           # template-scope variables as globals — WordPress includes those
           # files inside a function scope, so they are not. phpcs.xml.dist

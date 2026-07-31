@@ -63,7 +63,7 @@ class Petstablished_Blocks {
 		register_block_bindings_source(
 			'petsync/pet-data',
 			array(
-				'label'              => __( 'Pet Data', 'shelter-pet-sync' ),
+				'label'              => __( 'Pet Data', 'shelter-pets' ),
 				'get_value_callback' => array( $this, 'get_binding_value' ),
 				'uses_context'       => array( 'postId', 'postType' ),
 			)
@@ -73,7 +73,7 @@ class Petstablished_Blocks {
 		register_block_bindings_source(
 			'petsync/adoption-stats',
 			array(
-				'label'              => __( 'Adoption Statistics', 'shelter-pet-sync' ),
+				'label'              => __( 'Adoption Statistics', 'shelter-pets' ),
 				'get_value_callback' => array( $this, 'get_stats_binding_value' ),
 				'uses_context'       => array(),
 			)
@@ -116,7 +116,7 @@ class Petstablished_Blocks {
 
 		// Format for display.
 		if ( is_bool( $value ) ) {
-			return $value ? __( 'Yes', 'shelter-pet-sync' ) : __( 'No', 'shelter-pet-sync' );
+			return $value ? __( 'Yes', 'shelter-pets' ) : __( 'No', 'shelter-pets' );
 		}
 
 		return is_scalar( $value ) ? (string) $value : null;
@@ -124,12 +124,12 @@ class Petstablished_Blocks {
 
 	private function get_placeholder( string $key ): string {
 		$placeholders = array(
-			'status' => __( '[Status]', 'shelter-pet-sync' ),
-			'animal' => __( '[Animal]', 'shelter-pet-sync' ),
-			'breed'  => __( '[Breed]', 'shelter-pet-sync' ),
-			'age'    => __( '[Age]', 'shelter-pet-sync' ),
-			'sex'    => __( '[Sex]', 'shelter-pet-sync' ),
-			'size'   => __( '[Size]', 'shelter-pet-sync' ),
+			'status' => __( '[Status]', 'shelter-pets' ),
+			'animal' => __( '[Animal]', 'shelter-pets' ),
+			'breed'  => __( '[Breed]', 'shelter-pets' ),
+			'age'    => __( '[Age]', 'shelter-pets' ),
+			'sex'    => __( '[Sex]', 'shelter-pets' ),
+			'size'   => __( '[Size]', 'shelter-pets' ),
 		);
 		return $placeholders[ $key ] ?? '[' . ucfirst( str_replace( '_', ' ', $key ) ) . ']';
 	}
@@ -355,7 +355,7 @@ class Petstablished_Blocks {
 				'key'    => $key,
 				'type'   => 'taxonomy',
 				'source' => 'petsync/pet-data',
-				'desc'   => sprintf( /* translators: %s: pet field name */ __( 'Pet %s', 'shelter-pet-sync' ), ucfirst( $key ) ),
+				'desc'   => sprintf( /* translators: %s: pet field name */ __( 'Pet %s', 'shelter-pets' ), ucfirst( $key ) ),
 			);
 		}
 

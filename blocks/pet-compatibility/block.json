@@ -8,7 +8,7 @@
 	"description": "Display pet compatibility with dogs, cats, and children.",
 	"keywords": ["pet", "compatibility", "dogs", "cats", "kids", "good with"],
 	"ancestor": ["petsync/pet-details"],
-	"textdomain": "shelter-pet-sync",
+	"textdomain": "shelter-pets",
 	"usesContext": ["postId", "postType"],
 	"attributes": {
 		"showDogs": { "type": "boolean", "default": true },

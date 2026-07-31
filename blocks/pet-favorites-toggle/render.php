@@ -28,7 +28,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		type="button"
 		class="pet-favorites-toggle__btn"
 		data-wp-on--click="actions.openFavoritesModal"
-		aria-label="<?php esc_attr_e( 'View favorites', 'shelter-pet-sync' ); ?>"
+		aria-label="<?php esc_attr_e( 'View favorites', 'shelter-pets' ); ?>"
 	>
 		<?php
 		echo Petstablished_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
@@ -42,7 +42,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		?>
 
 		<span class="pet-favorites-toggle__label">
-			<?php esc_html_e( 'Favorites', 'shelter-pet-sync' ); ?>
+			<?php esc_html_e( 'Favorites', 'shelter-pets' ); ?>
 		</span>
 
 		<?php if ( $show_count ) : ?>

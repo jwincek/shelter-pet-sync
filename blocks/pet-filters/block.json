@@ -7,7 +7,7 @@
 	"category": "theme",
 	"description": "Filter form for pet listings. Works without JavaScript via URL parameters.",
 	"keywords": ["pet", "filter", "search", "adoption"],
-	"textdomain": "shelter-pet-sync",
+	"textdomain": "shelter-pets",
 	"attributes": {
 		"showAnimal": { "type": "boolean", "default": true },
 		"showBreed": { "type": "boolean", "default": true },

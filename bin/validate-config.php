@@ -1,6 +1,6 @@
 <?php
 /**
- * Config-contract validator for Shelter Pet Sync.
+ * Config-contract validator for Shelter Pets.
  *
  * Static analysis — no WordPress, no Composer dependencies. It cross-checks
  * the JSON config (config/*.json) against the PHP that consumes it, catching
@@ -91,14 +91,38 @@ foreach ( $it as $f ) {
 		$php_files[] = $f->getPathname();
 	}
 }
-// The main plugin file, resolved from the directory name rather than hardcoded
-// so a future rename can't silently drop it from every check below (it did:
-// this pointed at the pre-rename petstablished-sync.php and was skipped).
-$main_file = $root . '/' . basename( $root ) . '.php';
-if ( ! is_file( $main_file ) ) {
-	$add( 'error', 'config', 'Cannot find the main plugin file at ' . basename( $main_file ) . ' — checks below will not cover it.' );
+// The main plugin file, identified by its "Plugin Name:" header.
+//
+// Not hardcoded (it once pointed at the pre-rename petstablished-sync.php and
+// was silently skipped by every check) and not derived from the directory name
+// either — the checkout directory is not reliably the slug, since CI clones
+// into a folder named after the repository. Only the header is authoritative.
+$main_file = null;
+foreach ( glob( $root . '/*.php' ) ?: [] as $candidate ) {
+	$head = (string) file_get_contents( $candidate, false, null, 0, 8192 );
+	if ( preg_match( '/^[ \t]*\*?[ \t]*Plugin Name:[ \t]*\S/mi', $head ) ) {
+		$main_file = $candidate;
+		break;
+	}
+}
+
+if ( null === $main_file ) {
+	$add( 'error', 'config', 'No PHP file at the repo root carries a "Plugin Name:" header — checks below will not cover the main plugin file.' );
 } else {
 	$php_files[] = $main_file;
+
+	// WordPress.org requires the text domain to equal the slug, and the slug is
+	// taken from the main file's name. A mismatch here is what makes
+	// translations silently fail to load after a rename.
+	$main_head   = (string) file_get_contents( $main_file, false, null, 0, 8192 );
+	$slug        = basename( $main_file, '.php' );
+	$text_domain = preg_match( '/^[ \t]*\*?[ \t]*Text Domain:[ \t]*(\S+)/mi', $main_head, $td ) ? $td[1] : null;
+
+	if ( null === $text_domain ) {
+		$add( 'error', 'config', 'No "Text Domain:" header in ' . basename( $main_file ) . '.' );
+	} elseif ( $text_domain !== $slug ) {
+		$add( 'error', 'config', "Text Domain '$text_domain' does not match the plugin slug '$slug' — WordPress.org requires them to be identical, and translations will not load." );
+	}
 }
 
 foreach ( $php_files as $path ) {

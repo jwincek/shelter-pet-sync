@@ -7,7 +7,7 @@
 	"category": "petsync",
 	"description": "Display comprehensive pet information using customizable inner blocks with pet data bindings.",
 	"keywords": ["pet", "details", "profile", "adoption"],
-	"textdomain": "shelter-pet-sync",
+	"textdomain": "shelter-pets",
 	"attributes": {
 		"layout": {
 			"type": "string",

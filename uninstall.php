@@ -138,7 +138,7 @@ function vcps_uninstall_site(): bool {
 			array(
 				'taxonomy' => 'wp_theme',
 				'field'    => 'name',
-				'terms'    => 'shelter-pet-sync',
+				'terms'    => 'shelter-pets',
 			),
 			),
 		)
@@ -148,7 +148,7 @@ function vcps_uninstall_site(): bool {
 		wp_delete_post( $template_id, true );
 	}
 
-	$theme_term = get_term_by( 'name', 'shelter-pet-sync', 'wp_theme' );
+	$theme_term = get_term_by( 'name', 'shelter-pets', 'wp_theme' );
 	if ( $theme_term ) {
 		wp_delete_term( $theme_term->term_id, 'wp_theme' );
 	}
