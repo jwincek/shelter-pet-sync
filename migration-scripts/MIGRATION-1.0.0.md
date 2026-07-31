@@ -19,7 +19,7 @@ content**. Done in the wrong order, pets disappear and pet blocks render as
 | **Block names `petstablished/*` → `petsync/*`** (and binding sources `petstablished/pet-data`, `petstablished/adoption-stats`) | Any page/template/widget using the old block names breaks ("this block contains unexpected content"); bindings go blank. | `wp search-replace` (step 5) |
 | **API snapshot now stores only the display subset** | Old `_pet_api_response` rows still hold full PII until purged. | `2026-06-23-purge-pii-from-api-snapshots.php` |
 | **Change-detection hash basis changed** | The **first sync after upgrade re-processes every pet once** (expected; then steady-state resumes). | nothing — just expect it |
-| **Plugin dir/slug/text-domain → `shelter-pet-sync`** | Optional rename for consistency; needs a reactivate. | step 3 (optional) |
+| **Plugin dir/slug/text-domain → `shelter-pets`** | Optional rename for consistency; needs a reactivate. | step 3 (optional) |
 
 **Preserved — no action needed:** `/adopt/pets/…` permalinks (rewrite slug
 unchanged), all `_pet_*` post meta, all `pet_*` taxonomies and term
@@ -66,27 +66,27 @@ we're in maintenance mode and about to migrate.
 
 ## 3. (Recommended) Rename the plugin directory to match the slug
 
-The text domain is now `shelter-pet-sync`; matching the folder avoids a
+The text domain is now `shelter-pets`; matching the folder avoids a
 text-domain/slug mismatch. **Skip this whole step if you prefer to keep the
 folder name** — the plugin still works either way.
 
 ```bash
 cd wp-content/plugins
 wp plugin deactivate PLUGIN_DIR
-mv PLUGIN_DIR shelter-pet-sync
-wp plugin activate shelter-pet-sync
+mv PLUGIN_DIR shelter-pets
+wp plugin activate shelter-pets
 ```
 
 (If you skip the rename, instead run `wp plugin deactivate PLUGIN_DIR && wp
 plugin activate PLUGIN_DIR` once, so the activation hook re-flushes rewrite
 rules under the new code.)
 
-From here, `PLUGIN_DIR` is `shelter-pet-sync` if you renamed it.
+From here, `PLUGIN_DIR` is `shelter-pets` if you renamed it.
 
 ## 4. Migrate the post type (`pet` → `vcps_pet`)
 
 ```bash
-wp eval-file wp-content/plugins/shelter-pet-sync/migration-scripts/2026-06-23-rename-cpt-pet-to-vcps_pet.php
+wp eval-file wp-content/plugins/shelter-pets/migration-scripts/2026-06-23-rename-cpt-pet-to-vcps_pet.php
 ```
 
 Expected: `Migrated N post(s) from "pet" to "vcps_pet" …`. Idempotent — safe to
@@ -117,7 +117,7 @@ is targeted (it does **not** match `petstablished.com/…` or the
 ## 6. Purge PII from stored API snapshots
 
 ```bash
-wp eval-file wp-content/plugins/shelter-pet-sync/migration-scripts/2026-06-23-purge-pii-from-api-snapshots.php
+wp eval-file wp-content/plugins/shelter-pets/migration-scripts/2026-06-23-purge-pii-from-api-snapshots.php
 ```
 
 Expected: `N pet(s) … slimmed (… KB of PII/unused data removed)`. Idempotent.
@@ -161,7 +161,7 @@ wp maintenance-mode deactivate
 ```bash
 wp maintenance-mode activate
 cd wp-content/plugins
-rm -rf shelter-pet-sync   # or the renamed/checked-out tree
+rm -rf shelter-pets   # or the renamed/checked-out tree
 tar xzf ~/PLUGIN_DIR-pre-1.0.0.tgz          # restores the old plugin folder
 wp db import ~/backup-pre-1.0.0-$(date +%F).sql
 wp plugin activate PLUGIN_DIR                # original slug

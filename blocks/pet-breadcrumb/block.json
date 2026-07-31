@@ -8,7 +8,7 @@
 	"description": "Breadcrumb trail: Home › Adoptable Pets › Pet Name.",
 	"keywords": ["pet", "breadcrumb", "navigation", "back"],
 	"ancestor": ["petsync/pet-details"],
-	"textdomain": "shelter-pet-sync",
+	"textdomain": "shelter-pets",
 	"usesContext": ["postId", "postType"],
 	"attributes": {
 		"homeLabel": {

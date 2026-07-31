@@ -37,6 +37,6 @@ $wrapper_attributes = get_block_wrapper_attributes(
 );
 ?>
 <div <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?>>
-	<p class="pet-adoption-cta__fee-label"><?php esc_html_e( 'Adoption Fee:', 'shelter-pet-sync' ); ?></p>
+	<p class="pet-adoption-cta__fee-label"><?php esc_html_e( 'Adoption Fee:', 'shelter-pets' ); ?></p>
 	<p class="pet-adoption-cta__fee-amount"><?php echo esc_html( $fee ); ?></p>
 </div>

@@ -140,7 +140,7 @@ class Petstablished_REST {
 		if ( ! $name || ! in_array( $name, self::CLIENT_ABILITIES, true ) ) {
 			return new \WP_Error(
 				'rest_ability_not_found',
-				__( 'Ability not found.', 'shelter-pet-sync' ),
+				__( 'Ability not found.', 'shelter-pets' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -148,7 +148,7 @@ class Petstablished_REST {
 		if ( ! function_exists( 'wp_get_ability' ) ) {
 			return new \WP_Error(
 				'abilities_unavailable',
-				__( 'Abilities API is not available.', 'shelter-pet-sync' ),
+				__( 'Abilities API is not available.', 'shelter-pets' ),
 				[ 'status' => 501 ]
 			);
 		}
@@ -157,7 +157,7 @@ class Petstablished_REST {
 		if ( ! $ability ) {
 			return new \WP_Error(
 				'rest_ability_not_found',
-				sprintf( /* translators: %s: ability name */ __( 'Ability "%s" is not registered.', 'shelter-pet-sync' ), $name ),
+				sprintf( /* translators: %s: ability name */ __( 'Ability "%s" is not registered.', 'shelter-pets' ), $name ),
 				[ 'status' => 404 ]
 			);
 		}

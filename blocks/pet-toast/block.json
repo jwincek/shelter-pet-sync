@@ -7,7 +7,7 @@
 	"category": "petsync",
 	"description": "Floating toast that surfaces favorites, comparison, and sharing confirmations. Add once per page (bundled in the Pet Floating UI template part).",
 	"keywords": ["toast", "notification", "feedback", "status"],
-	"textdomain": "shelter-pet-sync",
+	"textdomain": "shelter-pets",
 	"supports": {
 		"html": false,
 		"multiple": false,

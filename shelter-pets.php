@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Shelter Pet Sync
- * Plugin URI: https://github.com/jwincek/shelter-pet-sync
- * Description: Sync adoptable pets from Petstablished with WordPress 6.9 Abilities API, Block Bindings, and Interactivity API.
+ * Plugin Name: Shelter Pets
+ * Plugin URI: https://github.com/jwincek/shelter-pets
+ * Description: Adoptable pet listings for animal shelters — blocks for cards, grids, filters, galleries, favorites and comparison, with sync from Petstablished.
  * Version: 1.0.0
  * Requires at least: 6.9
  * Requires PHP: 8.1
@@ -10,7 +10,7 @@
  * Author URI: https://github.com/jwincek
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: shelter-pet-sync
+ * Text Domain: shelter-pets
  *
  * @package Petstablished_Sync
  */
@@ -191,8 +191,8 @@ function petstablished_sync_init(): void {
 			wp_register_ability_category(
 				'pets',
 				[
-					'label'       => __( 'Pets', 'shelter-pet-sync' ),
-					'description' => __( 'Pet adoption data operations.', 'shelter-pet-sync' ),
+					'label'       => __( 'Pets', 'shelter-pets' ),
+					'description' => __( 'Pet adoption data operations.', 'shelter-pets' ),
 				]
 			);
 		}

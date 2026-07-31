@@ -32,7 +32,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		href="#"
 		class="back-to-top__button"
 		data-wp-on--click="actions.scrollToTop"
-		aria-label="<?php esc_attr_e( 'Back to top', 'shelter-pet-sync' ); ?>"
+		aria-label="<?php esc_attr_e( 'Back to top', 'shelter-pets' ); ?>"
 	>
 		<?php
 		Petstablished_Icons::render(

@@ -93,7 +93,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					data-wp-bind--aria-label="state.favoriteLabel"
 				>
 					<?php echo Petstablished_Icons::get_heart_interactive(); /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG. */ ?>
-					<span class="screen-reader-text"><?php esc_html_e( 'Favorite', 'shelter-pet-sync' ); ?></span>
+					<span class="screen-reader-text"><?php esc_html_e( 'Favorite', 'shelter-pets' ); ?></span>
 				</button>
 			<?php endif; ?>
 
@@ -114,7 +114,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 						)
 					);
 					?>
-					<span><?php esc_html_e( 'Compare', 'shelter-pet-sync' ); ?></span>
+					<span><?php esc_html_e( 'Compare', 'shelter-pets' ); ?></span>
 				</button>
 			<?php endif; ?>
 		</div>

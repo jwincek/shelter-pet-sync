@@ -115,7 +115,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		class="pet-favorites-modal__trigger"
 		data-wp-on--click="actions.toggleModal"
 		data-wp-bind--aria-expanded="context.isOpen"
-		aria-label="<?php esc_attr_e( 'View favorites', 'shelter-pet-sync' ); ?>"
+		aria-label="<?php esc_attr_e( 'View favorites', 'shelter-pets' ); ?>"
 	>
 		<svg
 			class="pet-favorites-modal__trigger-icon"
@@ -149,7 +149,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		data-wp-on--keydown="actions.handleKeydown"
 		role="dialog"
 		aria-modal="true"
-		aria-label="<?php esc_attr_e( 'Your favorite pets', 'shelter-pet-sync' ); ?>"
+		aria-label="<?php esc_attr_e( 'Your favorite pets', 'shelter-pets' ); ?>"
 		hidden
 	>
 		<div class="pet-favorites-modal__panel">
@@ -160,7 +160,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none" aria-hidden="true">
 						<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
 					</svg>
-					<?php esc_html_e( 'Favorites', 'shelter-pet-sync' ); ?>
+					<?php esc_html_e( 'Favorites', 'shelter-pets' ); ?>
 					<span class="pet-favorites-modal__count">(<span
 						data-wp-text="petsync::state.favorites.length"
 					><?php echo (int) $fav_count; ?></span>)</span>
@@ -169,7 +169,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					type="button"
 					class="pet-favorites-modal__close"
 					data-wp-on--click="actions.closeModal"
-					aria-label="<?php esc_attr_e( 'Close favorites', 'shelter-pet-sync' ); ?>"
+					aria-label="<?php esc_attr_e( 'Close favorites', 'shelter-pets' ); ?>"
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 						<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -189,14 +189,14 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 						<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
 					</svg>
-					<p><?php esc_html_e( 'No favorites yet.', 'shelter-pet-sync' ); ?></p>
-					<p class="pet-favorites-modal__empty-hint"><?php esc_html_e( 'Tap the heart on any pet to save them here.', 'shelter-pet-sync' ); ?></p>
+					<p><?php esc_html_e( 'No favorites yet.', 'shelter-pets' ); ?></p>
+					<p class="pet-favorites-modal__empty-hint"><?php esc_html_e( 'Tap the heart on any pet to save them here.', 'shelter-pets' ); ?></p>
 					<a
 						href="<?php echo esc_url( get_post_type_archive_link( 'vcps_pet' ) ); ?>"
 						class="pet-favorites-modal__empty-cta"
 						data-wp-on--click="actions.closeAndNavigate"
 					>
-						<?php esc_html_e( 'Browse Adoptable Pets', 'shelter-pet-sync' ); ?>
+						<?php esc_html_e( 'Browse Adoptable Pets', 'shelter-pets' ); ?>
 					</a>
 				</div>
 
@@ -249,10 +249,10 @@ $wrapper_attributes = get_block_wrapper_attributes(
 								<?php endif; ?>
 								<div class="pet-favorites-modal__card-badges">
 									<?php if ( ! empty( $pet['is_new'] ) ) : ?>
-										<span class="pet-favorites-modal__badge pet-favorites-modal__badge--new"><?php esc_html_e( 'New', 'shelter-pet-sync' ); ?></span>
+										<span class="pet-favorites-modal__badge pet-favorites-modal__badge--new"><?php esc_html_e( 'New', 'shelter-pets' ); ?></span>
 									<?php endif; ?>
 									<?php if ( isset( $pet['special_needs'] ) && 'yes' === strtolower( (string) $pet['special_needs'] ) ) : ?>
-										<span class="pet-favorites-modal__badge pet-favorites-modal__badge--special"><?php esc_html_e( 'Special Needs', 'shelter-pet-sync' ); ?></span>
+										<span class="pet-favorites-modal__badge pet-favorites-modal__badge--special"><?php esc_html_e( 'Special Needs', 'shelter-pets' ); ?></span>
 									<?php endif; ?>
 									<?php if ( ! empty( $pet['is_bonded_pair'] ) && ! empty( $partners ) ) : ?>
 										<span class="pet-favorites-modal__badge-popover-anchor">
@@ -261,7 +261,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 											</button>
 											<div class="pet-favorites-modal__bonded-popover" hidden role="tooltip">
 												<div class="pet-favorites-modal__bonded-popover-arrow"></div>
-												<p class="pet-favorites-modal__bonded-popover-label"><?php esc_html_e( 'Must adopt together with:', 'shelter-pet-sync' ); ?></p>
+												<p class="pet-favorites-modal__bonded-popover-label"><?php esc_html_e( 'Must adopt together with:', 'shelter-pets' ); ?></p>
 												<ul class="pet-favorites-modal__bonded-popover-list">
 													<?php foreach ( $partners as $partner ) : ?>
 														<li>
@@ -278,7 +278,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 									<?php endif; ?>
 								</div>
 								<div class="pet-favorites-modal__card-actions">
-									<button type="button" class="pet-favorites-modal__card-unfavorite js-unfavorite" data-pet-id="<?php echo esc_attr( $pet['id'] ); ?>" data-pet-name="<?php echo esc_attr( $pet['name'] ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Remove %s from favorites', 'shelter-pet-sync' ), $pet['name'] ) ); ?>">
+									<button type="button" class="pet-favorites-modal__card-unfavorite js-unfavorite" data-pet-id="<?php echo esc_attr( $pet['id'] ); ?>" data-pet-name="<?php echo esc_attr( $pet['name'] ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Remove %s from favorites', 'shelter-pets' ), $pet['name'] ) ); ?>">
 										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" stroke="none" aria-hidden="true">
 											<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
 										</svg>
@@ -302,10 +302,10 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					data-wp-on--click="actions.handleClearClick"
 					data-wp-text="state.clearButtonText"
 					data-wp-class--is-confirming="state.clearConfirming"
-					data-default-text="<?php esc_attr_e( 'Clear all favorites', 'shelter-pet-sync' ); ?>"
-					data-confirm-text="<?php esc_attr_e( 'Tap again to confirm', 'shelter-pet-sync' ); ?>"
+					data-default-text="<?php esc_attr_e( 'Clear all favorites', 'shelter-pets' ); ?>"
+					data-confirm-text="<?php esc_attr_e( 'Tap again to confirm', 'shelter-pets' ); ?>"
 				>
-					<?php esc_html_e( 'Clear all favorites', 'shelter-pet-sync' ); ?>
+					<?php esc_html_e( 'Clear all favorites', 'shelter-pets' ); ?>
 				</button>
 			</div>
 		</div>

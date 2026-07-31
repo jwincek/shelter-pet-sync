@@ -58,14 +58,14 @@ function register_stores(): void {
 			'isCompareBarVisible'  => $has_comparison,
 			// Button text for pet-actions (used by derived state getters).
 			'_i18n'                => [
-				'favorite'       => __( 'Favorite', 'shelter-pet-sync' ),
-				'unfavorite'     => __( 'Unfavorite', 'shelter-pet-sync' ),
-				'compare'        => __( 'Compare', 'shelter-pet-sync' ),
-				'comparing'      => __( 'Comparing', 'shelter-pet-sync' ),
-				'share'          => __( 'Share', 'shelter-pet-sync' ),
-				'copyLink'       => __( 'Copy link', 'shelter-pet-sync' ),
-				'copied'         => __( 'Copied!', 'shelter-pet-sync' ),
-				'copiedAnnounce' => __( 'Link copied to clipboard', 'shelter-pet-sync' ),
+				'favorite'       => __( 'Favorite', 'shelter-pets' ),
+				'unfavorite'     => __( 'Unfavorite', 'shelter-pets' ),
+				'compare'        => __( 'Compare', 'shelter-pets' ),
+				'comparing'      => __( 'Comparing', 'shelter-pets' ),
+				'share'          => __( 'Share', 'shelter-pets' ),
+				'copyLink'       => __( 'Copy link', 'shelter-pets' ),
+				'copied'         => __( 'Copied!', 'shelter-pets' ),
+				'copiedAnnounce' => __( 'Link copied to clipboard', 'shelter-pets' ),
 			],
 		]
 	);
@@ -172,15 +172,15 @@ function register_script_modules(): void {
  */
 function get_i18n_strings(): array {
 	return [
-		'added'             => __( 'Added to favorites', 'shelter-pet-sync' ),
-		'removed'           => __( 'Removed from favorites', 'shelter-pet-sync' ),
-		'compareAdd'        => __( 'Added to comparison', 'shelter-pet-sync' ),
-		'compareRemove'     => __( 'Removed from comparison', 'shelter-pet-sync' ),
-		'compareFull'       => __( 'Comparison is full (max 4)', 'shelter-pet-sync' ),
-		'copied'            => __( 'Link copied!', 'shelter-pet-sync' ),
-		'loading'           => __( 'Loading...', 'shelter-pet-sync' ),
-		'error'             => __( 'Something went wrong', 'shelter-pet-sync' ),
-		'noResults'         => __( 'No pets match your filters.', 'shelter-pet-sync' ),
-		'searchPlaceholder' => __( 'Search by name or breed…', 'shelter-pet-sync' ),
+		'added'             => __( 'Added to favorites', 'shelter-pets' ),
+		'removed'           => __( 'Removed from favorites', 'shelter-pets' ),
+		'compareAdd'        => __( 'Added to comparison', 'shelter-pets' ),
+		'compareRemove'     => __( 'Removed from comparison', 'shelter-pets' ),
+		'compareFull'       => __( 'Comparison is full (max 4)', 'shelter-pets' ),
+		'copied'            => __( 'Link copied!', 'shelter-pets' ),
+		'loading'           => __( 'Loading...', 'shelter-pets' ),
+		'error'             => __( 'Something went wrong', 'shelter-pets' ),
+		'noResults'         => __( 'No pets match your filters.', 'shelter-pets' ),
+		'searchPlaceholder' => __( 'Search by name or breed…', 'shelter-pets' ),
 	];
 }

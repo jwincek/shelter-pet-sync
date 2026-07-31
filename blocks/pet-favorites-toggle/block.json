@@ -11,7 +11,7 @@
 		"favorites",
 		"filter"
 	],
-	"textdomain": "shelter-pet-sync",
+	"textdomain": "shelter-pets",
 	"attributes": {
 		"showCount": {
 			"type": "boolean",

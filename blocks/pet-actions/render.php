@@ -42,8 +42,8 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 					)
 				);
 				?>
-				<p><?php esc_html_e( 'Pet Actions', 'shelter-pet-sync' ); ?></p>
-				<small><?php esc_html_e( 'Favorite, compare, and share buttons. Requires pet context.', 'shelter-pet-sync' ); ?></small>
+				<p><?php esc_html_e( 'Pet Actions', 'shelter-pets' ); ?></p>
+				<small><?php esc_html_e( 'Favorite, compare, and share buttons. Requires pet context.', 'shelter-pets' ); ?></small>
 			</div>
 		</div>
 		<?php
@@ -75,7 +75,7 @@ $share_url   = rawurlencode( $pet_url );
 $share_title = rawurlencode(
 	sprintf(
 	/* translators: %s: pet name */
-		__( 'Meet %s — Available for Adoption', 'shelter-pet-sync' ),
+		__( 'Meet %s — Available for Adoption', 'shelter-pets' ),
 		$pet_name
 	)
 );
@@ -117,8 +117,8 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		echo esc_attr(
 			sprintf(
 				$is_favorited
-				? /* translators: %s: pet name */ __( 'Unfavorite %s', 'shelter-pet-sync' )
-				: /* translators: %s: pet name */ __( 'Favorite %s', 'shelter-pet-sync' ),
+				? /* translators: %s: pet name */ __( 'Unfavorite %s', 'shelter-pets' )
+				: /* translators: %s: pet name */ __( 'Favorite %s', 'shelter-pets' ),
 				$pet_name
 			)
 		);
@@ -129,8 +129,8 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		<span class="pet-actions__label" data-wp-text="state.favoriteButtonText">
 			<?php
 			echo $is_favorited
-				? esc_html__( 'Unfavorite', 'shelter-pet-sync' )
-				: esc_html__( 'Favorite', 'shelter-pet-sync' );
+				? esc_html__( 'Unfavorite', 'shelter-pets' )
+				: esc_html__( 'Favorite', 'shelter-pets' );
 			?>
 		</span>
 	</button>
@@ -151,7 +151,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		echo esc_attr(
 			sprintf(
 			/* translators: %s: pet name */
-				__( 'Add %s to comparison', 'shelter-pet-sync' ),
+				__( 'Add %s to comparison', 'shelter-pets' ),
 				$pet_name
 			)
 		);
@@ -168,7 +168,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		);
 		?>
 		<span class="pet-actions__label" data-wp-text="state.compareButtonText">
-			<?php esc_html_e( 'Compare', 'shelter-pet-sync' ); ?>
+			<?php esc_html_e( 'Compare', 'shelter-pets' ); ?>
 		</span>
 	</button>
 	<?php endif; ?>
@@ -187,7 +187,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			echo esc_attr(
 				sprintf(
 				/* translators: %s: pet name */
-					__( 'Share %s', 'shelter-pet-sync' ),
+					__( 'Share %s', 'shelter-pets' ),
 					$pet_name
 				)
 			);
@@ -203,7 +203,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				)
 			);
 			?>
-			<span class="pet-actions__label"><?php esc_html_e( 'Share', 'shelter-pet-sync' ); ?></span>
+			<span class="pet-actions__label"><?php esc_html_e( 'Share', 'shelter-pets' ); ?></span>
 		</button>
 
 		<div
@@ -212,7 +212,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			data-wp-on-document--click="actions.closeShareMenuOnOutsideClick"
 			data-wp-on-document--keydown="actions.closeShareMenuOnEscape"
 			role="menu"
-			aria-label="<?php esc_attr_e( 'Share options', 'shelter-pet-sync' ); ?>"
+			aria-label="<?php esc_attr_e( 'Share options', 'shelter-pets' ); ?>"
 			hidden
 		>
 			<!-- Native share (hidden if Web Share API unavailable — handled via CSS/JS) -->
@@ -233,7 +233,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					)
 				);
 				?>
-				<span><?php esc_html_e( 'Share via…', 'shelter-pet-sync' ); ?></span>
+				<span><?php esc_html_e( 'Share via…', 'shelter-pets' ); ?></span>
 			</button>
 
 			<!-- Copy link -->
@@ -254,7 +254,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				);
 				?>
 				<span data-wp-text="state.copyButtonText">
-					<?php esc_html_e( 'Copy link', 'shelter-pet-sync' ); ?>
+					<?php esc_html_e( 'Copy link', 'shelter-pets' ); ?>
 				</span>
 			</button>
 
@@ -313,7 +313,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					)
 				);
 				?>
-				<span><?php esc_html_e( 'Email', 'shelter-pet-sync' ); ?></span>
+				<span><?php esc_html_e( 'Email', 'shelter-pets' ); ?></span>
 			</a>
 		</div>
 	</div>

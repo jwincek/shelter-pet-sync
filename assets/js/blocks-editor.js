@@ -225,10 +225,10 @@
 
 	// === Pet Card ===
 	registerBlockType( 'petsync/pet-card', {
-		title: __( 'Pet Card', 'shelter-pet-sync' ),
+		title: __( 'Pet Card', 'shelter-pets' ),
 		description: __(
 			'Display a single pet card with image and details.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'widgets',
 		icon: pawIcon,
@@ -253,12 +253,12 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Display Options', 'shelter-pet-sync' ),
+							title: __( 'Display Options', 'shelter-pets' ),
 						},
 						el( ToggleControl, {
 							label: __(
 								'Show Favorite Button',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showFavorite,
 							onChange: ( val ) =>
@@ -267,7 +267,7 @@
 						el( ToggleControl, {
 							label: __(
 								'Show Compare Button',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showCompare,
 							onChange: ( val ) =>
@@ -276,7 +276,7 @@
 						el( ToggleControl, {
 							label: __(
 								'Show Status Badge',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showStatus,
 							onChange: ( val ) =>
@@ -295,10 +295,10 @@
 
 	// === Pet Listing Grid ===
 	registerBlockType( 'petsync/pet-listing-grid', {
-		title: __( 'Pet Listing Grid', 'shelter-pet-sync' ),
+		title: __( 'Pet Listing Grid', 'shelter-pets' ),
 		description: __(
 			'Display a filterable grid of adoptable pets with instant client-side filtering.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'widgets',
 		icon: pawIcon,
@@ -330,10 +330,10 @@
 
 	// === Pet Details ===
 	registerBlockType( 'petsync/pet-details', {
-		title: __( 'Pet Details', 'shelter-pet-sync' ),
+		title: __( 'Pet Details', 'shelter-pets' ),
 		description: __(
 			'Display comprehensive pet profile information.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'widgets',
 		icon: pawIcon,
@@ -363,17 +363,17 @@
 					{},
 					el(
 						PanelBody,
-						{ title: __( 'Layout', 'shelter-pet-sync' ) },
+						{ title: __( 'Layout', 'shelter-pets' ) },
 						el( SelectControl, {
-							label: __( 'Layout', 'shelter-pet-sync' ),
+							label: __( 'Layout', 'shelter-pets' ),
 							value: attributes.layout,
 							options: [
 								{
-									label: __( 'Sidebar', 'shelter-pet-sync' ),
+									label: __( 'Sidebar', 'shelter-pets' ),
 									value: 'sidebar',
 								},
 								{
-									label: __( 'Stacked', 'shelter-pet-sync' ),
+									label: __( 'Stacked', 'shelter-pets' ),
 									value: 'stacked',
 								},
 							],
@@ -384,23 +384,23 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Sections', 'shelter-pet-sync' ),
+							title: __( 'Sections', 'shelter-pets' ),
 							initialOpen: false,
 						},
 						el( ToggleControl, {
-							label: __( 'Show Image', 'shelter-pet-sync' ),
+							label: __( 'Show Image', 'shelter-pets' ),
 							checked: attributes.showImage,
 							onChange: ( val ) =>
 								setAttributes( { showImage: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Show Status', 'shelter-pet-sync' ),
+							label: __( 'Show Status', 'shelter-pets' ),
 							checked: attributes.showStatus,
 							onChange: ( val ) =>
 								setAttributes( { showStatus: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Show Attributes', 'shelter-pet-sync' ),
+							label: __( 'Show Attributes', 'shelter-pets' ),
 							checked: attributes.showAttributes,
 							onChange: ( val ) =>
 								setAttributes( { showAttributes: val } ),
@@ -408,20 +408,20 @@
 						el( ToggleControl, {
 							label: __(
 								'Show Compatibility',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showCompatibility,
 							onChange: ( val ) =>
 								setAttributes( { showCompatibility: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Show Health Info', 'shelter-pet-sync' ),
+							label: __( 'Show Health Info', 'shelter-pets' ),
 							checked: attributes.showHealth,
 							onChange: ( val ) =>
 								setAttributes( { showHealth: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Show Description', 'shelter-pet-sync' ),
+							label: __( 'Show Description', 'shelter-pets' ),
 							checked: attributes.showDescription,
 							onChange: ( val ) =>
 								setAttributes( { showDescription: val } ),
@@ -429,14 +429,14 @@
 						el( ToggleControl, {
 							label: __(
 								'Show Adoption Info',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showAdoptionInfo,
 							onChange: ( val ) =>
 								setAttributes( { showAdoptionInfo: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Show Actions', 'shelter-pet-sync' ),
+							label: __( 'Show Actions', 'shelter-pets' ),
 							checked: attributes.showActions,
 							onChange: ( val ) =>
 								setAttributes( { showActions: val } ),
@@ -454,10 +454,10 @@
 
 	// === Pet Compare Bar ===
 	registerBlockType( 'petsync/pet-compare-bar', {
-		title: __( 'Pet Compare Bar', 'shelter-pet-sync' ),
+		title: __( 'Pet Compare Bar', 'shelter-pets' ),
 		description: __(
 			'Sticky bar showing pets selected for comparison.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'widgets',
 		icon: 'columns',
@@ -478,17 +478,17 @@
 					{},
 					el(
 						PanelBody,
-						{ title: __( 'Settings', 'shelter-pet-sync' ) },
+						{ title: __( 'Settings', 'shelter-pets' ) },
 						el( SelectControl, {
-							label: __( 'Position', 'shelter-pet-sync' ),
+							label: __( 'Position', 'shelter-pets' ),
 							value: attributes.position,
 							options: [
 								{
-									label: __( 'Bottom', 'shelter-pet-sync' ),
+									label: __( 'Bottom', 'shelter-pets' ),
 									value: 'bottom',
 								},
 								{
-									label: __( 'Top', 'shelter-pet-sync' ),
+									label: __( 'Top', 'shelter-pets' ),
 									value: 'top',
 								},
 							],
@@ -500,13 +500,13 @@
 				el(
 					'div',
 					{ className: 'petstablished-editor-placeholder' },
-					el( 'p', {}, __( 'Pet Compare Bar', 'shelter-pet-sync' ) ),
+					el( 'p', {}, __( 'Pet Compare Bar', 'shelter-pets' ) ),
 					el(
 						'small',
 						{},
 						__(
 							'This will appear as a sticky bar when pets are added to comparison.',
-							'shelter-pet-sync'
+							'shelter-pets'
 						)
 					)
 				)
@@ -517,10 +517,10 @@
 
 	// === Pet Filters (deprecated — use pet-listing-grid's built-in toolbar) ===
 	registerBlockType( 'petsync/pet-filters', {
-		title: __( 'Pet Filters (deprecated)', 'shelter-pet-sync' ),
+		title: __( 'Pet Filters (deprecated)', 'shelter-pets' ),
 		description: __(
 			"Deprecated — use the pet listing grid's built-in filter toolbar instead.",
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'widgets',
 		icon: 'filter',
@@ -546,20 +546,20 @@
 					{},
 					el(
 						PanelBody,
-						{ title: __( 'Layout', 'shelter-pet-sync' ) },
+						{ title: __( 'Layout', 'shelter-pets' ) },
 						el( SelectControl, {
-							label: __( 'Layout', 'shelter-pet-sync' ),
+							label: __( 'Layout', 'shelter-pets' ),
 							value: attributes.layout,
 							options: [
 								{
 									label: __(
 										'Horizontal',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'horizontal',
 								},
 								{
-									label: __( 'Vertical', 'shelter-pet-sync' ),
+									label: __( 'Vertical', 'shelter-pets' ),
 									value: 'vertical',
 								},
 							],
@@ -570,35 +570,35 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Filters', 'shelter-pet-sync' ),
+							title: __( 'Filters', 'shelter-pets' ),
 							initialOpen: false,
 						},
 						el( ToggleControl, {
-							label: __( 'Animal Type', 'shelter-pet-sync' ),
+							label: __( 'Animal Type', 'shelter-pets' ),
 							checked: attributes.showAnimal,
 							onChange: ( val ) =>
 								setAttributes( { showAnimal: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Breed', 'shelter-pet-sync' ),
+							label: __( 'Breed', 'shelter-pets' ),
 							checked: attributes.showBreed,
 							onChange: ( val ) =>
 								setAttributes( { showBreed: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Age', 'shelter-pet-sync' ),
+							label: __( 'Age', 'shelter-pets' ),
 							checked: attributes.showAge,
 							onChange: ( val ) =>
 								setAttributes( { showAge: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Sex', 'shelter-pet-sync' ),
+							label: __( 'Sex', 'shelter-pets' ),
 							checked: attributes.showSex,
 							onChange: ( val ) =>
 								setAttributes( { showSex: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Size', 'shelter-pet-sync' ),
+							label: __( 'Size', 'shelter-pets' ),
 							checked: attributes.showSize,
 							onChange: ( val ) =>
 								setAttributes( { showSize: val } ),
@@ -616,10 +616,10 @@
 
 	// === Pet Favorites Toggle (deprecated — use pet-favorites-modal) ===
 	registerBlockType( 'petsync/pet-favorites-toggle', {
-		title: __( 'Favorites Toggle (deprecated)', 'shelter-pet-sync' ),
+		title: __( 'Favorites Toggle (deprecated)', 'shelter-pets' ),
 		description: __(
 			'Deprecated — use Pet Favorites Modal instead.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'widgets',
 		icon: 'heart',
@@ -640,9 +640,9 @@
 					{},
 					el(
 						PanelBody,
-						{ title: __( 'Settings', 'shelter-pet-sync' ) },
+						{ title: __( 'Settings', 'shelter-pets' ) },
 						el( ToggleControl, {
-							label: __( 'Show Count', 'shelter-pet-sync' ),
+							label: __( 'Show Count', 'shelter-pets' ),
 							checked: attributes.showCount,
 							onChange: ( val ) =>
 								setAttributes( { showCount: val } ),
@@ -660,10 +660,10 @@
 
 	// === Pet Slider ===
 	registerBlockType( 'petsync/pet-slider', {
-		title: __( 'Pet Slider', 'shelter-pet-sync' ),
+		title: __( 'Pet Slider', 'shelter-pets' ),
 		description: __(
 			'A carousel slider showcasing available pets. Perfect for home pages, 404 pages, or anywhere you want to highlight adoptable pets.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'widgets',
 		icon: pawIcon,
@@ -713,19 +713,19 @@
 					{},
 					el(
 						PanelBody,
-						{ title: __( 'Display Mode', 'shelter-pet-sync' ) },
+						{ title: __( 'Display Mode', 'shelter-pets' ) },
 						el( SelectControl, {
-							label: __( 'Mode', 'shelter-pet-sync' ),
+							label: __( 'Mode', 'shelter-pets' ),
 							value: attributes.displayMode,
 							options: [
 								{
-									label: __( 'Carousel', 'shelter-pet-sync' ),
+									label: __( 'Carousel', 'shelter-pets' ),
 									value: 'carousel',
 								},
 								{
 									label: __(
 										'Hero (Featured)',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'hero',
 								},
@@ -736,27 +736,27 @@
 								attributes.displayMode === 'hero'
 									? __(
 											'Large featured pet with thumbnail strip. Great for home and 404 pages.',
-											'shelter-pet-sync'
+											'shelter-pets'
 									  )
 									: __(
 											'Traditional sliding carousel of pet cards.',
-											'shelter-pet-sync'
+											'shelter-pets'
 									  ),
 						} ),
 						el( SelectControl, {
-							label: __( 'Card Style', 'shelter-pet-sync' ),
+							label: __( 'Card Style', 'shelter-pets' ),
 							value: attributes.cardStyle,
 							options: [
 								{
-									label: __( 'Default', 'shelter-pet-sync' ),
+									label: __( 'Default', 'shelter-pets' ),
 									value: 'default',
 								},
 								{
-									label: __( 'Minimal', 'shelter-pet-sync' ),
+									label: __( 'Minimal', 'shelter-pets' ),
 									value: 'minimal',
 								},
 								{
-									label: __( 'Overlay', 'shelter-pet-sync' ),
+									label: __( 'Overlay', 'shelter-pets' ),
 									value: 'overlay',
 								},
 							],
@@ -767,11 +767,11 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Content', 'shelter-pet-sync' ),
+							title: __( 'Content', 'shelter-pets' ),
 							initialOpen: false,
 						},
 						el( ToggleControl, {
-							label: __( 'Show Title', 'shelter-pet-sync' ),
+							label: __( 'Show Title', 'shelter-pets' ),
 							checked: attributes.showTitle,
 							onChange: ( val ) =>
 								setAttributes( { showTitle: val } ),
@@ -788,7 +788,7 @@
 											marginBottom: '8px',
 										},
 									},
-									__( 'Title', 'shelter-pet-sync' )
+									__( 'Title', 'shelter-pets' )
 								),
 								el( 'input', {
 									type: 'text',
@@ -804,7 +804,7 @@
 							el( ToggleControl, {
 								label: __(
 									'Show CTA Subtitle',
-									'shelter-pet-sync'
+									'shelter-pets'
 								),
 								checked: attributes.showCta,
 								onChange: ( val ) =>
@@ -823,7 +823,7 @@
 											marginBottom: '8px',
 										},
 									},
-									__( 'CTA Text', 'shelter-pet-sync' )
+									__( 'CTA Text', 'shelter-pets' )
 								),
 								el( 'input', {
 									type: 'text',
@@ -836,7 +836,7 @@
 								} )
 							),
 						el( RangeControl, {
-							label: __( 'Number of Pets', 'shelter-pet-sync' ),
+							label: __( 'Number of Pets', 'shelter-pets' ),
 							value: attributes.count,
 							onChange: ( val ) =>
 								setAttributes( { count: val } ),
@@ -844,24 +844,24 @@
 							max: 20,
 						} ),
 						el( SelectControl, {
-							label: __( 'Order By', 'shelter-pet-sync' ),
+							label: __( 'Order By', 'shelter-pets' ),
 							value: attributes.orderBy,
 							options: [
 								{
-									label: __( 'Random', 'shelter-pet-sync' ),
+									label: __( 'Random', 'shelter-pets' ),
 									value: 'random',
 								},
 								{
 									label: __(
 										'Newest First',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'newest',
 								},
 								{
 									label: __(
 										'Name (A-Z)',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'name',
 								},
@@ -873,14 +873,14 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Navigation', 'shelter-pet-sync' ),
+							title: __( 'Navigation', 'shelter-pets' ),
 							initialOpen: false,
 						},
 						attributes.displayMode === 'carousel' &&
 							el( ToggleControl, {
 								label: __(
 									'Show Navigation Arrows',
-									'shelter-pet-sync'
+									'shelter-pets'
 								),
 								checked: attributes.showNavigation,
 								onChange: ( val ) =>
@@ -888,13 +888,13 @@
 							} ),
 						attributes.displayMode === 'carousel' &&
 							el( ToggleControl, {
-								label: __( 'Show Dots', 'shelter-pet-sync' ),
+								label: __( 'Show Dots', 'shelter-pets' ),
 								checked: attributes.showDots,
 								onChange: ( val ) =>
 									setAttributes( { showDots: val } ),
 							} ),
 						el( ToggleControl, {
-							label: __( 'Autoplay', 'shelter-pet-sync' ),
+							label: __( 'Autoplay', 'shelter-pets' ),
 							checked: attributes.autoplay,
 							onChange: ( val ) =>
 								setAttributes( { autoplay: val } ),
@@ -903,7 +903,7 @@
 							el( RangeControl, {
 								label: __(
 									'Autoplay Speed (ms)',
-									'shelter-pet-sync'
+									'shelter-pets'
 								),
 								value: attributes.autoplaySpeed,
 								onChange: ( val ) =>
@@ -916,20 +916,20 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Features', 'shelter-pet-sync' ),
+							title: __( 'Features', 'shelter-pets' ),
 							initialOpen: false,
 						},
 						el( ToggleControl, {
 							label: __(
 								'Show Quick Actions (Favorite/Compare)',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showQuickActions,
 							onChange: ( val ) =>
 								setAttributes( { showQuickActions: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Link to Archive', 'shelter-pet-sync' ),
+							label: __( 'Link to Archive', 'shelter-pets' ),
 							checked: attributes.linkToArchive,
 							onChange: ( val ) =>
 								setAttributes( { linkToArchive: val } ),
@@ -948,7 +948,7 @@
 									},
 									__(
 										'Archive Link Text',
-										'shelter-pet-sync'
+										'shelter-pets'
 									)
 								),
 								el( 'input', {
@@ -964,7 +964,7 @@
 						el( ToggleControl, {
 							label: __(
 								'Show Badges (Bonded Pair, Special Needs)',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showBadges,
 							onChange: ( val ) =>
@@ -974,28 +974,28 @@
 							el( SelectControl, {
 								label: __(
 									'Badge Position',
-									'shelter-pet-sync'
+									'shelter-pets'
 								),
 								value: attributes.badgePosition,
 								options: [
 									{
 										label: __(
 											'Top of image',
-											'shelter-pet-sync'
+											'shelter-pets'
 										),
 										value: 'image-top',
 									},
 									{
 										label: __(
 											'Bottom overlay',
-											'shelter-pet-sync'
+											'shelter-pets'
 										),
 										value: 'overlay-bottom',
 									},
 									{
 										label: __(
 											'Above pet name',
-											'shelter-pet-sync'
+											'shelter-pets'
 										),
 										value: 'above-name',
 									},
@@ -1016,10 +1016,10 @@
 
 	// === Pet Comparison ===
 	registerBlockType( 'petsync/pet-comparison', {
-		title: __( 'Pet Comparison', 'shelter-pet-sync' ),
+		title: __( 'Pet Comparison', 'shelter-pets' ),
 		description: __(
 			'Display side-by-side comparison of selected pets.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'widgets',
 		icon: 'columns',
@@ -1045,10 +1045,10 @@
 
 	// Pet Gallery
 	registerBlockType( 'petsync/pet-gallery', {
-		title: __( 'Pet Gallery', 'shelter-pet-sync' ),
+		title: __( 'Pet Gallery', 'shelter-pets' ),
 		description: __(
 			'Display pet photo gallery with lightbox.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'format-gallery',
@@ -1085,7 +1085,7 @@
 								className: 'dashicons dashicons-format-gallery',
 								style: { marginRight: '8px' },
 							} ),
-							__( 'Pet Gallery', 'shelter-pet-sync' )
+							__( 'Pet Gallery', 'shelter-pets' )
 						),
 						el(
 							'div',
@@ -1095,7 +1095,7 @@
 							},
 							__(
 								"Displays the pet's photo gallery. This block requires a pet context to display content.",
-								'shelter-pet-sync'
+								'shelter-pets'
 							)
 						)
 					)
@@ -1111,16 +1111,16 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Gallery Settings', 'shelter-pet-sync' ),
+							title: __( 'Gallery Settings', 'shelter-pets' ),
 						},
 						el( ToggleControl, {
-							label: __( 'Show Thumbnails', 'shelter-pet-sync' ),
+							label: __( 'Show Thumbnails', 'shelter-pets' ),
 							checked: attributes.showThumbnails,
 							onChange: ( val ) =>
 								setAttributes( { showThumbnails: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Enable Lightbox', 'shelter-pet-sync' ),
+							label: __( 'Enable Lightbox', 'shelter-pets' ),
 							checked: attributes.showLightbox,
 							onChange: ( val ) =>
 								setAttributes( { showLightbox: val } ),
@@ -1139,10 +1139,10 @@
 
 	// Pet Actions (Favorite, Compare, Share buttons)
 	registerBlockType( 'petsync/pet-actions', {
-		title: __( 'Pet Actions', 'shelter-pet-sync' ),
+		title: __( 'Pet Actions', 'shelter-pets' ),
 		description: __(
 			'Display favorite, compare, and share action buttons.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'heart',
@@ -1183,12 +1183,12 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Action Buttons', 'shelter-pet-sync' ),
+							title: __( 'Action Buttons', 'shelter-pets' ),
 						},
 						el( ToggleControl, {
 							label: __(
 								'Show Favorite Button',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showFavorite,
 							onChange: ( val ) =>
@@ -1197,7 +1197,7 @@
 						el( ToggleControl, {
 							label: __(
 								'Show Compare Button',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showCompare,
 							onChange: ( val ) =>
@@ -1206,7 +1206,7 @@
 						el( ToggleControl, {
 							label: __(
 								'Show Share Button',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showShare,
 							onChange: ( val ) =>
@@ -1216,24 +1216,24 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Display', 'shelter-pet-sync' ),
+							title: __( 'Display', 'shelter-pets' ),
 							initialOpen: false,
 						},
 						el( SelectControl, {
-							label: __( 'Display Mode', 'shelter-pet-sync' ),
+							label: __( 'Display Mode', 'shelter-pets' ),
 							value: attributes.displayMode,
 							options: [
 								{
 									label: __(
 										'Inline (segmented bar)',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'inline',
 								},
 								{
 									label: __(
 										'Overlay (floating on gallery)',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'overlay',
 								},
@@ -1243,39 +1243,39 @@
 							help: isOverlay
 								? __(
 										'Circular icon buttons positioned over the gallery image.',
-										'shelter-pet-sync'
+										'shelter-pets'
 								  )
 								: __(
 										'Segmented button bar below the gallery.',
-										'shelter-pet-sync'
+										'shelter-pets'
 								  ),
 						} ),
 						! isOverlay &&
 							el( SelectControl, {
 								label: __(
 									'Desktop Label Style',
-									'shelter-pet-sync'
+									'shelter-pets'
 								),
 								value: attributes.labelDisplay,
 								options: [
 									{
 										label: __(
 											'Icon & Text',
-											'shelter-pet-sync'
+											'shelter-pets'
 										),
 										value: 'icon-and-text',
 									},
 									{
 										label: __(
 											'Icon Only',
-											'shelter-pet-sync'
+											'shelter-pets'
 										),
 										value: 'icon-only',
 									},
 									{
 										label: __(
 											'Text Only',
-											'shelter-pet-sync'
+											'shelter-pets'
 										),
 										value: 'text-only',
 									},
@@ -1284,7 +1284,7 @@
 									setAttributes( { labelDisplay: val } ),
 								help: __(
 									'Mobile always shows icons only.',
-									'shelter-pet-sync'
+									'shelter-pets'
 								),
 							} )
 					)
@@ -1318,7 +1318,7 @@
 							},
 							__(
 								'Pet Actions: Favorite, Compare, Share',
-								'shelter-pet-sync'
+								'shelter-pets'
 							)
 						)
 					)
@@ -1330,10 +1330,10 @@
 
 	// Pet Attributes (breed, age, sex, size, etc.)
 	registerBlockType( 'petsync/pet-attributes', {
-		title: __( 'Pet Attributes', 'shelter-pet-sync' ),
+		title: __( 'Pet Attributes', 'shelter-pets' ),
 		description: __(
 			'Display pet attributes like breed, age, sex, size in a definition list.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'list-view',
@@ -1367,47 +1367,47 @@
 						{
 							title: __(
 								'Visible Attributes',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 						},
 						el( ToggleControl, {
-							label: __( 'Breed', 'shelter-pet-sync' ),
+							label: __( 'Breed', 'shelter-pets' ),
 							checked: attributes.showBreed,
 							onChange: ( val ) =>
 								setAttributes( { showBreed: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Age', 'shelter-pet-sync' ),
+							label: __( 'Age', 'shelter-pets' ),
 							checked: attributes.showAge,
 							onChange: ( val ) =>
 								setAttributes( { showAge: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Sex', 'shelter-pet-sync' ),
+							label: __( 'Sex', 'shelter-pets' ),
 							checked: attributes.showSex,
 							onChange: ( val ) =>
 								setAttributes( { showSex: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Size', 'shelter-pet-sync' ),
+							label: __( 'Size', 'shelter-pets' ),
 							checked: attributes.showSize,
 							onChange: ( val ) =>
 								setAttributes( { showSize: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Color', 'shelter-pet-sync' ),
+							label: __( 'Color', 'shelter-pets' ),
 							checked: attributes.showColor,
 							onChange: ( val ) =>
 								setAttributes( { showColor: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Coat', 'shelter-pet-sync' ),
+							label: __( 'Coat', 'shelter-pets' ),
 							checked: attributes.showCoat,
 							onChange: ( val ) =>
 								setAttributes( { showCoat: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Weight', 'shelter-pet-sync' ),
+							label: __( 'Weight', 'shelter-pets' ),
 							checked: attributes.showWeight,
 							onChange: ( val ) =>
 								setAttributes( { showWeight: val } ),
@@ -1445,7 +1445,7 @@
 										minWidth: '60px',
 									},
 								},
-								__( 'Breed', 'shelter-pet-sync' )
+								__( 'Breed', 'shelter-pets' )
 							),
 							el(
 								'dd',
@@ -1470,7 +1470,7 @@
 										minWidth: '60px',
 									},
 								},
-								__( 'Age', 'shelter-pet-sync' )
+								__( 'Age', 'shelter-pets' )
 							),
 							el(
 								'dd',
@@ -1489,7 +1489,7 @@
 										minWidth: '60px',
 									},
 								},
-								__( 'Sex', 'shelter-pet-sync' )
+								__( 'Sex', 'shelter-pets' )
 							),
 							el(
 								'dd',
@@ -1506,10 +1506,10 @@
 
 	// Pet Compatibility (good with dogs, cats, kids)
 	registerBlockType( 'petsync/pet-compatibility', {
-		title: __( 'Pet Compatibility', 'shelter-pet-sync' ),
+		title: __( 'Pet Compatibility', 'shelter-pets' ),
 		description: __(
 			'Display pet compatibility with dogs, cats, and children.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'groups',
@@ -1556,31 +1556,31 @@
 						{
 							title: __(
 								'Compatibility Options',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 						},
 						el( SelectControl, {
-							label: __( 'Display Style', 'shelter-pet-sync' ),
+							label: __( 'Display Style', 'shelter-pets' ),
 							value: attributes.displayStyle,
 							options: [
 								{
 									label: __(
 										'Cards (grid)',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'cards',
 								},
 								{
 									label: __(
 										'Stacked (vertical cards)',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'stacked',
 								},
 								{
 									label: __(
 										'Pills (compact strip)',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'pills',
 								},
@@ -1589,19 +1589,19 @@
 								setAttributes( { displayStyle: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Show Dogs', 'shelter-pet-sync' ),
+							label: __( 'Show Dogs', 'shelter-pets' ),
 							checked: attributes.showDogs,
 							onChange: ( val ) =>
 								setAttributes( { showDogs: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Show Cats', 'shelter-pet-sync' ),
+							label: __( 'Show Cats', 'shelter-pets' ),
 							checked: attributes.showCats,
 							onChange: ( val ) =>
 								setAttributes( { showCats: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Show Kids', 'shelter-pet-sync' ),
+							label: __( 'Show Kids', 'shelter-pets' ),
 							checked: attributes.showKids,
 							onChange: ( val ) =>
 								setAttributes( { showKids: val } ),
@@ -1610,33 +1610,33 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Heading', 'shelter-pet-sync' ),
+							title: __( 'Heading', 'shelter-pets' ),
 							initialOpen: false,
 						},
 						el( TextControl, {
 							label: __(
 								'All-Positive Heading',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							value: attributes.positiveHeadingText,
 							onChange: ( val ) =>
 								setAttributes( { positiveHeadingText: val } ),
 							help: __(
 								'Shown when all visible items are "yes".',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 						} ),
 						el( TextControl, {
 							label: __(
 								'Mixed/General Heading',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							value: attributes.headingText,
 							onChange: ( val ) =>
 								setAttributes( { headingText: val } ),
 							help: __(
 								'Shown when any item is "no" or "unknown".',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 						} )
 					)
@@ -1690,7 +1690,7 @@
 										color: '#065f46',
 									},
 								},
-								__( 'Dogs', 'shelter-pet-sync' )
+								__( 'Dogs', 'shelter-pets' )
 							),
 							el(
 								'span',
@@ -1730,7 +1730,7 @@
 										color: '#666',
 									},
 								},
-								__( 'Cats', 'shelter-pet-sync' )
+								__( 'Cats', 'shelter-pets' )
 							),
 							el(
 								'span',
@@ -1770,7 +1770,7 @@
 										color: '#065f46',
 									},
 								},
-								__( 'Kids', 'shelter-pet-sync' )
+								__( 'Kids', 'shelter-pets' )
 							),
 							el(
 								'span',
@@ -1792,10 +1792,10 @@
 
 	// Pet Health (vaccinations, spayed/neutered, etc.)
 	registerBlockType( 'petsync/pet-health', {
-		title: __( 'Pet Health', 'shelter-pet-sync' ),
+		title: __( 'Pet Health', 'shelter-pets' ),
 		description: __(
 			'Display pet health information like vaccinations and spay/neuter status.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'plus-alt',
@@ -1825,13 +1825,13 @@
 						{
 							title: __(
 								'Health Information',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 						},
 						el( ToggleControl, {
 							label: __(
 								'Show Vaccinations',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showVaccinations,
 							onChange: ( val ) =>
@@ -1840,14 +1840,14 @@
 						el( ToggleControl, {
 							label: __(
 								'Show Spayed/Neutered',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showSpayedNeutered,
 							onChange: ( val ) =>
 								setAttributes( { showSpayedNeutered: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __( 'Show Housebroken', 'shelter-pet-sync' ),
+							label: __( 'Show Housebroken', 'shelter-pets' ),
 							checked: attributes.showHousebroken,
 							onChange: ( val ) =>
 								setAttributes( { showHousebroken: val } ),
@@ -1872,19 +1872,19 @@
 							'li',
 							{ style: { marginBottom: '4px' } },
 							'✅ ',
-							__( 'Spayed/Neutered', 'shelter-pet-sync' )
+							__( 'Spayed/Neutered', 'shelter-pets' )
 						),
 						el(
 							'li',
 							{ style: { marginBottom: '4px' } },
 							'✅ ',
-							__( 'Vaccinations Current', 'shelter-pet-sync' )
+							__( 'Vaccinations Current', 'shelter-pets' )
 						),
 						el(
 							'li',
 							null,
 							'✅ ',
-							__( 'House Trained', 'shelter-pet-sync' )
+							__( 'House Trained', 'shelter-pets' )
 						)
 					)
 				)
@@ -1897,10 +1897,10 @@
 	// Content (heading, fee row, note, action button) is composed from native
 	// core blocks with Block Bindings + the petsync/adoption-action child block.
 	registerBlockType( 'petsync/pet-adoption-cta', {
-		title: __( 'Pet Adoption CTA', 'shelter-pet-sync' ),
+		title: __( 'Pet Adoption CTA', 'shelter-pets' ),
 		description: __(
 			'Display adoption fee and application link or downloadable PDF form.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'heart',
@@ -1985,7 +1985,7 @@
 											{
 												content: __(
 													'Adoption Fee:',
-													'shelter-pet-sync'
+													'shelter-pets'
 												),
 												className:
 													'pet-adoption-cta__fee-label',
@@ -2015,7 +2015,7 @@
 									{
 										content: __(
 											'The adoption fee helps cover vaccinations, spay/neuter surgery, microchip, and initial veterinary care.',
-											'shelter-pet-sync'
+											'shelter-pets'
 										),
 										className: 'pet-adoption-cta__note',
 									},
@@ -2050,10 +2050,10 @@
 
 	// Back to Top — floating scroll-to-top button.
 	registerBlockType( 'petsync/back-to-top', {
-		title: __( 'Back to Top', 'shelter-pet-sync' ),
+		title: __( 'Back to Top', 'shelter-pets' ),
 		description: __(
 			'Floating button that scrolls back to the top of the page.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'arrow-up-alt',
@@ -2078,22 +2078,22 @@
 					{},
 					el(
 						PanelBody,
-						{ title: __( 'Settings', 'shelter-pet-sync' ) },
+						{ title: __( 'Settings', 'shelter-pets' ) },
 						el( SelectControl, {
-							label: __( 'Position', 'shelter-pet-sync' ),
+							label: __( 'Position', 'shelter-pets' ),
 							value: attributes.position,
 							options: [
 								{
 									label: __(
 										'Bottom Left',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'bottom-left',
 								},
 								{
 									label: __(
 										'Bottom Right',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'bottom-right',
 								},
@@ -2104,7 +2104,7 @@
 						el( RangeControl, {
 							label: __(
 								'Show after scrolling (px)',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							value: attributes.threshold,
 							onChange: ( val ) =>
@@ -2129,7 +2129,7 @@
 					},
 					__(
 						'↑ Back to Top button (visible after scrolling)',
-						'shelter-pet-sync'
+						'shelter-pets'
 					)
 				)
 			);
@@ -2140,10 +2140,10 @@
 	// Pet Notifications — standalone toast region driven by the global
 	// petsync store's notification state. Invisible until a message fires.
 	registerBlockType( 'petsync/pet-toast', {
-		title: __( 'Pet Notifications', 'shelter-pet-sync' ),
+		title: __( 'Pet Notifications', 'shelter-pets' ),
 		description: __(
 			'Floating toast that surfaces favorites, comparison, and sharing confirmations.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'megaphone',
@@ -2161,14 +2161,14 @@
 					el(
 						'p',
 						{},
-						__( 'Pet Notifications', 'shelter-pet-sync' )
+						__( 'Pet Notifications', 'shelter-pets' )
 					),
 					el(
 						'small',
 						{},
 						__(
 							'Toast messages (favorites, comparison, sharing) appear here on the front end. Not visible until a message fires.',
-							'shelter-pet-sync'
+							'shelter-pets'
 						)
 					)
 				)
@@ -2179,10 +2179,10 @@
 
 	// Pet Breadcrumb — SSR breadcrumb trail: Home › Adoptable Pets › Pet Name.
 	registerBlockType( 'petsync/pet-breadcrumb', {
-		title: __( 'Pet Breadcrumb', 'shelter-pet-sync' ),
+		title: __( 'Pet Breadcrumb', 'shelter-pets' ),
 		description: __(
 			'Breadcrumb trail: Home › Adoptable Pets › Pet Name.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'arrow-left-alt',
@@ -2213,7 +2213,7 @@
 					},
 					__(
 						'Home › Adoptable Pets › [Pet Name]',
-						'shelter-pet-sync'
+						'shelter-pets'
 					)
 				)
 			);
@@ -2223,10 +2223,10 @@
 
 	// Pet Tagline — quick-facts summary with taxonomy filter links.
 	registerBlockType( 'petsync/pet-tagline', {
-		title: __( 'Pet Tagline', 'shelter-pet-sync' ),
+		title: __( 'Pet Tagline', 'shelter-pets' ),
 		description: __(
 			'Quick-facts tagline with taxonomy filter links.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'tag',
@@ -2249,7 +2249,7 @@
 					{ style: { margin: 0, color: '#666', fontSize: '1rem' } },
 					__(
 						'Dog · Labrador · Young · Male · Medium',
-						'shelter-pet-sync'
+						'shelter-pets'
 					)
 				)
 			);
@@ -2259,10 +2259,10 @@
 
 	// Pet Adoption Fee — SSR fee row, auto-hidden when no fee is set.
 	registerBlockType( 'petsync/adoption-fee', {
-		title: __( 'Pet Adoption Fee', 'shelter-pet-sync' ),
+		title: __( 'Pet Adoption Fee', 'shelter-pets' ),
 		description: __(
 			'Displays the adoption fee. Hidden automatically if no fee is set.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'tag',
@@ -2281,7 +2281,7 @@
 				el(
 					'span',
 					{ className: 'pet-adoption-cta__fee-label' },
-					__( 'Adoption Fee:', 'shelter-pet-sync' )
+					__( 'Adoption Fee:', 'shelter-pets' )
 				),
 				el(
 					'span',
@@ -2297,10 +2297,10 @@
 	// page link, or PDF download). Lives inside petsync/pet-adoption-cta as a
 	// child block.
 	registerBlockType( 'petsync/adoption-action', {
-		title: __( 'Pet Adoption Action', 'shelter-pet-sync' ),
+		title: __( 'Pet Adoption Action', 'shelter-pets' ),
 		description: __(
 			'Adoption application button — links to Petstablished form, an internal page, or provides a PDF download.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'download',
@@ -2354,7 +2354,7 @@
 					value: String( page.id ),
 					label:
 						page.title?.rendered ||
-						__( '(no title)', 'shelter-pet-sync' ),
+						__( '(no title)', 'shelter-pets' ),
 				};
 			} );
 
@@ -2367,30 +2367,30 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Application Mode', 'shelter-pet-sync' ),
+							title: __( 'Application Mode', 'shelter-pets' ),
 						},
 						el( SelectControl, {
-							label: __( 'Form Mode', 'shelter-pet-sync' ),
+							label: __( 'Form Mode', 'shelter-pets' ),
 							value: attributes.formMode,
 							options: [
 								{
 									label: __(
 										'Petstablished (link to adoption form)',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'petstablished',
 								},
 								{
 									label: __(
 										'PDF Download',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'pdf',
 								},
 								{
 									label: __(
 										'Internal Page (e.g. Adoption Resources)',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'page',
 								},
@@ -2401,7 +2401,7 @@
 						! isPdf &&
 							! isPage &&
 							el( TextControl, {
-								label: __( 'Button Text', 'shelter-pet-sync' ),
+								label: __( 'Button Text', 'shelter-pets' ),
 								value: attributes.buttonText,
 								onChange: ( val ) =>
 									setAttributes( { buttonText: val } ),
@@ -2411,7 +2411,7 @@
 								'div',
 								{},
 								el( ComboboxControl, {
-									label: __( 'Page', 'shelter-pet-sync' ),
+									label: __( 'Page', 'shelter-pets' ),
 									value: attributes.pageId
 										? String( attributes.pageId )
 										: '',
@@ -2424,7 +2424,7 @@
 								el( TextControl, {
 									label: __(
 										'Button Text',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: attributes.pageButtonText,
 									onChange: ( val ) =>
@@ -2463,11 +2463,11 @@
 												attributes.pdfAttachmentId
 													? __(
 															'Replace PDF',
-															'shelter-pet-sync'
+															'shelter-pets'
 													  )
 													: __(
 															'Select PDF from Media Library',
-															'shelter-pet-sync'
+															'shelter-pets'
 													  )
 											),
 									} )
@@ -2475,7 +2475,7 @@
 								el( TextControl, {
 									label: __(
 										'PDF Button Text',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: attributes.pdfButtonText,
 									onChange: ( val ) =>
@@ -2498,11 +2498,11 @@
 								isPdf
 									? __(
 											'No PDF selected — choose a file in the Application Mode panel.',
-											'shelter-pet-sync'
+											'shelter-pets'
 									  )
 									: __(
 											'No page selected — choose one in the Application Mode panel.',
-											'shelter-pet-sync'
+											'shelter-pets'
 									  )
 							)
 					  )
@@ -2523,10 +2523,10 @@
 
 	// === Pet Favorites Modal ===
 	registerBlockType( 'petsync/pet-favorites-modal', {
-		title: __( 'Pet Favorites Modal', 'shelter-pet-sync' ),
+		title: __( 'Pet Favorites Modal', 'shelter-pets' ),
 		description: __(
 			'Floating heart button that opens a modal showing all favorited pets.',
-			'shelter-pet-sync'
+			'shelter-pets'
 		),
 		category: 'petsync',
 		icon: 'heart',
@@ -2552,22 +2552,22 @@
 					{},
 					el(
 						PanelBody,
-						{ title: __( 'Settings', 'shelter-pet-sync' ) },
+						{ title: __( 'Settings', 'shelter-pets' ) },
 						el( SelectControl, {
-							label: __( 'Position', 'shelter-pet-sync' ),
+							label: __( 'Position', 'shelter-pets' ),
 							value: attributes.position,
 							options: [
 								{
 									label: __(
 										'Bottom Right',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'bottom-right',
 								},
 								{
 									label: __(
 										'Bottom Left',
-										'shelter-pet-sync'
+										'shelter-pets'
 									),
 									value: 'bottom-left',
 								},
@@ -2578,7 +2578,7 @@
 						el( ToggleControl, {
 							label: __(
 								'Show Compare Button',
-								'shelter-pet-sync'
+								'shelter-pets'
 							),
 							checked: attributes.showCompare,
 							onChange: ( val ) =>
@@ -2609,7 +2609,7 @@
 						el(
 							'strong',
 							{},
-							__( 'Favorites Modal', 'shelter-pet-sync' )
+							__( 'Favorites Modal', 'shelter-pets' )
 						),
 						el(
 							'p',
@@ -2622,7 +2622,7 @@
 							},
 							__(
 								'Floating heart button appears on the frontend. Click to open a modal with all favorited pets.',
-								'shelter-pet-sync'
+								'shelter-pets'
 							)
 						)
 					)

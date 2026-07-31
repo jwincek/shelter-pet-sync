@@ -7,7 +7,7 @@
 	"category": "petsync",
 	"description": "Display pet photos with lightbox functionality.",
 	"keywords": ["pet", "gallery", "photos", "images"],
-	"textdomain": "shelter-pet-sync",
+	"textdomain": "shelter-pets",
 	"ancestor": ["petsync/pet-details"],
 	"attributes": {
 		"columns": {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Config-contract validator for Shelter Pet Sync.
+ * Config-contract validator for Shelter Pets.
  *
  * Static analysis — no WordPress, no Composer dependencies. It cross-checks
  * the JSON config (config/*.json) against the PHP that consumes it, catching
