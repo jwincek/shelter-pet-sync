@@ -114,6 +114,41 @@ class CPT_Registry {
 					]
 				);
 			}
+
+			// Editable api_fields — the manual-entry counterpart of the provider
+			// mapping. Registering these gives a pet with no provider somewhere
+			// to store the values a sync would otherwise have supplied.
+			// Pet_Hydrator prefers them over the API snapshot, so synced pets
+			// are unaffected until someone actually writes one. Type and
+			// sanitizer come from the api_fields declaration, so the field's
+			// shape has a single source of truth.
+			$api_fields = $config['api_fields'] ?? [];
+
+			foreach ( $config['editable_fields'] ?? [] as $field => $editable ) {
+				$api_config = $api_fields[ $field ] ?? null;
+
+				// Declared editable but absent from api_fields: the hydrator
+				// would never read it back, so registering the key would create
+				// a write-only field. The config validator flags this too.
+				if ( null === $api_config ) {
+					continue;
+				}
+
+				$declared_type = $api_config['type'] ?? 'string';
+
+				register_post_meta(
+					$post_type,
+					$prefix . $field,
+					[
+						'type'              => self::map_type( $declared_type ),
+						'description'       => $editable['label'] ?? $field,
+						'single'            => true,
+						'show_in_rest'      => true,
+						'sanitize_callback' => self::get_sanitizer( $declared_type ),
+						'auth_callback'     => fn() => current_user_can( 'edit_posts' ),
+					]
+				);
+			}
 		}
 	}
 
