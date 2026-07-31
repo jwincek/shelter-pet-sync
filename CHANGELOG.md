@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Initial public release.
+- Manual pet entry: every field a sync would supply can be entered by hand from
+  grouped panels in the editor sidebar, so the plugin works with no Petstablished
+  account at all. Field list, grouping and control types come from
+  `entities.json`, so adding a field is a config change.
+- Pets record which platform they came from. Fields on imported pets are
+  read-only in the editor, since the platform is their source of record, and a
+  sync never touches pets it did not import.
 - Pets record which platform they were imported from (`_pet_provider`), and the
   sync matches records on provider + ID rather than ID alone. Stale-pet pruning
   is scoped the same way, so a sync only ever drafts pets it imported itself —
