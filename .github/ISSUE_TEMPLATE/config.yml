@@ -1,0 +1,20 @@
+# Routes the traffic that arrives once the plugin is listed on WordPress.org.
+#
+# Public GitHub Issues become a de facto support channel for a listed plugin
+# whether or not that is the intent, so the expectation is set here before the
+# first user arrives rather than after. Support belongs on the WordPress.org
+# forum, which is the official channel, is searchable by other users hitting
+# the same problem, and is where the plugin's rating and support stats are
+# tracked. Issues stay open for bugs and feature requests.
+#
+# Note: the support URL 404s until the plugin is approved and listed. That is
+# expected — nobody can reach this repo from a plugin listing before then.
+blank_issues_enabled: true
+contact_links:
+  - name: Support & how-to questions
+    url: https://wordpress.org/support/plugin/shelter-pet-sync/
+    about: Installation help, configuration, Petstablished API keys, or "how do I …" — the WordPress.org forum is the fastest channel and other users can find the answer later.
+
+  - name: Petstablished account & API access
+    url: https://petstablished.com/
+    about: Questions about your Petstablished account, your public API key, or the pet records themselves are for Petstablished — this plugin only reads what their API returns.
