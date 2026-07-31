@@ -256,28 +256,19 @@
 							title: __( 'Display Options', 'shelter-pets' ),
 						},
 						el( ToggleControl, {
-							label: __(
-								'Show Favorite Button',
-								'shelter-pets'
-							),
+							label: __( 'Show Favorite Button', 'shelter-pets' ),
 							checked: attributes.showFavorite,
 							onChange: ( val ) =>
 								setAttributes( { showFavorite: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __(
-								'Show Compare Button',
-								'shelter-pets'
-							),
+							label: __( 'Show Compare Button', 'shelter-pets' ),
 							checked: attributes.showCompare,
 							onChange: ( val ) =>
 								setAttributes( { showCompare: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __(
-								'Show Status Badge',
-								'shelter-pets'
-							),
+							label: __( 'Show Status Badge', 'shelter-pets' ),
 							checked: attributes.showStatus,
 							onChange: ( val ) =>
 								setAttributes( { showStatus: val } ),
@@ -406,10 +397,7 @@
 								setAttributes( { showAttributes: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __(
-								'Show Compatibility',
-								'shelter-pets'
-							),
+							label: __( 'Show Compatibility', 'shelter-pets' ),
 							checked: attributes.showCompatibility,
 							onChange: ( val ) =>
 								setAttributes( { showCompatibility: val } ),
@@ -427,10 +415,7 @@
 								setAttributes( { showDescription: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __(
-								'Show Adoption Info',
-								'shelter-pets'
-							),
+							label: __( 'Show Adoption Info', 'shelter-pets' ),
 							checked: attributes.showAdoptionInfo,
 							onChange: ( val ) =>
 								setAttributes( { showAdoptionInfo: val } ),
@@ -552,10 +537,7 @@
 							value: attributes.layout,
 							options: [
 								{
-									label: __(
-										'Horizontal',
-										'shelter-pets'
-									),
+									label: __( 'Horizontal', 'shelter-pets' ),
 									value: 'horizontal',
 								},
 								{
@@ -852,17 +834,11 @@
 									value: 'random',
 								},
 								{
-									label: __(
-										'Newest First',
-										'shelter-pets'
-									),
+									label: __( 'Newest First', 'shelter-pets' ),
 									value: 'newest',
 								},
 								{
-									label: __(
-										'Name (A-Z)',
-										'shelter-pets'
-									),
+									label: __( 'Name (A-Z)', 'shelter-pets' ),
 									value: 'name',
 								},
 							],
@@ -946,10 +922,7 @@
 											marginBottom: '8px',
 										},
 									},
-									__(
-										'Archive Link Text',
-										'shelter-pets'
-									)
+									__( 'Archive Link Text', 'shelter-pets' )
 								),
 								el( 'input', {
 									type: 'text',
@@ -972,10 +945,7 @@
 						} ),
 						attributes.showBadges &&
 							el( SelectControl, {
-								label: __(
-									'Badge Position',
-									'shelter-pets'
-								),
+								label: __( 'Badge Position', 'shelter-pets' ),
 								value: attributes.badgePosition,
 								options: [
 									{
@@ -1186,28 +1156,19 @@
 							title: __( 'Action Buttons', 'shelter-pets' ),
 						},
 						el( ToggleControl, {
-							label: __(
-								'Show Favorite Button',
-								'shelter-pets'
-							),
+							label: __( 'Show Favorite Button', 'shelter-pets' ),
 							checked: attributes.showFavorite,
 							onChange: ( val ) =>
 								setAttributes( { showFavorite: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __(
-								'Show Compare Button',
-								'shelter-pets'
-							),
+							label: __( 'Show Compare Button', 'shelter-pets' ),
 							checked: attributes.showCompare,
 							onChange: ( val ) =>
 								setAttributes( { showCompare: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __(
-								'Show Share Button',
-								'shelter-pets'
-							),
+							label: __( 'Show Share Button', 'shelter-pets' ),
 							checked: attributes.showShare,
 							onChange: ( val ) =>
 								setAttributes( { showShare: val } ),
@@ -1365,10 +1326,7 @@
 					el(
 						PanelBody,
 						{
-							title: __(
-								'Visible Attributes',
-								'shelter-pets'
-							),
+							title: __( 'Visible Attributes', 'shelter-pets' ),
 						},
 						el( ToggleControl, {
 							label: __( 'Breed', 'shelter-pets' ),
@@ -1564,10 +1522,7 @@
 							value: attributes.displayStyle,
 							options: [
 								{
-									label: __(
-										'Cards (grid)',
-										'shelter-pets'
-									),
+									label: __( 'Cards (grid)', 'shelter-pets' ),
 									value: 'cards',
 								},
 								{
@@ -1614,10 +1569,7 @@
 							initialOpen: false,
 						},
 						el( TextControl, {
-							label: __(
-								'All-Positive Heading',
-								'shelter-pets'
-							),
+							label: __( 'All-Positive Heading', 'shelter-pets' ),
 							value: attributes.positiveHeadingText,
 							onChange: ( val ) =>
 								setAttributes( { positiveHeadingText: val } ),
@@ -1823,25 +1775,16 @@
 					el(
 						PanelBody,
 						{
-							title: __(
-								'Health Information',
-								'shelter-pets'
-							),
+							title: __( 'Health Information', 'shelter-pets' ),
 						},
 						el( ToggleControl, {
-							label: __(
-								'Show Vaccinations',
-								'shelter-pets'
-							),
+							label: __( 'Show Vaccinations', 'shelter-pets' ),
 							checked: attributes.showVaccinations,
 							onChange: ( val ) =>
 								setAttributes( { showVaccinations: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __(
-								'Show Spayed/Neutered',
-								'shelter-pets'
-							),
+							label: __( 'Show Spayed/Neutered', 'shelter-pets' ),
 							checked: attributes.showSpayedNeutered,
 							onChange: ( val ) =>
 								setAttributes( { showSpayedNeutered: val } ),
@@ -2084,17 +2027,11 @@
 							value: attributes.position,
 							options: [
 								{
-									label: __(
-										'Bottom Left',
-										'shelter-pets'
-									),
+									label: __( 'Bottom Left', 'shelter-pets' ),
 									value: 'bottom-left',
 								},
 								{
-									label: __(
-										'Bottom Right',
-										'shelter-pets'
-									),
+									label: __( 'Bottom Right', 'shelter-pets' ),
 									value: 'bottom-right',
 								},
 							],
@@ -2158,11 +2095,7 @@
 				el(
 					'div',
 					{ className: 'petstablished-editor-placeholder' },
-					el(
-						'p',
-						{},
-						__( 'Pet Notifications', 'shelter-pets' )
-					),
+					el( 'p', {}, __( 'Pet Notifications', 'shelter-pets' ) ),
 					el(
 						'small',
 						{},
@@ -2211,10 +2144,7 @@
 							fontSize: '0.8125rem',
 						},
 					},
-					__(
-						'Home › Adoptable Pets › [Pet Name]',
-						'shelter-pets'
-					)
+					__( 'Home › Adoptable Pets › [Pet Name]', 'shelter-pets' )
 				)
 			);
 		},
@@ -2381,10 +2311,7 @@
 									value: 'petstablished',
 								},
 								{
-									label: __(
-										'PDF Download',
-										'shelter-pets'
-									),
+									label: __( 'PDF Download', 'shelter-pets' ),
 									value: 'pdf',
 								},
 								{
@@ -2422,10 +2349,7 @@
 										} ),
 								} ),
 								el( TextControl, {
-									label: __(
-										'Button Text',
-										'shelter-pets'
-									),
+									label: __( 'Button Text', 'shelter-pets' ),
 									value: attributes.pageButtonText,
 									onChange: ( val ) =>
 										setAttributes( {
@@ -2558,17 +2482,11 @@
 							value: attributes.position,
 							options: [
 								{
-									label: __(
-										'Bottom Right',
-										'shelter-pets'
-									),
+									label: __( 'Bottom Right', 'shelter-pets' ),
 									value: 'bottom-right',
 								},
 								{
-									label: __(
-										'Bottom Left',
-										'shelter-pets'
-									),
+									label: __( 'Bottom Left', 'shelter-pets' ),
 									value: 'bottom-left',
 								},
 							],
@@ -2576,10 +2494,7 @@
 								setAttributes( { position: val } ),
 						} ),
 						el( ToggleControl, {
-							label: __(
-								'Show Compare Button',
-								'shelter-pets'
-							),
+							label: __( 'Show Compare Button', 'shelter-pets' ),
 							checked: attributes.showCompare,
 							onChange: ( val ) =>
 								setAttributes( { showCompare: val } ),
