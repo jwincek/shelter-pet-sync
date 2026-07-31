@@ -60,7 +60,8 @@ rsync -a "${EXCLUDES[@]}" "$ROOT/" "$DEST/"
 # trusting that .distignore stayed correct.
 LEAKED=()
 for f in .git .github bin vendor node_modules composer.json package.json \
-         phpcs.xml.dist .wp-env.json .eslintrc.json .stylelintrc.json migration-scripts; do
+         phpcs.xml.dist .wp-env.json .eslintrc.json .stylelintrc.json migration-scripts \
+         .wordpress-org assets-src build; do
 	[[ -e "$DEST/$f" ]] && LEAKED+=("$f")
 done
 if (( ${#LEAKED[@]} )); then
