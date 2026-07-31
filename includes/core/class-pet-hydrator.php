@@ -402,7 +402,12 @@ class Pet_Hydrator {
 		];
 
 		foreach ( $checks as $key => $label ) {
-			if ( ! empty( $entity[ $key ] ) ) {
+			// Must be exactly 'yes'. These are tristates resolving to
+			// 'yes' | 'no' | 'unknown' | '', and an emptiness test counts 'no'
+			// and 'unknown' as compatible because both are non-empty strings —
+			// which advertised pets as good with dogs, cats or children when
+			// the shelter had recorded the opposite.
+			if ( 'yes' === strtolower( (string) ( $entity[ $key ] ?? '' ) ) ) {
 				$items[] = $label;
 			}
 		}
