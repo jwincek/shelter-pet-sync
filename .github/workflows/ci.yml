@@ -95,7 +95,7 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Upload zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: shelter-pets-${{ steps.build.outputs.version }}
           path: build/*.zip
