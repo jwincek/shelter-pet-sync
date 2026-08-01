@@ -92,7 +92,7 @@ final class HydrationQueryCountTest extends PetTestCase {
 		$this->assertLessThan(
 			self::PETS,
 			$queries,
-			"hydrating " . self::PETS . " pets took {$queries} queries — that is at least one per pet, so a cache is not being primed"
+			'hydrating ' . self::PETS . " pets took {$queries} queries — that is at least one per pet, so a cache is not being primed"
 		);
 	}
 
@@ -106,12 +106,18 @@ final class HydrationQueryCountTest extends PetTestCase {
 	 * The specific regression: featured images are separate posts, and their
 	 * meta holds the image sizes get_the_post_thumbnail_url() needs.
 	 */
-	public function test_featured_images_are_primed( ): void {
+	public function test_featured_images_are_primed(): void {
 		$ids = $this->seed_pets();
 
 		wp_cache_flush();
 		Pet_Hydrator::flush_cache();
-		$posts = get_posts( array( 'post_type' => 'vcps_pet', 'post_status' => 'publish', 'posts_per_page' => -1 ) );
+		$posts = get_posts(
+			array(
+				'post_type'      => 'vcps_pet',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+			)
+		);
 		Pet_Hydrator::hydrate_many( $posts, 'grid' );
 
 		$before = get_num_queries();
@@ -131,7 +137,13 @@ final class HydrationQueryCountTest extends PetTestCase {
 
 		wp_cache_flush();
 		Pet_Hydrator::flush_cache();
-		$posts = get_posts( array( 'post_type' => 'vcps_pet', 'post_status' => 'publish', 'posts_per_page' => -1 ) );
+		$posts = get_posts(
+			array(
+				'post_type'      => 'vcps_pet',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+			)
+		);
 
 		$before   = get_num_queries();
 		$entities = Pet_Hydrator::hydrate_many( $posts, 'full' );

@@ -34,21 +34,21 @@ final class TristateTest extends TestCase {
 	 */
 	public static function tristate_values(): array {
 		return array(
-			'empty string is no data'   => array( '', '' ),
-			'null is no data'           => array( null, '' ),
-			'yes'                       => array( 'yes', 'yes' ),
-			'Yes is case-insensitive'   => array( 'Yes', 'yes' ),
-			'true string'               => array( 'true', 'yes' ),
-			'numeric one'               => array( '1', 'yes' ),
-			'boolean true'              => array( true, 'yes' ),
-			'no'                        => array( 'no', 'no' ),
-			'No is case-insensitive'    => array( 'No', 'no' ),
-			'false string'              => array( 'false', 'no' ),
-			'numeric zero'              => array( '0', 'no' ),
-			'boolean false'             => array( false, 'no' ),
-			'Not Sure is inconclusive'  => array( 'Not Sure', 'unknown' ),
-			'anything else is unknown'  => array( 'maybe', 'unknown' ),
-			'whitespace is trimmed'     => array( '  yes  ', 'yes' ),
+			'empty string is no data'  => array( '', '' ),
+			'null is no data'          => array( null, '' ),
+			'yes'                      => array( 'yes', 'yes' ),
+			'Yes is case-insensitive'  => array( 'Yes', 'yes' ),
+			'true string'              => array( 'true', 'yes' ),
+			'numeric one'              => array( '1', 'yes' ),
+			'boolean true'             => array( true, 'yes' ),
+			'no'                       => array( 'no', 'no' ),
+			'No is case-insensitive'   => array( 'No', 'no' ),
+			'false string'             => array( 'false', 'no' ),
+			'numeric zero'             => array( '0', 'no' ),
+			'boolean false'            => array( false, 'no' ),
+			'Not Sure is inconclusive' => array( 'Not Sure', 'unknown' ),
+			'anything else is unknown' => array( 'maybe', 'unknown' ),
+			'whitespace is trimmed'    => array( '  yes  ', 'yes' ),
 		);
 	}
 
@@ -69,31 +69,55 @@ final class TristateTest extends TestCase {
 	 */
 	public static function compatibility_cases(): array {
 		return array(
-			'all yes'                     => array(
-				array( 'ok_with_dogs' => 'yes', 'ok_with_cats' => 'yes', 'ok_with_kids' => 'yes' ),
+			'all yes'                    => array(
+				array(
+					'ok_with_dogs' => 'yes',
+					'ok_with_cats' => 'yes',
+					'ok_with_kids' => 'yes',
+				),
 				'Good with dogs, cats, kids',
 			),
 			// The regression: 'no' is a non-empty string.
-			'all no claims nothing'       => array(
-				array( 'ok_with_dogs' => 'no', 'ok_with_cats' => 'no', 'ok_with_kids' => 'no' ),
+			'all no claims nothing'      => array(
+				array(
+					'ok_with_dogs' => 'no',
+					'ok_with_cats' => 'no',
+					'ok_with_kids' => 'no',
+				),
 				'',
 			),
 			// So is 'unknown'.
-			'unknown claims nothing'      => array(
-				array( 'ok_with_dogs' => 'unknown', 'ok_with_cats' => 'unknown', 'ok_with_kids' => 'unknown' ),
+			'unknown claims nothing'     => array(
+				array(
+					'ok_with_dogs' => 'unknown',
+					'ok_with_cats' => 'unknown',
+					'ok_with_kids' => 'unknown',
+				),
 				'',
 			),
-			'mixed lists only the yeses'  => array(
-				array( 'ok_with_dogs' => 'no', 'ok_with_cats' => 'yes', 'ok_with_kids' => 'unknown' ),
+			'mixed lists only the yeses' => array(
+				array(
+					'ok_with_dogs' => 'no',
+					'ok_with_cats' => 'yes',
+					'ok_with_kids' => 'unknown',
+				),
 				'Good with cats',
 			),
-			'no data claims nothing'      => array(
-				array( 'ok_with_dogs' => '', 'ok_with_cats' => '', 'ok_with_kids' => '' ),
+			'no data claims nothing'     => array(
+				array(
+					'ok_with_dogs' => '',
+					'ok_with_cats' => '',
+					'ok_with_kids' => '',
+				),
 				'',
 			),
-			'missing keys claim nothing'  => array( array(), '' ),
-			'uppercase YES still counts'  => array(
-				array( 'ok_with_dogs' => 'YES', 'ok_with_cats' => 'no', 'ok_with_kids' => 'no' ),
+			'missing keys claim nothing' => array( array(), '' ),
+			'uppercase YES still counts' => array(
+				array(
+					'ok_with_dogs' => 'YES',
+					'ok_with_cats' => 'no',
+					'ok_with_kids' => 'no',
+				),
 				'Good with dogs',
 			),
 		);

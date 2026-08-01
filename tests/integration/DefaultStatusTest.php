@@ -146,7 +146,12 @@ final class DefaultStatusTest extends PetTestCase {
 		$this->assertSame( array( 'available' ), $this->status_of( $id ) );
 
 		wp_set_object_terms( $id, array(), 'pet_status' );
-		wp_update_post( array( 'ID' => $id, 'post_title' => 'Cleared, edited' ) );
+		wp_update_post(
+			array(
+				'ID'         => $id,
+				'post_title' => 'Cleared, edited',
+			)
+		);
 
 		$this->assertSame( array(), $this->status_of( $id ) );
 	}
