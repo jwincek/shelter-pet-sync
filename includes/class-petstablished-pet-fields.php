@@ -46,7 +46,7 @@ class Petstablished_Pet_Fields {
 		wp_enqueue_script(
 			self::HANDLE,
 			PETSTABLISHED_SYNC_URL . 'assets/js/pet-fields.js',
-			array( 'wp-plugins', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-core-data', 'wp-i18n' ),
+			array( 'wp-plugins', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-core-data', 'wp-i18n', 'wp-block-editor' ),
 			PETSTABLISHED_SYNC_VERSION,
 			true
 		);

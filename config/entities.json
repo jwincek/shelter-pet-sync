@@ -38,6 +38,12 @@
           "default": "",
           "show_in_rest": false,
           "description": "SHA-256 hash of the API response for change detection."
+        },
+        "gallery_ids": {
+          "type": "attachment_ids",
+          "default": [],
+          "show_in_rest": true,
+          "description": "Attachment IDs for a hand-curated gallery. Takes precedence over the provider snapshot's images, and unlike the snapshot carries real alt text from the media library."
         }
       },
 
@@ -99,7 +105,8 @@
         "adoption_fee":         { "group": "adoption",      "control": "text",     "label": "Adoption fee" },
         "adoption_form_url":    { "group": "adoption",      "control": "url",      "label": "Adoption form URL" },
 
-        "youtube_url":          { "group": "media",         "control": "url",      "label": "YouTube URL" }
+        "youtube_url":          { "group": "media",         "control": "url",      "label": "YouTube URL" },
+        "gallery_ids":          { "group": "media",         "control": "media",    "label": "Gallery images" }
       },
 
       "_comment_taxonomy_source_map": "Single-value taxonomy mappings: provider API key -> taxonomy. Sibling of attribute_map below (which maps boolean API keys -> pet_attribute term slugs). Both are consumed by the sync when writing terms, and both feed the change-detection hash via get_consumed_api_keys().",

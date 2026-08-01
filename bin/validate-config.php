@@ -290,10 +290,15 @@ foreach ( array_keys( (array) ( $entity['attribute_map'] ?? [] ) ) as $src_key )
 $editable_fields = (array) ( $entity['editable_fields'] ?? [] );
 $editable_groups = (array) ( $entity['editable_field_groups'] ?? [] );
 $api_field_names = array_keys( (array) ( $entity['api_fields'] ?? [] ) );
+// An editable field may be backed by a provider mapping (api_fields) or by
+// storage in its own right (fields, e.g. gallery_ids). Either is readable back;
+// neither means the editor writes into a void.
+$entity_field_names = array_keys( (array) ( $entity['fields'] ?? [] ) );
+$backed_names       = array_merge( $api_field_names, $entity_field_names );
 
 foreach ( $editable_fields as $field => $cfg ) {
-	if ( ! in_array( $field, $api_field_names, true ) ) {
-		$add( 'error', 'editable-fields', "editable_fields '$field' is not declared in api_fields — the editor would write meta the hydrator never reads back." );
+	if ( ! in_array( $field, $backed_names, true ) ) {
+		$add( 'error', 'editable-fields', "editable_fields '$field' is declared in neither api_fields nor fields — the editor would write meta the hydrator never reads back." );
 	}
 
 	$group = $cfg['group'] ?? null;
@@ -302,13 +307,13 @@ foreach ( $editable_fields as $field => $cfg ) {
 	}
 
 	$control = $cfg['control'] ?? 'text';
-	if ( ! in_array( $control, [ 'text', 'url', 'textarea', 'tristate' ], true ) ) {
+	if ( ! in_array( $control, [ 'text', 'url', 'textarea', 'tristate', 'media' ], true ) ) {
 		$add( 'error', 'editable-fields', "editable_fields '$field' uses control '$control', which assets/js/pet-fields.js does not implement (it would silently fall back to a text input)." );
 	}
 
 	// A tristate control on a non-tristate field (or the reverse) round-trips
 	// badly: the hydrator casts by the api_fields type, not the control.
-	$declared_type = $entity['api_fields'][ $field ]['type'] ?? null;
+	$declared_type = $entity['api_fields'][ $field ]['type'] ?? ( $entity['fields'][ $field ]['type'] ?? null );
 	if ( null !== $declared_type ) {
 		$is_tristate_control = 'tristate' === $control;
 		$is_tristate_type    = 'tristate' === $declared_type;

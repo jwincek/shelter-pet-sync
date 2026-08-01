@@ -34,6 +34,7 @@ class Provider {
 		'favorites'  => 'favorites.php',
 		'comparison' => 'comparison.php',
 		'stats'      => 'stats.php',
+		'gallery'    => 'gallery.php',
 	];
 
 	/**
@@ -162,6 +163,7 @@ class Provider {
 			'petsync/clear-favorites'    => 'Petstablished\\Abilities\\Favorites\\clear_all',
 			'petsync/update-comparison'  => 'Petstablished\\Abilities\\Comparison\\update',
 			'petsync/get-comparison'     => 'Petstablished\\Abilities\\Comparison\\get_comparison',
+			'petsync/set-pet-gallery'    => 'Petstablished\\Abilities\\Gallery\\set_gallery',
 		];
 
 		if ( isset( $explicit_map[ $name ] ) ) {
