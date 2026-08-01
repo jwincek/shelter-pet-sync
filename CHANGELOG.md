@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sync never touches pets it did not import.
 
 ### Fixed
+- Pet listings issue 3 database queries for a 99-pet archive instead of 202.
+  Batch priming covered the pets' own meta and terms but not the separate
+  posts hydration reaches for — featured images, gallery attachments and
+  bonded partners — so each of those cost a query per pet.
 - Hand-created pets are given the `Available` status when saved with none, so
   they appear on the pet archive. The listing grid filters on that status, so a
   pet without one rendered correctly on its own page while being invisible on
