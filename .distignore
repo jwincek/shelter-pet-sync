@@ -13,6 +13,10 @@ composer.lock
 package.json
 package-lock.json
 phpcs.xml.dist
+# Test suite and its harness. Nothing here runs for a user.
+tests
+phpunit.xml.dist
+phpunit-integration.xml.dist
 .eslintrc.json
 .stylelintrc.json
 node_modules

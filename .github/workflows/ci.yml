@@ -30,6 +30,50 @@ jobs:
       - name: Run PHPCS
         run: composer lint
 
+  tests:
+    name: PHPUnit
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+          extensions: mysqli
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      # The unit suite loads no WordPress, so it can run before the test
+      # library exists and fails fast on pure-logic regressions.
+      - name: Unit suite
+        run: composer test:unit
+
+      # An explicit version, not "latest": the test library comes from the
+      # wordpress-develop repository, where "latest" is not a tag.
+      - name: Install the WordPress test library
+        run: bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 7.0.2
+
+      - name: Integration suite
+        run: composer test:integration
+
   validate-config:
     name: Config Contract Validator
     runs-on: ubuntu-latest
