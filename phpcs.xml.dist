@@ -67,4 +67,16 @@
 			</property>
 		</properties>
 	</rule>
+
+	<!--
+		Test files follow PHPUnit's conventions, not WordPress's, and the two
+		genuinely conflict. Only the naming and prefixing rules are lifted —
+		everything else, including the security sniffs, still applies to tests.
+	-->
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
 </ruleset>

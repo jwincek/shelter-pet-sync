@@ -1,24 +1,35 @@
 {
-	"name": "jwincek/shelter-pets",
-	"description": "Sync adoptable pets from Petstablished into WordPress using the Abilities API, Block Bindings, and Interactivity API.",
-	"type": "wordpress-plugin",
-	"license": "GPL-2.0-or-later",
-	"require": {
-		"php": ">=8.1"
-	},
-	"require-dev": {
-		"wp-coding-standards/wpcs": "^3.0",
-		"phpcompatibility/phpcompatibility-wp": "^2.1",
-		"dealerdirect/phpcodesniffer-composer-installer": "^1.0"
-	},
-	"config": {
-		"allow-plugins": {
-			"dealerdirect/phpcodesniffer-composer-installer": true
-		}
-	},
-	"scripts": {
-		"lint": "phpcs",
-		"lint:fix": "phpcbf",
-		"validate:config": "php bin/validate-config.php"
-	}
+    "name": "jwincek/shelter-pets",
+    "description": "Sync adoptable pets from Petstablished into WordPress using the Abilities API, Block Bindings, and Interactivity API.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "phpunit/phpunit": "^9.6",
+        "wp-coding-standards/wpcs": "^3.0",
+        "yoast/phpunit-polyfills": "^2.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "8.1.0"
+        }
+    },
+    "scripts": {
+        "lint": "phpcs",
+        "lint:fix": "phpcbf",
+        "validate:config": "php bin/validate-config.php",
+        "test": [
+            "@test:unit",
+            "@test:integration"
+        ],
+        "test:unit": "phpunit",
+        "test:integration": "phpunit -c phpunit-integration.xml.dist"
+    }
 }
