@@ -199,7 +199,10 @@ class Petstablished_Kennel_Cards {
 		$size  = isset( $sizes[ $size ] ) ? $size : 'index';
 
 		$back = add_query_arg(
-			array( 'post_type' => 'vcps_pet', 'page' => self::PAGE_SLUG ),
+			array(
+				'post_type' => 'vcps_pet',
+				'page'      => self::PAGE_SLUG,
+			),
 			admin_url( 'edit.php' )
 		);
 		?>
