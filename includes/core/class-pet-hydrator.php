@@ -471,6 +471,14 @@ class Pet_Hydrator {
 	}
 
 	private static function compute_gallery( int $id ): array {
+		// Hand-curated images win, mirroring the precedence the scalar fields
+		// use. Without this a pet with no provider gets only its featured
+		// image, however many photos the shelter has.
+		$manual = self::compute_manual_gallery( $id );
+		if ( $manual ) {
+			return $manual;
+		}
+
 		$api_data = self::get_api_data( $id );
 		$images   = $api_data['images'] ?? [];
 		if ( empty( $images ) || ! is_array( $images ) ) {
@@ -483,6 +491,48 @@ class Pet_Hydrator {
 			],
 			$images
 		);
+	}
+
+	/**
+	 * Gallery entries from attachments chosen in the editor.
+	 *
+	 * Alt text comes from the media library, falling back to the pet's name.
+	 * The provider path can only ever use the name for every image, so a
+	 * hand-curated gallery is genuinely more accessible than an imported one.
+	 *
+	 * @param int $id Pet post ID.
+	 * @return array Gallery entries, empty when none are set.
+	 */
+	private static function compute_manual_gallery( int $id ): array {
+		$config = self::get_config();
+		$prefix = $config['meta_prefix'] ?? '_pet_';
+		$ids    = get_post_meta( $id, $prefix . 'gallery_ids', true );
+
+		if ( ! is_array( $ids ) || ! $ids ) {
+			return [];
+		}
+
+		$gallery = [];
+
+		foreach ( $ids as $attachment_id ) {
+			$attachment_id = (int) $attachment_id;
+			$url           = wp_get_attachment_image_url( $attachment_id, 'large' );
+
+			// Skip attachments that have since been deleted rather than
+			// emitting an <img> with an empty src.
+			if ( ! $url ) {
+				continue;
+			}
+
+			$alt = (string) get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
+
+			$gallery[] = [
+				'url' => $url,
+				'alt' => '' !== trim( $alt ) ? $alt : get_the_title( $id ),
+			];
+		}
+
+		return $gallery;
 	}
 
 	/**

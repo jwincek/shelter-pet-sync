@@ -27,11 +27,20 @@
 	// the current location and fall back so the panel survives either.
 	const { PluginDocumentSettingPanel } = wp.editor || wp.editPost || {};
 	const { createElement: el, Fragment } = wp.element;
-	const { TextControl, TextareaControl, SelectControl, Notice } =
-		wp.components;
+	const {
+		TextControl,
+		TextareaControl,
+		SelectControl,
+		Notice,
+		BaseControl,
+		Button,
+		Flex,
+		FlexItem,
+	} = wp.components;
+	const { MediaUpload, MediaUploadCheck } = wp.blockEditor;
 	const { useSelect } = wp.data;
 	const { useEntityProp } = wp.coreData;
-	const { __, sprintf } = wp.i18n;
+	const { __, _n, sprintf } = wp.i18n;
 
 	// Strings live here rather than being passed from PHP so the extractor sees
 	// literals — a format string arriving as data can neither be validated by
@@ -104,6 +113,10 @@
 			);
 		}
 
+		if ( 'media' === field.control ) {
+			return renderMediaControl( field, meta, setMeta );
+		}
+
 		if ( 'textarea' === field.control ) {
 			return el( TextareaControl, shared );
 		}
@@ -113,6 +126,102 @@
 			Object.assign( {}, shared, {
 				type: 'url' === field.control ? 'url' : 'text',
 			} )
+		);
+	}
+
+	/**
+	 * Gallery picker bound to an array of attachment IDs.
+	 *
+	 * @param {Object}   field   Field config.
+	 * @param {Object}   meta    Current meta values.
+	 * @param {Function} setMeta Meta setter.
+	 * @return {Object} Element.
+	 */
+	function renderMediaControl( field, meta, setMeta ) {
+		const ids = Array.isArray( meta[ field.metaKey ] )
+			? meta[ field.metaKey ]
+			: [];
+
+		const write = ( next ) => {
+			const update = {};
+			update[ field.metaKey ] = next;
+			setMeta( update );
+		};
+
+		const count = ids.length;
+
+		return el(
+			BaseControl,
+			{
+				key: field.name,
+				label: field.label,
+				__nextHasNoMarginBottom: true,
+				help: isLocked
+					? undefined
+					: sprintf(
+							/* translators: %d: number of images currently in the gallery. */
+							_n(
+								'%d image selected.',
+								'%d images selected.',
+								count,
+								'shelter-pets'
+							),
+							count
+					  ),
+			},
+			el(
+				MediaUploadCheck,
+				{},
+				el( MediaUpload, {
+					multiple: true,
+					gallery: true,
+					allowedTypes: [ 'image' ],
+					value: ids,
+					onSelect: ( items ) =>
+						write(
+							( Array.isArray( items ) ? items : [ items ] ).map(
+								( item ) => item.id
+							)
+						),
+					render: ( { open } ) =>
+						el(
+							Flex,
+							{ justify: 'flex-start', gap: 2 },
+							el(
+								FlexItem,
+								{},
+								el(
+									Button,
+									{
+										variant: 'secondary',
+										onClick: open,
+										disabled: isLocked,
+										__next40pxDefaultSize: true,
+									},
+									count
+										? __( 'Edit gallery', 'shelter-pets' )
+										: __( 'Add images', 'shelter-pets' )
+								)
+							),
+							count && ! isLocked
+								? el(
+										FlexItem,
+										{},
+										el(
+											Button,
+											{
+												variant: 'tertiary',
+												isDestructive: true,
+												onClick: () => write( [] ),
+												__next40pxDefaultSize: true,
+											},
+											__( 'Clear', 'shelter-pets' )
+										)
+								  )
+								: null
+						),
+				} )
+			)
 		);
 	}
 
