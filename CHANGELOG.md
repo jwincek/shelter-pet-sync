@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pets record which platform they came from. Fields on imported pets are
   read-only in the editor, since the platform is their source of record, and a
   sync never touches pets it did not import.
+
+### Fixed
+- Hand-created pets are given the `Available` status when saved with none, so
+  they appear on the pet archive. The listing grid filters on that status, so a
+  pet without one rendered correctly on its own page while being invisible on
+  the archive — missing rather than visibly broken.
 - Pets record which platform they were imported from (`_pet_provider`), and the
   sync matches records on provider + ID rather than ID alone. Stale-pet pruning
   is scoped the same way, so a sync only ever drafts pets it imported itself —

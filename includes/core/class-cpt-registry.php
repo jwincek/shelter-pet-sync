@@ -25,6 +25,7 @@ class CPT_Registry {
 		add_action( 'init', [ self::class, 'register_post_types' ] );
 		add_action( 'init', [ self::class, 'register_taxonomies' ] );
 		add_action( 'init', [ self::class, 'register_meta' ], 11 );
+		add_action( 'wp_after_insert_post', [ self::class, 'apply_default_terms' ], 10, 3 );
 	}
 
 	/**
@@ -60,19 +61,37 @@ class CPT_Registry {
 		$taxonomies = Config::get_item( 'taxonomies', 'taxonomies', [] );
 
 		foreach ( $taxonomies as $slug => $config ) {
-			register_taxonomy(
-				$slug,
-				$config['post_types'] ?? [],
-				[
-					'labels'            => self::build_labels( $config['labels'] ),
-					'public'            => $config['public'] ?? true,
-					'show_ui'           => $config['show_ui'] ?? true,
-					'show_in_rest'      => $config['show_in_rest'] ?? true,
-					'hierarchical'      => $config['hierarchical'] ?? false,
-					'rewrite'           => $config['rewrite'] ?? [ 'slug' => $slug ],
-					'show_admin_column' => $config['show_admin_column'] ?? false,
-				]
-			);
+			$args = [
+				'labels'            => self::build_labels( $config['labels'] ),
+				'public'            => $config['public'] ?? true,
+				'show_ui'           => $config['show_ui'] ?? true,
+				'show_in_rest'      => $config['show_in_rest'] ?? true,
+				'hierarchical'      => $config['hierarchical'] ?? false,
+				'rewrite'           => $config['rewrite'] ?? [ 'slug' => $slug ],
+				'show_admin_column' => $config['show_admin_column'] ?? false,
+			];
+
+			// A term WordPress assigns when a post is saved with none chosen.
+			//
+			// Without this a hand-created pet has no pet_status, and the
+			// listing grid filters on `available` — so it renders correctly on
+			// its own page while being invisible on the archive. Pets imported
+			// from a provider never hit this, because the sync writes a status
+			// from the API.
+			$default_slug = $config['default_term'] ?? null;
+			if ( $default_slug ) {
+				foreach ( $config['default_terms'] ?? [] as $term ) {
+					if ( ( $term['slug'] ?? null ) === $default_slug ) {
+						$args['default_term'] = [
+							'name' => $term['name'],
+							'slug' => $term['slug'],
+						];
+						break;
+					}
+				}
+			}
+
+			register_taxonomy( $slug, $config['post_types'] ?? [], $args );
 
 			// Create default terms if specified.
 			if ( ! empty( $config['default_terms'] ) ) {
@@ -82,6 +101,53 @@ class CPT_Registry {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Assign a configured default term to a newly created post that has none.
+	 *
+	 * `default_term` on register_taxonomy covers most paths, but not the one
+	 * the block editor uses: sending an empty term array counts as supplying
+	 * terms, so WordPress skips the default. The result is a pet with no
+	 * status, which renders fine on its own page and is invisible on the
+	 * archive, because the listing grid filters on `available`.
+	 *
+	 * Creation only. On later saves an empty taxonomy is taken to mean the
+	 * editor cleared it deliberately, and re-adding the term would fight them.
+	 *
+	 * Runs on wp_after_insert_post because that fires after the REST
+	 * controller has handled terms — save_post is too early to see them.
+	 *
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post    Post object.
+	 * @param bool    $update  Whether this is an update rather than a creation.
+	 */
+	public static function apply_default_terms( int $post_id, $post, bool $update ): void {
+		if ( $update || ! $post instanceof \WP_Post ) {
+			return;
+		}
+
+		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+
+		$taxonomies = Config::get_item( 'taxonomies', 'taxonomies', [] );
+
+		foreach ( $taxonomies as $slug => $config ) {
+			$default = $config['default_term'] ?? null;
+
+			if ( ! $default || ! in_array( $post->post_type, (array) ( $config['post_types'] ?? [] ), true ) ) {
+				continue;
+			}
+
+			$existing = wp_get_object_terms( $post_id, $slug, [ 'fields' => 'ids' ] );
+
+			if ( is_wp_error( $existing ) || ! empty( $existing ) ) {
+				continue;
+			}
+
+			wp_set_object_terms( $post_id, $default, $slug );
 		}
 	}
 
