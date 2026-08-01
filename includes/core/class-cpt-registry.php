@@ -98,18 +98,68 @@ class CPT_Registry {
 			$post_type = $config['post_type'] ?? $entity_key;
 			$prefix    = $config['meta_prefix'] ?? '_';
 
+			$registered = [];
+
 			foreach ( $config['fields'] ?? [] as $field => $field_config ) {
-				$type = self::map_type( $field_config['type'] ?? 'string' );
+				$declared = $field_config['type'] ?? 'string';
+				$schema   = self::get_rest_schema( $declared );
+				$in_rest  = $field_config['show_in_rest'] ?? true;
 
 				register_post_meta(
 					$post_type,
 					$prefix . $field,
 					[
-						'type'              => $type,
+						'type'              => self::map_type( $declared ),
 						'description'       => $field_config['description'] ?? '',
 						'single'            => true,
-						'show_in_rest'      => $field_config['show_in_rest'] ?? true,
-						'sanitize_callback' => self::get_sanitizer( $field_config['type'] ?? 'string' ),
+						// A schema-bearing type must pass its schema through, or
+						// REST rejects the value and the save fails silently —
+						// which in the editor looks like a control that does nothing.
+						'show_in_rest'      => ( $in_rest && $schema ) ? [ 'schema' => $schema ] : $in_rest,
+						'sanitize_callback' => self::get_sanitizer( $declared ),
+						'auth_callback'     => fn() => current_user_can( 'edit_posts' ),
+					]
+				);
+
+				$registered[ $field ] = true;
+			}
+
+			// Editable api_fields — the manual-entry counterpart of the provider
+			// mapping. Registering these gives a pet with no provider somewhere
+			// to store the values a sync would otherwise have supplied.
+			// Pet_Hydrator prefers them over the API snapshot, so synced pets
+			// are unaffected until someone actually writes one. Type and
+			// sanitizer come from the api_fields declaration, so the field's
+			// shape has a single source of truth.
+			$api_fields = $config['api_fields'] ?? [];
+
+			foreach ( $config['editable_fields'] ?? [] as $field => $editable ) {
+				// Already registered above as an entity field — gallery_ids is
+				// storage in its own right rather than a provider mapping.
+				if ( isset( $registered[ $field ] ) ) {
+					continue;
+				}
+
+				$api_config = $api_fields[ $field ] ?? null;
+
+				// Declared editable but absent from api_fields: the hydrator
+				// would never read it back, so registering the key would create
+				// a write-only field. The config validator flags this too.
+				if ( null === $api_config ) {
+					continue;
+				}
+
+				$declared_type = $api_config['type'] ?? 'string';
+
+				register_post_meta(
+					$post_type,
+					$prefix . $field,
+					[
+						'type'              => self::map_type( $declared_type ),
+						'description'       => $editable['label'] ?? $field,
+						'single'            => true,
+						'show_in_rest'      => true,
+						'sanitize_callback' => self::get_sanitizer( $declared_type ),
 						'auth_callback'     => fn() => current_user_can( 'edit_posts' ),
 					]
 				);
@@ -148,9 +198,29 @@ class CPT_Registry {
 			'integer'    => 'integer',
 			'number'     => 'number',
 			'boolean'    => 'boolean',
-			'array', 'json_array' => 'array',
+			'array', 'json_array', 'attachment_ids' => 'array',
 			'object'     => 'object',
 			default      => 'string',
+		};
+	}
+
+	/**
+	 * REST schema for a field type, where the type needs one.
+	 *
+	 * Array meta is rejected by the REST API without an explicit item schema —
+	 * the value silently fails to save, which in the editor looks like a
+	 * control that does nothing.
+	 *
+	 * @param string $type Declared field type.
+	 * @return array|null Schema, or null when the default handling is right.
+	 */
+	private static function get_rest_schema( string $type ): ?array {
+		return match ( $type ) {
+			'attachment_ids' => [
+				'type'  => 'array',
+				'items' => [ 'type' => 'integer' ],
+			],
+			default => null,
 		};
 	}
 
@@ -160,10 +230,31 @@ class CPT_Registry {
 	private static function get_sanitizer( string $type ): callable {
 		return match ( $type ) {
 			'integer'    => 'absint',
-			'number'     => 'floatval',
+			// Closures, not the internal functions directly: WordPress calls a
+			// sanitize_callback with three arguments, and a PHP internal throws
+			// an ArgumentCountError when handed extras.
+			'number'     => static fn( $v ) => (float) $v,
 			'boolean'    => 'rest_sanitize_boolean',
 			'email'      => 'sanitize_email',
 			'url'        => 'esc_url_raw',
+			// An array run through sanitize_text_field collapses to the string
+			// "Array". Attachment IDs are coerced individually and anything
+			// that is not a positive integer is dropped.
+			//
+			// intval rather than absint: absint takes the absolute value, so
+			// -5 would silently become attachment 5 — a real, unrelated image
+			// rather than a rejected input.
+			'attachment_ids' => static function ( $value ) {
+				if ( ! is_array( $value ) ) {
+					return [];
+				}
+				return array_values(
+					array_filter(
+						array_map( 'intval', $value ),
+						static fn( $id ) => $id > 0
+					)
+				);
+			},
 			default      => 'sanitize_text_field',
 		};
 	}

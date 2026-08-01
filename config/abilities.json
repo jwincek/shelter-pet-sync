@@ -15,7 +15,9 @@
       },
       "input_schema": {
         "type": "object",
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "properties": {
           "id": {
             "type": "integer",
@@ -28,57 +30,156 @@
         "type": "object",
         "description": "Hydrated pet entity.",
         "properties": {
-          "id":                    { "type": "integer" },
-          "name":                  { "type": "string" },
-          "status":                { "type": "string" },
-          "animal":                { "type": "string" },
-          "breed":                 { "type": "string" },
-          "age":                   { "type": "string" },
-          "sex":                   { "type": "string" },
-          "size":                  { "type": "string" },
-          "color":                 { "type": "string" },
-          "coat":                  { "type": "string" },
-          "image":                 { "type": "string" },
-          "url":                   { "type": "string" },
-          "description":           { "type": "string" },
-          "gallery":               { "type": "array", "items": { "type": "object" } },
-          "gallery_count":         { "type": "integer" },
-          "favorited":             { "type": "boolean" },
-          "is_new":                { "type": "boolean" },
-          "weight":                { "type": "string" },
-          "adoption_fee":          { "type": "string" },
-          "adoption_fee_formatted": { "type": "string" },
-          "adoption_form_url":     { "type": "string" },
-          "has_adoption_info":     { "type": "boolean" },
-          "numerical_age":         { "type": "string" },
-          "youtube_url":           { "type": "string" },
-          "microchip_id":          { "type": "string" },
-          "ok_with_dogs":          { "type": "string" },
-          "ok_with_cats":          { "type": "string" },
-          "ok_with_kids":          { "type": "string" },
-          "shots_current":         { "type": "string" },
-          "spayed_neutered":       { "type": "string" },
-          "housebroken":           { "type": "string" },
-          "special_needs":         { "type": "string" },
-          "special_needs_detail":  { "type": "string" },
-          "special_needs_summary": { "type": "string" },
-          "hypoallergenic":        { "type": "string" },
-          "declawed":              { "type": "string" },
-          "coat_pattern":          { "type": "string" },
-          "secondary_color":       { "type": "string" },
-          "tertiary_color":        { "type": "string" },
-          "is_bonded_pair":        { "type": "boolean" },
-          "bonded_pair_names":     { "type": "array", "items": { "type": "object" } },
-          "bonded_group_id":       { "type": "string" },
-          "siblings_names":        { "type": "string" },
-          "tagline":               { "type": "string" },
-          "compatibility":         { "type": "string" },
-          "story_title":           { "type": "string" },
-          "adoption_title":        { "type": "string" }
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "animal": {
+            "type": "string"
+          },
+          "breed": {
+            "type": "string"
+          },
+          "age": {
+            "type": "string"
+          },
+          "sex": {
+            "type": "string"
+          },
+          "size": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "coat": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "gallery": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "gallery_count": {
+            "type": "integer"
+          },
+          "favorited": {
+            "type": "boolean"
+          },
+          "is_new": {
+            "type": "boolean"
+          },
+          "weight": {
+            "type": "string"
+          },
+          "adoption_fee": {
+            "type": "string"
+          },
+          "adoption_fee_formatted": {
+            "type": "string"
+          },
+          "adoption_form_url": {
+            "type": "string"
+          },
+          "has_adoption_info": {
+            "type": "boolean"
+          },
+          "numerical_age": {
+            "type": "string"
+          },
+          "youtube_url": {
+            "type": "string"
+          },
+          "microchip_id": {
+            "type": "string"
+          },
+          "ok_with_dogs": {
+            "type": "string"
+          },
+          "ok_with_cats": {
+            "type": "string"
+          },
+          "ok_with_kids": {
+            "type": "string"
+          },
+          "shots_current": {
+            "type": "string"
+          },
+          "spayed_neutered": {
+            "type": "string"
+          },
+          "housebroken": {
+            "type": "string"
+          },
+          "special_needs": {
+            "type": "string"
+          },
+          "special_needs_detail": {
+            "type": "string"
+          },
+          "special_needs_summary": {
+            "type": "string"
+          },
+          "hypoallergenic": {
+            "type": "string"
+          },
+          "declawed": {
+            "type": "string"
+          },
+          "coat_pattern": {
+            "type": "string"
+          },
+          "secondary_color": {
+            "type": "string"
+          },
+          "tertiary_color": {
+            "type": "string"
+          },
+          "is_bonded_pair": {
+            "type": "boolean"
+          },
+          "bonded_pair_names": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "bonded_group_id": {
+            "type": "string"
+          },
+          "siblings_names": {
+            "type": "string"
+          },
+          "tagline": {
+            "type": "string"
+          },
+          "compatibility": {
+            "type": "string"
+          },
+          "story_title": {
+            "type": "string"
+          },
+          "adoption_title": {
+            "type": "string"
+          }
         }
       }
     },
-
     "petsync/list-pets": {
       "label": "List Pets",
       "description": "Retrieves a paginated list of pets with taxonomy and compatibility filters.",
@@ -96,31 +197,90 @@
         "$ref": "schemas/taxonomy-filters.json",
         "type": "object",
         "properties": {
-          "status":   { "type": "string", "default": "available", "description": "Filter by status slug." },
-          "color":    { "type": "string", "description": "Filter by color slug." },
-          "coat":     { "type": "string", "description": "Filter by coat slug." },
-          "per_page": { "type": "integer", "default": 12, "minimum": 1, "maximum": 100 },
-          "page":     { "type": "integer", "default": 1, "minimum": 1 },
-          "cursor":   { "type": "string", "description": "Cursor for keyset pagination." },
-          "orderby":  { "type": "string", "default": "date", "enum": ["date", "title", "name", "rand", "age"] },
-          "order":    { "type": "string", "default": "DESC", "enum": ["ASC", "DESC"] },
-          "exclude":  { "type": "array", "items": { "type": "integer" }, "description": "Post IDs to exclude." }
+          "status": {
+            "type": "string",
+            "default": "available",
+            "description": "Filter by status slug."
+          },
+          "color": {
+            "type": "string",
+            "description": "Filter by color slug."
+          },
+          "coat": {
+            "type": "string",
+            "description": "Filter by coat slug."
+          },
+          "per_page": {
+            "type": "integer",
+            "default": 12,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Cursor for keyset pagination."
+          },
+          "orderby": {
+            "type": "string",
+            "default": "date",
+            "enum": [
+              "date",
+              "title",
+              "name",
+              "rand",
+              "age"
+            ]
+          },
+          "order": {
+            "type": "string",
+            "default": "DESC",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "exclude": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Post IDs to exclude."
+          }
         },
         "additionalProperties": false
       },
       "output_schema": {
         "type": "object",
         "properties": {
-          "pets":       { "type": "array", "items": { "type": "object" } },
-          "total":      { "type": "integer" },
-          "page":       { "type": "integer" },
-          "totalPages": { "type": "integer" },
-          "hasMore":    { "type": "boolean" },
-          "nextCursor": { "type": "string" }
+          "pets": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "nextCursor": {
+            "type": "string"
+          }
         }
       }
     },
-
     "petsync/filter-pets": {
       "label": "Filter Pets",
       "description": "Retrieves filtered, paginated pets with live filter counts for each taxonomy value.",
@@ -138,35 +298,109 @@
         "$ref": "schemas/taxonomy-filters.json",
         "type": "object",
         "properties": {
-          "status":            { "type": "string", "default": "available" },
-          "color":             { "type": "string" },
-          "coat":              { "type": "string" },
-          "search":            { "type": "string", "description": "Search by pet name and breed." },
-          "goodWithDogs":      { "type": "boolean" },
-          "goodWithCats":      { "type": "boolean" },
-          "goodWithKids":      { "type": "boolean" },
-          "shotsCurrent":      { "type": "boolean" },
-          "spayedNeutered":    { "type": "boolean" },
-          "housebroken":       { "type": "boolean" },
-          "specialNeeds":      { "type": "boolean" },
-          "hypoallergenic":    { "type": "boolean" },
-          "declawed":          { "type": "boolean" },
-          "showFavoritesOnly": { "type": "boolean", "default": false },
-          "per_page":          { "type": "integer", "default": 12, "minimum": 1, "maximum": 100 },
-          "page":              { "type": "integer", "default": 1, "minimum": 1 },
-          "orderby":           { "type": "string", "default": "date", "enum": ["date", "title", "name", "rand", "age"] },
-          "order":             { "type": "string", "default": "DESC", "enum": ["ASC", "DESC"] }
+          "status": {
+            "type": "string",
+            "default": "available"
+          },
+          "color": {
+            "type": "string"
+          },
+          "coat": {
+            "type": "string"
+          },
+          "search": {
+            "type": "string",
+            "description": "Search by pet name and breed."
+          },
+          "goodWithDogs": {
+            "type": "boolean"
+          },
+          "goodWithCats": {
+            "type": "boolean"
+          },
+          "goodWithKids": {
+            "type": "boolean"
+          },
+          "shotsCurrent": {
+            "type": "boolean"
+          },
+          "spayedNeutered": {
+            "type": "boolean"
+          },
+          "housebroken": {
+            "type": "boolean"
+          },
+          "specialNeeds": {
+            "type": "boolean"
+          },
+          "hypoallergenic": {
+            "type": "boolean"
+          },
+          "declawed": {
+            "type": "boolean"
+          },
+          "showFavoritesOnly": {
+            "type": "boolean",
+            "default": false
+          },
+          "per_page": {
+            "type": "integer",
+            "default": 12,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+          },
+          "orderby": {
+            "type": "string",
+            "default": "date",
+            "enum": [
+              "date",
+              "title",
+              "name",
+              "rand",
+              "age"
+            ]
+          },
+          "order": {
+            "type": "string",
+            "default": "DESC",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          }
         },
         "additionalProperties": false
       },
       "output_schema": {
         "type": "object",
-        "required": ["pets", "total", "page", "totalPages", "counts"],
+        "required": [
+          "pets",
+          "total",
+          "page",
+          "totalPages",
+          "counts"
+        ],
         "properties": {
-          "pets":       { "type": "array", "items": { "type": "object" } },
-          "total":      { "type": "integer" },
-          "page":       { "type": "integer" },
-          "totalPages": { "type": "integer" },
+          "pets": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer"
+          },
           "counts": {
             "type": "object",
             "description": "Per-taxonomy and per-compatibility-filter counts given currently active filters.",
@@ -175,9 +409,15 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "value": { "type": "string" },
-                  "label": { "type": "string" },
-                  "count": { "type": "integer" }
+                  "value": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "count": {
+                    "type": "integer"
+                  }
                 }
               }
             }
@@ -185,7 +425,6 @@
         }
       }
     },
-
     "petsync/batch-get-pets": {
       "label": "Batch Get Pets",
       "description": "Retrieves multiple pets by their post IDs in one request.",
@@ -201,11 +440,15 @@
       },
       "input_schema": {
         "type": "object",
-        "required": ["ids"],
+        "required": [
+          "ids"
+        ],
         "properties": {
           "ids": {
             "type": "array",
-            "items": { "type": "integer" },
+            "items": {
+              "type": "integer"
+            },
             "description": "Array of pet post IDs."
           }
         },
@@ -214,12 +457,21 @@
       "output_schema": {
         "type": "object",
         "properties": {
-          "pets":    { "type": "array", "items": { "type": "object" } },
-          "missing": { "type": "array", "items": { "type": "integer" } }
+          "pets": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
         }
       }
     },
-
     "petsync/get-filter-options": {
       "label": "Get Filter Options",
       "description": "Retrieves all available filter values from pet taxonomies with term counts.",
@@ -245,15 +497,20 @@
           "items": {
             "type": "object",
             "properties": {
-              "value": { "type": "string" },
-              "label": { "type": "string" },
-              "count": { "type": "integer" }
+              "value": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer"
+              }
             }
           }
         }
       }
     },
-
     "petsync/toggle-favorite": {
       "label": "Toggle Favorite",
       "description": "Adds or removes a pet from the current user's favorites list.",
@@ -269,7 +526,9 @@
       },
       "input_schema": {
         "type": "object",
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "properties": {
           "id": {
             "type": "integer",
@@ -280,14 +539,25 @@
       },
       "output_schema": {
         "type": "object",
-        "required": ["favorited", "favorites"],
+        "required": [
+          "favorited",
+          "favorites"
+        ],
         "properties": {
-          "favorited": { "type": "boolean", "description": "Whether the pet is now favorited." },
-          "favorites": { "type": "array", "items": { "type": "integer" }, "description": "Updated favorites list." }
+          "favorited": {
+            "type": "boolean",
+            "description": "Whether the pet is now favorited."
+          },
+          "favorites": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Updated favorites list."
+          }
         }
       }
     },
-
     "petsync/get-favorites": {
       "label": "Get Favorites",
       "description": "Retrieves the current user's favorite pet IDs and hydrated pet data.",
@@ -308,12 +578,21 @@
       "output_schema": {
         "type": "object",
         "properties": {
-          "favorites": { "type": "array", "items": { "type": "integer" } },
-          "pets":      { "type": "array", "items": { "type": "object" } }
+          "favorites": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "pets": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
         }
       }
     },
-
     "petsync/clear-favorites": {
       "label": "Clear All Favorites",
       "description": "Removes all pets from the current user's favorites list in a single operation.",
@@ -333,13 +612,20 @@
       },
       "output_schema": {
         "type": "object",
-        "required": ["favorites"],
+        "required": [
+          "favorites"
+        ],
         "properties": {
-          "favorites": { "type": "array", "items": { "type": "integer" }, "description": "Empty favorites list." }
+          "favorites": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Empty favorites list."
+          }
         }
       }
     },
-
     "petsync/update-comparison": {
       "label": "Update Comparison",
       "description": "Manages the pet comparison list: add, remove, clear, or set pets.",
@@ -355,11 +641,18 @@
       },
       "input_schema": {
         "type": "object",
-        "required": ["action"],
+        "required": [
+          "action"
+        ],
         "properties": {
           "action": {
             "type": "string",
-            "enum": ["add", "remove", "clear", "set"],
+            "enum": [
+              "add",
+              "remove",
+              "clear",
+              "set"
+            ],
             "description": "The comparison operation to perform."
           },
           "id": {
@@ -368,7 +661,9 @@
           },
           "ids": {
             "type": "array",
-            "items": { "type": "integer" },
+            "items": {
+              "type": "integer"
+            },
             "description": "Pet post IDs (for set)."
           }
         },
@@ -376,17 +671,36 @@
       },
       "output_schema": {
         "type": "object",
-        "required": ["ids", "count", "max"],
+        "required": [
+          "ids",
+          "count",
+          "max"
+        ],
         "properties": {
-          "ids":      { "type": "array", "items": { "type": "integer" } },
-          "pets":     { "type": "array", "items": { "type": "object" } },
-          "count":    { "type": "integer" },
-          "max":      { "type": "integer" },
-          "shareUrl": { "type": "string" }
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "pets": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "max": {
+            "type": "integer"
+          },
+          "shareUrl": {
+            "type": "string"
+          }
         }
       }
     },
-
     "petsync/get-comparison": {
       "label": "Get Comparison",
       "description": "Retrieves the current comparison list with hydrated pet data and share URL.",
@@ -407,15 +721,30 @@
       "output_schema": {
         "type": "object",
         "properties": {
-          "ids":      { "type": "array", "items": { "type": "integer" } },
-          "pets":     { "type": "array", "items": { "type": "object" } },
-          "count":    { "type": "integer" },
-          "max":      { "type": "integer" },
-          "shareUrl": { "type": "string" }
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "pets": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "max": {
+            "type": "integer"
+          },
+          "shareUrl": {
+            "type": "string"
+          }
         }
       }
     },
-
     "petsync/get-adoption-stats": {
       "label": "Get Adoption Stats",
       "description": "Retrieves aggregate adoption statistics for use in block bindings and archive pages.",
@@ -443,17 +772,102 @@
       "output_schema": {
         "type": "object",
         "properties": {
-          "available_count":     { "type": "integer", "description": "Total available pets." },
-          "available_by_species": { "type": "string", "description": "Formatted string: '23 Dogs, 8 Cats'." },
+          "available_count": {
+            "type": "integer",
+            "description": "Total available pets."
+          },
+          "available_by_species": {
+            "type": "string",
+            "description": "Formatted string: '23 Dogs, 8 Cats'."
+          },
           "species_counts": {
             "type": "object",
             "description": "Count per animal type.",
-            "additionalProperties": { "type": "integer" }
+            "additionalProperties": {
+              "type": "integer"
+            }
           },
-          "newest_pet_name":   { "type": "string" },
-          "newest_pet_id":     { "type": "integer" },
-          "total_pets":        { "type": "integer", "description": "All pets regardless of status." },
-          "last_sync":         { "type": "string", "description": "ISO 8601 timestamp of last sync." }
+          "newest_pet_name": {
+            "type": "string"
+          },
+          "newest_pet_id": {
+            "type": "integer"
+          },
+          "total_pets": {
+            "type": "integer",
+            "description": "All pets regardless of status."
+          },
+          "last_sync": {
+            "type": "string",
+            "description": "ISO 8601 timestamp of last sync."
+          }
+        }
+      }
+    },
+    "petsync/set-pet-gallery": {
+      "label": "Set Pet Gallery",
+      "description": "Replaces a pet's hand-curated gallery with the given attachments. An empty list clears it, which for an imported pet restores its provider images.",
+      "category": "pets",
+      "permission": "edit_posts",
+      "meta": {
+        "annotations": {
+          "readonly": false,
+          "destructive": false,
+          "idempotent": true
+        },
+        "show_in_rest": true
+      },
+      "input_schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "attachment_ids"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Pet post ID."
+          },
+          "attachment_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Attachment IDs in display order. Non-image attachments are skipped and reported."
+          }
+        },
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "required": [
+          "id",
+          "gallery",
+          "count"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Pet post ID."
+          },
+          "gallery": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Resolved gallery entries, each with url and alt."
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of images now in the gallery."
+          },
+          "skipped": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Requested IDs that were not image attachments."
+          }
         }
       }
     }
