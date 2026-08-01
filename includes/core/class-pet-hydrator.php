@@ -3,8 +3,13 @@
  * Pet Hydrator — config-driven WP_Post to entity array conversion.
  *
  * Solves the N+1 query problem by batch-priming caches before hydrating.
- * A single call to hydrate_many() for 100 pets produces ~5 database queries
- * instead of ~2,000.
+ * Measured on a 99-pet archive: 3 queries, where hydrating one at a time
+ * would issue thousands.
+ *
+ * Priming has to cover more than the pets themselves. Their own meta and
+ * terms were batched from the start, but the featured image, the gallery and
+ * bonded partners are separate posts, and reaching for those cost a query
+ * each — 202 queries for the same 99 pets before prime_related_caches().
  *
  * Usage:
  *   $pet  = Pet_Hydrator::get( $post_id );
@@ -54,6 +59,149 @@ class Pet_Hydrator {
 	public static function flush_cache(): void {
 		self::$cache          = [];
 		self::$api_data_cache = [];
+		self::$ps_id_map      = [];
+		self::$ps_id_checked  = [];
+	}
+
+	/**
+	 * Provider record ID => local post ID, for the current request.
+	 *
+	 * @var array<int, int>
+	 */
+	private static array $ps_id_map = [];
+
+	/**
+	 * Provider record IDs already looked up, hits and misses alike.
+	 *
+	 * Separate from the map above so a miss is remembered and not re-queried
+	 * on every pet that references the same absent partner.
+	 *
+	 * @var array<int, bool>
+	 */
+	private static array $ps_id_checked = [];
+
+	/**
+	 * Prime the caches for records hydration reaches for but does not own.
+	 *
+	 * update_postmeta_cache() primes the PETS' meta, which is where the
+	 * batch-priming stopped. But the featured image, the gallery and bonded
+	 * partners are all separate posts, and touching them pulled a query each:
+	 * on a 99-pet archive, 305 queries against a documented ~5.
+	 *
+	 * Attachments are primed with their meta because image sizes live there —
+	 * without it every get_the_post_thumbnail_url() call is a round trip.
+	 *
+	 * @param int[] $post_ids Pet post IDs whose caches are already primed.
+	 */
+	private static function prime_related_caches( array $post_ids ): void {
+		if ( ! $post_ids ) {
+			return;
+		}
+
+		$config = self::get_config();
+		$prefix = $config['meta_prefix'] ?? '_pet_';
+
+		$attachments = [];
+		$partner_ids = [];
+
+		foreach ( $post_ids as $id ) {
+			$id = (int) $id;
+
+			$thumbnail = (int) get_post_meta( $id, '_thumbnail_id', true );
+			if ( $thumbnail ) {
+				$attachments[] = $thumbnail;
+			}
+
+			$gallery = get_post_meta( $id, $prefix . 'gallery_ids', true );
+			if ( is_array( $gallery ) ) {
+				foreach ( $gallery as $attachment_id ) {
+					$attachment_id = (int) $attachment_id;
+					if ( $attachment_id > 0 ) {
+						$attachments[] = $attachment_id;
+					}
+				}
+			}
+
+			$api_data = self::get_api_data( $id );
+			foreach ( (array) ( $api_data['grouped_pet_ids'] ?? [] ) as $ps_id ) {
+				$ps_id = (int) $ps_id;
+				if ( $ps_id > 0 ) {
+					$partner_ids[] = $ps_id;
+				}
+			}
+		}
+
+		$attachments = array_values( array_unique( $attachments ) );
+		if ( $attachments ) {
+			// Meta yes, terms no — attachments carry image sizes in meta and
+			// nothing here reads their taxonomies.
+			_prime_post_caches( $attachments, false, true );
+		}
+
+		self::prime_ps_id_map( $partner_ids );
+	}
+
+	/**
+	 * Resolve provider record IDs to local posts in one query.
+	 *
+	 * Bonded pairs previously cost a query per partner per pet.
+	 *
+	 * @param int[] $ps_ids Provider record IDs.
+	 */
+	private static function prime_ps_id_map( array $ps_ids ): void {
+		$ps_ids = array_values( array_unique( array_filter( array_map( 'intval', $ps_ids ) ) ) );
+		$ps_ids = array_diff( $ps_ids, array_keys( self::$ps_id_checked ) );
+
+		if ( ! $ps_ids ) {
+			return;
+		}
+
+		$found = get_posts(
+			[
+				'post_type'   => 'vcps_pet',
+				'post_status' => 'publish',
+				'numberposts' => -1,
+				'fields'      => 'ids',
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- one batched lookup replacing a query per partner.
+				'meta_query'  => [
+					[
+						'key'     => '_pet_ps_id',
+						'value'   => array_map( 'strval', $ps_ids ),
+						'compare' => 'IN',
+					],
+				],
+			]
+		);
+
+		if ( $found ) {
+			update_postmeta_cache( $found );
+
+			foreach ( $found as $post_id ) {
+				$ps_id = (int) get_post_meta( $post_id, '_pet_ps_id', true );
+				if ( $ps_id ) {
+					self::$ps_id_map[ $ps_id ] = (int) $post_id;
+				}
+			}
+		}
+
+		// Record misses too, so an absent partner is not re-queried per pet.
+		foreach ( $ps_ids as $ps_id ) {
+			self::$ps_id_checked[ $ps_id ] = true;
+		}
+	}
+
+	/**
+	 * Local post ID for a provider record ID, or null.
+	 *
+	 * @param int $ps_id Provider record ID.
+	 * @return int|null Post ID.
+	 */
+	private static function resolve_ps_id( int $ps_id ): ?int {
+		if ( ! isset( self::$ps_id_checked[ $ps_id ] ) ) {
+			self::prime_ps_id_map( [ $ps_id ] );
+		}
+
+		return self::$ps_id_map[ $ps_id ] ?? null;
 	}
 
 	/**
@@ -80,6 +228,7 @@ class Pet_Hydrator {
 		// Prime caches for this single post.
 		update_postmeta_cache( [ $post_id ] );
 		update_object_term_cache( [ $post_id ], 'vcps_pet' );
+		self::prime_related_caches( [ $post_id ] );
 
 		$entity                    = self::hydrate( $post, $profile );
 		self::$cache[ $cache_key ] = $entity;
@@ -310,6 +459,10 @@ class Pet_Hydrator {
 
 		// 2. Prime all taxonomy term lookups in one query.
 		update_object_term_cache( $ids, 'vcps_pet' );
+
+		// 3. Prime the records hydration reaches for but does not own —
+		//    featured images, gallery attachments, bonded partners.
+		self::prime_related_caches( $ids );
 
 		// Hydrate each post — all get_post_meta() and get_the_terms()
 		// calls now hit the WP object cache, zero database queries.
@@ -575,19 +728,9 @@ class Pet_Hydrator {
 					continue;
 				}
 
-				$local = get_posts(
-					[
-						'post_type'   => 'vcps_pet',
-						'post_status' => 'publish',
-						'meta_key'    => '_pet_ps_id',
-						'meta_value'  => (string) $ps_id,
-						'numberposts' => 1,
-						'fields'      => 'ids',
-					]
-				);
+				$partner_id = self::resolve_ps_id( $ps_id );
 
-				if ( ! empty( $local ) ) {
-					$partner_id = $local[0];
+				if ( $partner_id ) {
 					$partners[] = [
 						'id'   => $partner_id,
 						'name' => get_the_title( $partner_id ),
