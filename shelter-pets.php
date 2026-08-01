@@ -224,7 +224,7 @@ add_action( 'plugins_loaded', 'petstablished_sync_init' );
  * plugin's DATA version and is deliberately independent of the release version
  * in the plugin header — most releases change no stored data at all.
  */
-define( 'PETSYNC_DB_VERSION', 2 );
+define( 'PETSYNC_DB_VERSION', 3 );
 
 /**
  * The ordered migration list.
@@ -240,6 +240,7 @@ function petsync_get_migrations(): array {
 	return array(
 		1 => 'petsync_migrate_1_option_names',
 		2 => 'petsync_migrate_2_provider_meta',
+		3 => 'petsync_migrate_3_default_status',
 	);
 }
 
@@ -340,5 +341,54 @@ function petsync_migrate_2_provider_meta(): void {
 
 	foreach ( $pet_ids as $pet_id ) {
 		update_post_meta( $pet_id, '_pet_provider', Petstablished_Sync::PROVIDER );
+	}
+}
+
+/**
+ * Migration 3 — give hand-created pets a status so they reach the archive.
+ *
+ * The listing grid filters on the `available` status term. New pets now get one
+ * automatically, but any created before that have none, so they render on their
+ * own page and never appear on the archive — silently missing rather than
+ * visibly broken.
+ *
+ * Scoped to pets with no provider. A pet imported from a platform gets its
+ * status from the API on the next sync, and guessing on its behalf could
+ * contradict the platform. Pets that already carry any status are untouched, so
+ * nothing is relabelled.
+ */
+function petsync_migrate_3_default_status(): void {
+	$taxonomies = \Petstablished\Core\Config::get_item( 'taxonomies', 'taxonomies', array() );
+	$default    = $taxonomies['pet_status']['default_term'] ?? null;
+
+	if ( ! $default ) {
+		return;
+	}
+
+	$pet_ids = get_posts(
+		array(
+			'post_type'        => 'vcps_pet',
+			'post_status'      => 'any',
+			'numberposts'      => -1,
+			'fields'           => 'ids',
+			'suppress_filters' => false,
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- one-time migration, not a request-path query.
+			'meta_query'       => array(
+				array(
+					'key'     => '_pet_provider',
+					'compare' => 'NOT EXISTS',
+				),
+			),
+		)
+	);
+
+	foreach ( $pet_ids as $pet_id ) {
+		$existing = wp_get_object_terms( $pet_id, 'pet_status', array( 'fields' => 'ids' ) );
+
+		if ( is_wp_error( $existing ) || ! empty( $existing ) ) {
+			continue;
+		}
+
+		wp_set_object_terms( $pet_id, $default, 'pet_status' );
 	}
 }

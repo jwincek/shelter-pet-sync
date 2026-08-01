@@ -1,7 +1,9 @@
 {
   "taxonomies": {
     "pet_status": {
-      "post_types": [ "vcps_pet" ],
+      "post_types": [
+        "vcps_pet"
+      ],
       "labels": {
         "singular": "Status",
         "plural": "Statuses"
@@ -10,16 +12,31 @@
       "hierarchical": false,
       "show_in_rest": true,
       "show_admin_column": true,
+      "_comment_default_term": "Assigned by WordPress when a pet is saved with no status chosen. Hand-created pets would otherwise have none, and the listing grid filters on 'available' — so they would render on their own page but never on the archive.",
+      "default_term": "available",
       "default_terms": [
-        { "slug": "available",   "name": "Available" },
-        { "slug": "pending",     "name": "Adoption Pending" },
-        { "slug": "adopted",     "name": "Adopted" },
-        { "slug": "hold",        "name": "On Hold" }
+        {
+          "slug": "available",
+          "name": "Available"
+        },
+        {
+          "slug": "pending",
+          "name": "Adoption Pending"
+        },
+        {
+          "slug": "adopted",
+          "name": "Adopted"
+        },
+        {
+          "slug": "hold",
+          "name": "On Hold"
+        }
       ]
     },
-
     "pet_animal": {
-      "post_types": [ "vcps_pet" ],
+      "post_types": [
+        "vcps_pet"
+      ],
       "labels": {
         "singular": "Animal",
         "plural": "Animals"
@@ -29,9 +46,10 @@
       "show_in_rest": true,
       "show_admin_column": true
     },
-
     "pet_breed": {
-      "post_types": [ "vcps_pet" ],
+      "post_types": [
+        "vcps_pet"
+      ],
       "labels": {
         "singular": "Breed",
         "plural": "Breeds"
@@ -41,9 +59,10 @@
       "show_in_rest": true,
       "show_admin_column": true
     },
-
     "pet_age": {
-      "post_types": [ "vcps_pet" ],
+      "post_types": [
+        "vcps_pet"
+      ],
       "labels": {
         "singular": "Age",
         "plural": "Ages"
@@ -53,9 +72,10 @@
       "show_in_rest": true,
       "show_admin_column": false
     },
-
     "pet_sex": {
-      "post_types": [ "vcps_pet" ],
+      "post_types": [
+        "vcps_pet"
+      ],
       "labels": {
         "singular": "Sex",
         "plural": "Sexes"
@@ -65,9 +85,10 @@
       "show_in_rest": true,
       "show_admin_column": false
     },
-
     "pet_size": {
-      "post_types": [ "vcps_pet" ],
+      "post_types": [
+        "vcps_pet"
+      ],
       "labels": {
         "singular": "Size",
         "plural": "Sizes"
@@ -77,9 +98,10 @@
       "show_in_rest": true,
       "show_admin_column": false
     },
-
     "pet_color": {
-      "post_types": [ "vcps_pet" ],
+      "post_types": [
+        "vcps_pet"
+      ],
       "labels": {
         "singular": "Color",
         "plural": "Colors"
@@ -89,9 +111,10 @@
       "show_in_rest": true,
       "show_admin_column": false
     },
-
     "pet_coat": {
-      "post_types": [ "vcps_pet" ],
+      "post_types": [
+        "vcps_pet"
+      ],
       "labels": {
         "singular": "Coat",
         "plural": "Coats"
@@ -101,9 +124,10 @@
       "show_in_rest": true,
       "show_admin_column": false
     },
-
     "pet_attribute": {
-      "post_types": [ "vcps_pet" ],
+      "post_types": [
+        "vcps_pet"
+      ],
       "labels": {
         "singular": "Attribute",
         "plural": "Attributes"
@@ -113,15 +137,42 @@
       "show_in_rest": true,
       "show_admin_column": false,
       "default_terms": [
-        { "slug": "good-with-dogs",  "name": "Good with Dogs" },
-        { "slug": "good-with-cats",  "name": "Good with Cats" },
-        { "slug": "good-with-kids",  "name": "Good with Kids" },
-        { "slug": "shots-current",   "name": "Shots Current" },
-        { "slug": "spayed-neutered", "name": "Spayed/Neutered" },
-        { "slug": "housebroken",     "name": "Housebroken" },
-        { "slug": "special-needs",   "name": "Special Needs" },
-        { "slug": "hypoallergenic",  "name": "Hypoallergenic" },
-        { "slug": "declawed",        "name": "Declawed" }
+        {
+          "slug": "good-with-dogs",
+          "name": "Good with Dogs"
+        },
+        {
+          "slug": "good-with-cats",
+          "name": "Good with Cats"
+        },
+        {
+          "slug": "good-with-kids",
+          "name": "Good with Kids"
+        },
+        {
+          "slug": "shots-current",
+          "name": "Shots Current"
+        },
+        {
+          "slug": "spayed-neutered",
+          "name": "Spayed/Neutered"
+        },
+        {
+          "slug": "housebroken",
+          "name": "Housebroken"
+        },
+        {
+          "slug": "special-needs",
+          "name": "Special Needs"
+        },
+        {
+          "slug": "hypoallergenic",
+          "name": "Hypoallergenic"
+        },
+        {
+          "slug": "declawed",
+          "name": "Declawed"
+        }
       ]
     }
   }
