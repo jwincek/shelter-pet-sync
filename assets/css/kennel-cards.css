@@ -1,0 +1,183 @@
+/**
+ * Kennel cards — picker on screen, cards on paper.
+ *
+ * The print rules are the point. Everything WordPress puts around an admin
+ * page is hidden so the sheet contains only cards, which is what lets this
+ * live on an admin screen instead of needing a front-end route.
+ */
+
+/* ── Picker ─────────────────────────────────────────────────────────────── */
+
+.petsync-kennel__picker {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 220px, 1fr ) );
+	gap: 4px 16px;
+	margin: 1em 0;
+	max-height: 60vh;
+	overflow-y: auto;
+	padding: 8px;
+	border: 1px solid #dcdcde;
+	background: #fff;
+}
+
+.petsync-kennel__picker li {
+	margin: 0;
+}
+
+.petsync-kennel__picker label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px;
+	cursor: pointer;
+}
+
+.petsync-kennel__picker img,
+.petsync-kennel__nophoto {
+	width: 40px;
+	height: 40px;
+	object-fit: cover;
+	border-radius: 4px;
+	flex: 0 0 auto;
+}
+
+.petsync-kennel__nophoto {
+	background: #f0f0f1;
+	border: 1px dashed #c3c4c7;
+}
+
+.petsync-kennel__toolbar {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+/* ── Cards, on screen ───────────────────────────────────────────────────── */
+
+.petsync-cards {
+	display: grid;
+	gap: 12px;
+	margin-top: 16px;
+}
+
+.petsync-cards--index {
+	grid-template-columns: repeat( 2, 1fr );
+}
+
+.petsync-cards--half {
+	grid-template-columns: 1fr;
+}
+
+.petsync-cards--full {
+	grid-template-columns: 1fr;
+}
+
+.petsync-cards__cell {
+	border: 1px solid #dcdcde;
+	background: #fff;
+	padding: 16px;
+	overflow: hidden;
+}
+
+.kennel-card__photo img {
+	width: 100%;
+	height: auto;
+	object-fit: cover;
+}
+
+.kennel-card__name {
+	margin: 0.3em 0 0.1em;
+	line-height: 1.1;
+}
+
+.kennel-card__tagline {
+	margin: 0 0 0.4em;
+	font-weight: 600;
+}
+
+.kennel-card__compat,
+.kennel-card__needs,
+.kennel-card__fee,
+.kennel-card__footer {
+	margin: 0 0 0.25em;
+}
+
+/* An unset field binds to an empty string; collapse the gap it leaves. */
+.kennel-card p:empty,
+.kennel-card h2:empty {
+	display: none;
+}
+
+/* ── Print ──────────────────────────────────────────────────────────────── */
+
+@media print {
+
+	/* Everything WordPress wraps an admin screen in. */
+	#adminmenumain,
+	#wpadminbar,
+	#wpfooter,
+	#screen-meta,
+	#screen-meta-links,
+	.notice,
+	.update-nag,
+	.petsync-kennel__toolbar,
+	.wp-heading-inline,
+	.page-title-action,
+	.description {
+		display: none !important;
+	}
+
+	html,
+	body,
+	#wpcontent,
+	#wpbody,
+	#wpbody-content,
+	.wrap {
+		margin: 0 !important;
+		padding: 0 !important;
+		background: #fff !important;
+		width: auto !important;
+	}
+
+	@page {
+		margin: 0.4in;
+	}
+
+	.petsync-cards {
+		gap: 0;
+		margin: 0;
+	}
+
+	.petsync-cards__cell {
+		border: 1px dashed #999;
+		box-sizing: border-box;
+		break-inside: avoid;
+		page-break-inside: avoid;
+		overflow: hidden;
+	}
+
+	/* 4 to a sheet. */
+	.petsync-cards--index {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+
+	.petsync-cards--index .petsync-cards__cell {
+		height: 5in;
+	}
+
+	/* 2 to a sheet. */
+	.petsync-cards--half .petsync-cards__cell {
+		height: 5.2in;
+	}
+
+	/* 1 to a sheet. */
+	.petsync-cards--full .petsync-cards__cell {
+		height: 10.2in;
+		break-after: page;
+		page-break-after: always;
+	}
+
+	.kennel-card__photo img {
+		max-height: 45%;
+	}
+}

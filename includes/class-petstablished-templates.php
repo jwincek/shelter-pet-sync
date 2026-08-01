@@ -149,6 +149,11 @@ class Petstablished_Templates {
 				'description' => __( 'Favorites modal and compare bar — shared across pet templates.', 'shelter-pets' ),
 				'area'        => 'uncategorized',
 			),
+			'kennel-card'     => array(
+				'title'       => __( 'Kennel Card', 'shelter-pets' ),
+				'description' => __( 'The printed card for a kennel or cage. Edit it here and every card printed from Pets → Kennel Cards follows this layout.', 'shelter-pets' ),
+				'area'        => 'uncategorized',
+			),
 		);
 	}
 
