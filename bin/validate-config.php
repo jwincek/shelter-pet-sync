@@ -283,6 +283,54 @@ foreach ( array_keys( (array) ( $entity['attribute_map'] ?? [] ) ) as $src_key )
 	}
 }
 
+// ── Check 5b: editable_fields are real, grouped, and readable back ───────────
+// Manual entry writes post meta that Pet_Hydrator reads in preference to the
+// API snapshot. A field declared editable but missing from api_fields would be
+// written by the editor and never read back — a silent data black hole.
+$editable_fields = (array) ( $entity['editable_fields'] ?? [] );
+$editable_groups = (array) ( $entity['editable_field_groups'] ?? [] );
+$api_field_names = array_keys( (array) ( $entity['api_fields'] ?? [] ) );
+// An editable field may be backed by a provider mapping (api_fields) or by
+// storage in its own right (fields, e.g. gallery_ids). Either is readable back;
+// neither means the editor writes into a void.
+$entity_field_names = array_keys( (array) ( $entity['fields'] ?? [] ) );
+$backed_names       = array_merge( $api_field_names, $entity_field_names );
+
+foreach ( $editable_fields as $field => $cfg ) {
+	if ( ! in_array( $field, $backed_names, true ) ) {
+		$add( 'error', 'editable-fields', "editable_fields '$field' is declared in neither api_fields nor fields — the editor would write meta the hydrator never reads back." );
+	}
+
+	$group = $cfg['group'] ?? null;
+	if ( null === $group || ! array_key_exists( $group, $editable_groups ) ) {
+		$add( 'error', 'editable-fields', "editable_fields '$field' is in group '" . ( $group ?? '(none)' ) . "', which is not declared in editable_field_groups — its panel would never render." );
+	}
+
+	$control = $cfg['control'] ?? 'text';
+	if ( ! in_array( $control, [ 'text', 'url', 'textarea', 'tristate', 'media' ], true ) ) {
+		$add( 'error', 'editable-fields', "editable_fields '$field' uses control '$control', which assets/js/pet-fields.js does not implement (it would silently fall back to a text input)." );
+	}
+
+	// A tristate control on a non-tristate field (or the reverse) round-trips
+	// badly: the hydrator casts by the api_fields type, not the control.
+	$declared_type = $entity['api_fields'][ $field ]['type'] ?? ( $entity['fields'][ $field ]['type'] ?? null );
+	if ( null !== $declared_type ) {
+		$is_tristate_control = 'tristate' === $control;
+		$is_tristate_type    = 'tristate' === $declared_type;
+		if ( $is_tristate_control !== $is_tristate_type ) {
+			$add( 'warning', 'editable-fields', "editable_fields '$field' uses control '$control' but api_fields declares type '$declared_type' — the hydrator casts by type, so the two should agree." );
+		}
+	}
+}
+
+// A group with no fields renders an empty panel.
+foreach ( array_keys( $editable_groups ) as $group_slug ) {
+	$used = array_filter( $editable_fields, static fn( $c ) => ( $c['group'] ?? null ) === $group_slug );
+	if ( ! $used ) {
+		$add( 'warning', 'editable-fields', "editable_field_groups '$group_slug' has no fields — it would render an empty panel." );
+	}
+}
+
 // ── Check 6 (heuristic): interactivity action/callback references resolve ─────
 $ref_names = [];
 foreach ( array_merge(
