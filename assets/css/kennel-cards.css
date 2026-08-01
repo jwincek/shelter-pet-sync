@@ -181,3 +181,15 @@
 		max-height: 45%;
 	}
 }
+
+.petsync-kennel__filter {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin: 1em 0 0.5em;
+}
+
+.petsync-kennel__count {
+	margin: 0.25em 0;
+	color: #646970;
+}

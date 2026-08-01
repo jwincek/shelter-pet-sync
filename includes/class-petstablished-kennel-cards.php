@@ -105,7 +105,13 @@ class Petstablished_Kennel_Cards {
 	 * Pet picker.
 	 */
 	private function render_selection(): void {
-		$pets  = $this->get_printable_pets();
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only filter on a read-only screen.
+		$status = isset( $_GET['pet_status'] ) ? sanitize_key( wp_unslash( $_GET['pet_status'] ) ) : 'available';
+
+		$statuses = $this->get_status_options();
+		$status   = isset( $statuses[ $status ] ) ? $status : 'available';
+
+		$pets  = $this->get_printable_pets( $status );
 		$sizes = $this->get_sizes();
 		?>
 		<div class="wrap petsync-kennel">
@@ -124,12 +130,36 @@ class Petstablished_Kennel_Cards {
 				</div>
 			<?php endif; ?>
 
+			<form method="get" action="" class="petsync-kennel__filter">
+				<input type="hidden" name="post_type" value="vcps_pet" />
+				<input type="hidden" name="page" value="<?php echo esc_attr( self::PAGE_SLUG ); ?>" />
+				<label for="petsync-status"><?php esc_html_e( 'Show', 'shelter-pets' ); ?></label>
+				<select name="pet_status" id="petsync-status">
+					<?php foreach ( $statuses as $slug => $label ) : ?>
+						<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $slug, $status ); ?>>
+							<?php echo esc_html( $label ); ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+				<button type="submit" class="button"><?php esc_html_e( 'Apply', 'shelter-pets' ); ?></button>
+			</form>
+
 			<?php if ( ! $pets ) : ?>
 				<div class="notice notice-warning">
-					<p><?php esc_html_e( 'No published pets to print yet.', 'shelter-pets' ); ?></p>
+					<p><?php esc_html_e( 'No pets match that status.', 'shelter-pets' ); ?></p>
 				</div>
 				<?php return; ?>
 			<?php endif; ?>
+
+			<p class="petsync-kennel__count">
+				<?php
+				printf(
+					/* translators: %d: number of pets available to print. */
+					esc_html( _n( '%d pet', '%d pets', count( $pets ), 'shelter-pets' ) ),
+					count( $pets )
+				);
+				?>
+			</p>
 
 			<form method="get" action="">
 				<input type="hidden" name="post_type" value="vcps_pet" />
@@ -261,8 +291,19 @@ class Petstablished_Kennel_Cards {
 
 		$html = do_blocks( $template->content );
 
+		// Restore whatever the caller had, rather than whatever the main query
+		// holds. wp_reset_postdata() re-reads $wp_query, so calling it after
+		// putting $post back would discard the restore any time the two differ
+		// — which is exactly the situation inside a secondary loop.
 		$post = $original; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- restoring.
-		wp_reset_postdata();
+
+		if ( $original instanceof WP_Post ) {
+			// Also restores $authordata, $pages and friends, which
+			// setup_postdata() set on the way in.
+			setup_postdata( $original );
+		} else {
+			wp_reset_postdata();
+		}
 
 		return $html;
 	}
@@ -312,19 +353,60 @@ class Petstablished_Kennel_Cards {
 	}
 
 	/**
-	 * Pets worth offering to print — published, newest first.
+	 * Pets worth offering to print.
 	 *
+	 * Defaults to whatever the archive considers current, because a kennel card
+	 * is for an animal presently in a kennel — printing the whole history is
+	 * never what anyone wants, and with a few hundred pets an unfiltered list
+	 * is unusable.
+	 *
+	 * @param string $status Status term slug, or 'all'.
 	 * @return WP_Post[]
 	 */
-	private function get_printable_pets(): array {
-		return get_posts(
+	private function get_printable_pets( string $status = 'available' ): array {
+		$args = array(
+			'post_type'      => 'vcps_pet',
+			'post_status'    => 'publish',
+			'posts_per_page' => 500,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		);
+
+		if ( 'all' !== $status ) {
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- an admin screen filtering by status.
+			$args['tax_query'] = array(
+				array(
+					'taxonomy' => 'pet_status',
+					'field'    => 'slug',
+					'terms'    => array( $status ),
+				),
+			);
+		}
+
+		return get_posts( $args );
+	}
+
+	/**
+	 * Status terms actually in use, for the filter.
+	 *
+	 * @return array<string, string> Slug => label.
+	 */
+	private function get_status_options(): array {
+		$options = array( 'all' => __( 'All statuses', 'shelter-pets' ) );
+
+		$terms = get_terms(
 			array(
-				'post_type'      => 'vcps_pet',
-				'post_status'    => 'publish',
-				'posts_per_page' => 200,
-				'orderby'        => 'title',
-				'order'          => 'ASC',
+				'taxonomy'   => 'pet_status',
+				'hide_empty' => true,
 			)
 		);
+
+		if ( ! is_wp_error( $terms ) ) {
+			foreach ( $terms as $term ) {
+				$options[ $term->slug ] = sprintf( '%s (%d)', $term->name, $term->count );
+			}
+		}
+
+		return $options;
 	}
 }
