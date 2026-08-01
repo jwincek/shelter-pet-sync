@@ -30,3 +30,6 @@ debug.log
 
 # Generated distribution build (bin/build-dist.sh).
 /build/
+
+# PHPUnit run cache (generated).
+.phpunit.result.cache
