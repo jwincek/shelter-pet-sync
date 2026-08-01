@@ -41,6 +41,22 @@ class Pet_Hydrator {
 	private static ?array $entity_config = null;
 
 	/**
+	 * Drop the per-request hydration caches.
+	 *
+	 * Hydration is memoised for the length of a request, which is right for a
+	 * page render but wrong for any process that writes pet data and then reads
+	 * it back: a long-running sync, WP-CLI, or a test. Those need to see their
+	 * own writes.
+	 *
+	 * Leaves the entity config alone — that comes from a JSON file that cannot
+	 * change mid-request.
+	 */
+	public static function flush_cache(): void {
+		self::$cache          = [];
+		self::$api_data_cache = [];
+	}
+
+	/**
 	 * Get a hydrated pet by post ID.
 	 *
 	 * Returns from per-request cache if available.
@@ -112,10 +128,23 @@ class Pet_Hydrator {
 			$entity[ $key . 'Slug' ] = $term ? $term->slug : '';
 		}
 
-		// API fields — read from stored API JSON snapshot.
-		// One JSON decode per pet, cached for the request.
+		// API fields, resolved in precedence order:
+		//
+		//   1. post meta   — a value entered by hand (editable_fields only)
+		//   2. API snapshot — what the provider last sent
+		//   3. the field's declared default
+		//
+		// Meta first is what lets a pet exist with no provider at all: a
+		// hand-authored pet has no snapshot, so without this every one of these
+		// fields would hydrate empty. Synced pets are unaffected — nothing
+		// writes this meta for them, so they fall straight through to the
+		// snapshot exactly as before, which is why this needs no migration.
+		//
+		// One JSON decode per pet, cached for the request. The get_post_meta
+		// calls hit WordPress's per-post meta cache, primed on first access.
 		$api_data   = self::get_api_data( $id );
 		$api_fields = $config['api_fields'] ?? [];
+		$editable   = $config['editable_fields'] ?? [];
 		foreach ( $api_fields as $field_name => $field_config ) {
 			if ( $include_fields && ! in_array( $field_name, $include_fields, true ) ) {
 				continue;
@@ -124,7 +153,26 @@ class Pet_Hydrator {
 			if ( null === $api_key ) {
 				continue; // Computed api_field (like primary_image_url), skip.
 			}
-			$raw                   = $api_data[ $api_key ] ?? $field_config['default'] ?? '';
+
+			$raw = null;
+
+			if ( isset( $editable[ $field_name ] ) ) {
+				$manual = get_post_meta( $id, $prefix . $field_name, true );
+				// An empty string is how WordPress reports "no such meta", so
+				// it cannot be distinguished from a deliberately blanked value.
+				// Treating empty as absent means clearing a field on a synced
+				// pet reveals the provider's value again rather than blanking
+				// it — the safer of the two behaviours, since the provider
+				// remains the source of record for those pets.
+				if ( '' !== $manual && null !== $manual && false !== $manual ) {
+					$raw = $manual;
+				}
+			}
+
+			if ( null === $raw ) {
+				$raw = $api_data[ $api_key ] ?? $field_config['default'] ?? '';
+			}
+
 			$entity[ $field_name ] = self::cast_api_value( $raw, $field_config );
 		}
 

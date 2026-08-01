@@ -210,6 +210,7 @@ function petstablished_sync_init(): void {
 	// Admin & Sync (admin only).
 	if ( is_admin() ) {
 		new Petstablished_Admin();
+		new Petstablished_Pet_Fields();
 	}
 	new Petstablished_Sync();
 }

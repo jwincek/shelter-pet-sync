@@ -67,6 +67,41 @@
         "declawed":             { "api_key": "declawed",            "type": "tristate", "default": "" }
       },
 
+      "_comment_editable_fields": "Which api_fields a human can fill in when a pet has no provider, and how. api_fields above describes where a value comes FROM a provider; this describes how a value is ENTERED by hand. Each entry here is registered as post meta (_pet_<name>) and takes precedence over the API snapshot at hydration time, so a manual pet needs no provider and a synced pet is unaffected. Fields absent from this list are provider-internal (bonded_group_id, bonded_pet_ids, youtube_urls) and have no manual equivalent.",
+      "editable_field_groups": {
+        "basics":        "Basics",
+        "health":        "Health",
+        "compatibility": "Good with",
+        "adoption":      "Adoption",
+        "media":         "Media"
+      },
+      "editable_fields": {
+        "weight":               { "group": "basics",        "control": "text",     "label": "Weight" },
+        "numerical_age":        { "group": "basics",        "control": "text",     "label": "Age (numeric)" },
+        "coat_pattern":         { "group": "basics",        "control": "text",     "label": "Coat pattern" },
+        "secondary_color":      { "group": "basics",        "control": "text",     "label": "Secondary colour" },
+        "tertiary_color":       { "group": "basics",        "control": "text",     "label": "Tertiary colour" },
+        "microchip_id":         { "group": "basics",        "control": "text",     "label": "Microchip ID" },
+        "siblings_names":       { "group": "basics",        "control": "text",     "label": "Sibling names" },
+
+        "shots_current":        { "group": "health",        "control": "tristate", "label": "Shots up to date" },
+        "spayed_neutered":      { "group": "health",        "control": "tristate", "label": "Spayed / neutered" },
+        "housebroken":          { "group": "health",        "control": "tristate", "label": "House-trained" },
+        "declawed":             { "group": "health",        "control": "tristate", "label": "Declawed" },
+        "hypoallergenic":       { "group": "health",        "control": "tristate", "label": "Hypoallergenic" },
+        "special_needs":        { "group": "health",        "control": "tristate", "label": "Has special needs" },
+        "special_needs_detail": { "group": "health",        "control": "textarea", "label": "Special needs detail" },
+
+        "ok_with_dogs":         { "group": "compatibility", "control": "tristate", "label": "Dogs" },
+        "ok_with_cats":         { "group": "compatibility", "control": "tristate", "label": "Cats" },
+        "ok_with_kids":         { "group": "compatibility", "control": "tristate", "label": "Kids" },
+
+        "adoption_fee":         { "group": "adoption",      "control": "text",     "label": "Adoption fee" },
+        "adoption_form_url":    { "group": "adoption",      "control": "url",      "label": "Adoption form URL" },
+
+        "youtube_url":          { "group": "media",         "control": "url",      "label": "YouTube URL" }
+      },
+
       "_comment_taxonomy_source_map": "Single-value taxonomy mappings: provider API key -> taxonomy. Sibling of attribute_map below (which maps boolean API keys -> pet_attribute term slugs). Both are consumed by the sync when writing terms, and both feed the change-detection hash via get_consumed_api_keys().",
       "taxonomy_source_map": {
         "status":        "pet_status",
