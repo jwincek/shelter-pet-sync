@@ -44,14 +44,14 @@
 
   <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
     <text x="248" y="116" fill="#FFFFFF" font-size="58" font-weight="700" letter-spacing="-0.5">Shelter Pets</text>
-    <text x="250" y="156" fill="#BFF0EA" font-size="20" font-weight="400">Adoptable animals on your own site, not in an embed</text>
+    <text x="250" y="156" fill="#BFF0EA" font-size="19" font-weight="400">Your animals on your site — and on the kennel door</text>
     <g font-size="16" font-weight="600" fill="#0B5F59">
-      <rect x="250" y="176" width="120" height="30" rx="15" fill="#BFF0EA" opacity="0.95"/>
-      <text x="310" y="196" text-anchor="middle">21 blocks</text>
-      <rect x="380" y="176" width="150" height="30" rx="15" fill="#BFF0EA" opacity="0.95"/>
-      <text x="455" y="196" text-anchor="middle">No build step</text>
-      <rect x="540" y="176" width="164" height="30" rx="15" fill="#BFF0EA" opacity="0.95"/>
-      <text x="622" y="196" text-anchor="middle">Interactivity API</text>
+      <rect x="250" y="176" width="132" height="30" rx="15" fill="#BFF0EA" opacity="0.95"/>
+      <text x="316" y="196" text-anchor="middle">Kennel cards</text>
+      <rect x="392" y="176" width="160" height="30" rx="15" fill="#BFF0EA" opacity="0.95"/>
+      <text x="472" y="196" text-anchor="middle">Works standalone</text>
+      <rect x="562" y="176" width="118" height="30" rx="15" fill="#BFF0EA" opacity="0.95"/>
+      <text x="621" y="196" text-anchor="middle">21 blocks</text>
     </g>
   </g>
 </svg>
