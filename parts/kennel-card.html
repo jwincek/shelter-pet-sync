@@ -1,0 +1,77 @@
+<!-- wp:group {"className":"kennel-card","layout":{"type":"constrained"}} -->
+<div class="wp-block-group kennel-card">
+
+	<!-- wp:columns {"className":"kennel-card__top","verticalAlignment":"top"} -->
+	<div class="wp-block-columns kennel-card__top are-vertically-aligned-top">
+
+		<!-- wp:column {"width":"56%","verticalAlignment":"top"} -->
+		<div class="wp-block-column is-vertically-aligned-top" style="flex-basis:56%">
+
+			<!-- wp:heading {"level":1,"className":"kennel-card__name","metadata":{"bindings":{"content":{"source":"petsync/pet-data","args":{"key":"name"}}}}} -->
+			<h1 class="wp-block-heading kennel-card__name"></h1>
+			<!-- /wp:heading -->
+
+			<!-- wp:petsync/pet-attributes {"className":"kennel-card__attributes"} /-->
+
+			<!-- wp:petsync/pet-health {"className":"kennel-card__health"} /-->
+
+		</div>
+		<!-- /wp:column -->
+
+		<!-- wp:column {"width":"44%","verticalAlignment":"top"} -->
+		<div class="wp-block-column is-vertically-aligned-top" style="flex-basis:44%">
+
+			<!-- wp:paragraph {"className":"kennel-card__banner"} -->
+			<p class="kennel-card__banner">Adopt me!</p>
+			<!-- /wp:paragraph -->
+
+			<!-- wp:image {"className":"kennel-card__photo","metadata":{"bindings":{"url":{"source":"petsync/pet-data","args":{"key":"image"}},"alt":{"source":"petsync/pet-data","args":{"key":"name"}}}}} -->
+			<figure class="wp-block-image kennel-card__photo"><img alt=""/></figure>
+			<!-- /wp:image -->
+
+		</div>
+		<!-- /wp:column -->
+
+	</div>
+	<!-- /wp:columns -->
+
+	<!-- wp:group {"className":"kennel-card__footer"} -->
+	<div class="wp-block-group kennel-card__footer">
+
+		<!-- wp:columns {"verticalAlignment":"center"} -->
+		<div class="wp-block-columns are-vertically-aligned-center">
+
+			<!-- wp:column {"width":"60%","verticalAlignment":"center"} -->
+			<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:60%">
+
+				<!-- wp:site-title {"level":0,"className":"kennel-card__org"} /-->
+
+				<!-- wp:paragraph {"className":"kennel-card__contact"} -->
+				<p class="kennel-card__contact">Add your shelter's phone, email and address here. It is part of the card design, so you only enter it once.</p>
+				<!-- /wp:paragraph -->
+
+			</div>
+			<!-- /wp:column -->
+
+			<!-- wp:column {"width":"40%","verticalAlignment":"center"} -->
+			<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:40%">
+
+				<!-- wp:paragraph {"className":"kennel-card__more"} -->
+				<p class="kennel-card__more">See more photos and apply online:</p>
+				<!-- /wp:paragraph -->
+
+				<!-- wp:paragraph {"className":"kennel-card__url","metadata":{"bindings":{"content":{"source":"petsync/pet-data","args":{"key":"url"}}}}} -->
+				<p class="kennel-card__url"></p>
+				<!-- /wp:paragraph -->
+
+			</div>
+			<!-- /wp:column -->
+
+		</div>
+		<!-- /wp:columns -->
+
+	</div>
+	<!-- /wp:group -->
+
+</div>
+<!-- /wp:group -->

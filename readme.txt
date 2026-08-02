@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Adoptable pet listings for animal shelters — add pets by hand or sync from Petstablished, with blocks for cards, grids, filters and comparison.
+Adoptable pet listings and printable kennel cards for animal shelters — add pets by hand or sync from Petstablished.
 
 == Description ==
 
@@ -16,12 +16,16 @@ Shelter Pets puts your shelter's adoptable animals on your own website as a cust
 
 Add animals by hand from the WordPress editor, or connect a Petstablished account and have them imported and kept up to date automatically. Both work the same on the front end, and the two can be mixed — a sync only ever touches the pets it imported itself.
 
+Kennel cards print straight from the same records, so the card on the kennel and the listing on your website never disagree — and nobody retypes an animal's details into a word processor.
+
 Built on the modern WordPress stack — the Abilities API, Block Bindings, and the Interactivity API — so the front end is reactive (favorites, compare, filters, galleries) with no build step required.
 
 Petstablished is the supported platform today; support for additional shelter-management platforms (such as Shelterluv) is planned. No platform account is required — the plugin works standalone.
 
 **Features**
 
+* Printable kennel cards: pick the animals, choose a size, print. Four to a sheet, two to a sheet, or one per page.
+* The card's design is a block template part — rearrange it once in the Site Editor and every card follows.
 * Add pets by hand in the WordPress editor — adoption fee, health, and compatibility details in grouped sidebar panels.
 * Optional batched sync from Petstablished, with an admin progress UI and WP-Cron scheduling.
 * Pet blocks: cards, listing grid, slider, filters, gallery, attributes, health, compatibility, comparison, favorites, adoption CTA, and more.
@@ -67,6 +71,12 @@ If you do use Petstablished, connect it and your listings are imported and kept 
 
 Yes. Each pet records where it came from. A sync only ever updates the pets it imported itself, so hand-entered pets are never overwritten and never removed when an animal leaves the platform. Fields on imported pets are read-only in the editor, because the platform is the source of record for them.
 
+= Can I print kennel cards? =
+
+Yes. Go to **Pets → Kennel Cards**, choose the animals and a size, and print. Cards are built from the same records that drive your website, so they cannot drift out of step with what visitors see.
+
+The design is a block template part. Open **Edit card design** to rearrange it in the Site Editor — move the photo, add or remove details, put your shelter's contact information in the footer — and every card printed afterwards follows the new layout.
+
 = Does the sync run automatically? =
 
 You can enable automatic syncing on a schedule from the Sync Settings screen. It runs through WP-Cron. You can also sync on demand at any time with the Sync Now button.
@@ -87,6 +97,7 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 
 = 1.0.0 =
 * Initial public release.
+* Printable kennel cards from Pets → Kennel Cards, in three sizes, with the card design editable as a block template part.
 * Pets can be created entirely by hand — no Petstablished account required. Adoption, health and compatibility details are entered in grouped panels in the editor sidebar.
 * Imported and hand-entered pets can coexist: each pet records its source, so a sync only ever updates or removes the pets it imported itself.
 * Optional batched sync from the Petstablished public API with admin progress UI and WP-Cron scheduling.

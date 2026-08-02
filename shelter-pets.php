@@ -211,6 +211,7 @@ function petstablished_sync_init(): void {
 	if ( is_admin() ) {
 		new Petstablished_Admin();
 		new Petstablished_Pet_Fields();
+		new Petstablished_Kennel_Cards();
 	}
 	new Petstablished_Sync();
 }
