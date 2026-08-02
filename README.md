@@ -1,19 +1,24 @@
 # Shelter Pets
 
-Sync adoptable pets from [Petstablished](https://petstablished.com) into WordPress, built on the modern WordPress 6.9 stack: Abilities API, Block Bindings, and Interactivity API.
+Adoptable pet listings and printable kennel cards for animal shelters. Built on the modern WordPress stack: Abilities API, Block Bindings, and Interactivity API.
+
+Pets can be entered by hand or synced from [Petstablished](https://petstablished.com) — no platform account is required.
 
 ## Requirements
 
 - WordPress 6.9+
 - PHP 8.1+
-- A Petstablished public API key
+
+A Petstablished account is optional. Without one, pets are entered in the editor and everything else works the same.
 
 ## Installation
 
 1. Download or clone this repository into `wp-content/plugins/shelter-pets/`.
 2. Activate the plugin in **Plugins → Installed Plugins**.
-3. Go to **Pets → Sync Settings** and enter your Petstablished public key.
-4. Click **Sync Now** to import your adoptable pets.
+3. Go to **Pets → Add New** and enter an animal.
+4. Add the pet blocks to your pages and templates from the block inserter.
+
+Using Petstablished? Instead of step 3, go to **Pets → Sync Settings**, enter your public key, and click **Sync Now**.
 
 ## Local Development
 
@@ -32,6 +37,14 @@ npm run stop
 ```
 
 The local site will be available at `http://localhost:8888` with the plugin pre-activated.
+
+## Tests
+
+```bash
+composer test:unit          # no WordPress needed
+composer test:integration   # needs the WP test library, see tests/README.md
+composer test               # both
+```
 
 ## Linting
 
@@ -57,7 +70,8 @@ includes/core/   → Reusable infrastructure (Config loader, CPT registry, Query
 includes/abilities/ → Ability callbacks registered via the WP 6.9 Abilities API
 blocks/          → Server-rendered blocks with Interactivity API view scripts
 templates/       → Block theme templates (archive-vcps_pet.html, single-vcps_pet.html)
-parts/           → Template parts (pet-floating-ui: compare bar, favorites, notifications)
+parts/           → Template parts (pet-floating-ui; kennel-card, the printable card design)
+tests/           → Unit suite (no WordPress) and integration suite (real WordPress + database)
 assets/          → Editor scripts, Interactivity stores, stylesheets
 ```
 
@@ -65,6 +79,8 @@ Business logic lives in **abilities** — thin, testable operations with JSON Sc
 
 ## Key Features
 
+- **Printable kennel cards** — pick animals, choose a size, print. The card's design is a block template part, so it is rearranged in the Site Editor rather than in code, and every field on it is a block binding.
+- **Manual entry** — every field a sync would supply can be typed in the editor, so the plugin works with no platform account at all.
 - **Batched sync** with admin progress UI and WP-Cron scheduling.
 - **21 blocks** for pet cards, grids, sliders, filters, galleries, comparison, favorites, adoption CTAs, and more.
 - **Interactivity API** for reactive front-end (favorites, compare, filters, gallery, toast notifications) — no build step required.
@@ -75,7 +91,8 @@ Business logic lives in **abilities** — thin, testable operations with JSON Sc
 
 1. Fork the repository and create a feature branch from `main`.
 2. Run `composer install && npm install` to set up linting tools.
-3. Make your changes and ensure `composer lint` and `npm run lint:js` pass.
+3. Make your changes and ensure `composer lint`, `npm run lint:js` and `composer test` pass.
+   The integration suite needs the WordPress test library — see `tests/README.md`.
 4. Open a pull request against `main`. The CI workflow will run automatically.
 
 ## License

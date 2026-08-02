@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Initial public release.
+- Printable kennel cards. **Pets → Kennel Cards** filters to the animals
+  currently available, and prints the selected ones four to a sheet, two to a
+  sheet, or one per page. The sheet renders on the admin screen and print CSS
+  hides everything WordPress wraps around it.
+- The card's design is a `kennel-card` block template part rather than markup
+  in PHP, so it is edited in the Site Editor and every field on it is a block
+  binding. **Edit card design** deep-links straight to that one part. Its
+  layout follows the card Petfinder used to print, which is the format the
+  shelters that relied on it already know.
 - Manual pet entry: every field a sync would supply can be entered by hand from
   grouped panels in the editor sidebar, so the plugin works with no Petstablished
   account at all. Field list, grouping and control types come from
