@@ -108,6 +108,76 @@
 	display: none;
 }
 
+/* ── Card layout ────────────────────────────────────────────────────────── */
+
+/*
+ * Follows the information architecture of the Petfinder card the shelter used
+ * before that feature was withdrawn: identity top-left, attribute rows beneath,
+ * photo right, contact and listing link in a footer.
+ *
+ * Deliberately NOT their visual identity — the ribbon takes the theme's accent
+ * colour and the footer uses the site's own name, so the card is the shelter's
+ * rather than a copy of someone else's branding.
+ */
+
+.kennel-card__top {
+	gap: 16px;
+	margin-bottom: 12px;
+}
+
+.kennel-card__name {
+	margin: 0 0 0.35em;
+	font-size: 2.1em;
+	line-height: 1.05;
+}
+
+.kennel-card__banner {
+	display: inline-block;
+	margin: 0 0 6px;
+	padding: 4px 16px;
+	background: var( --wp--preset--color--primary, #0e7e76 );
+	color: #fff;
+	font-weight: 700;
+	font-size: 1.05em;
+	letter-spacing: 0.02em;
+	border-radius: 3px;
+}
+
+.kennel-card__photo img {
+	width: 100%;
+	height: auto;
+	object-fit: cover;
+}
+
+.kennel-card__attributes,
+.kennel-card__health {
+	font-size: 0.95em;
+}
+
+.kennel-card__footer {
+	margin-top: 14px;
+	padding-top: 10px;
+	border-top: 1px solid #c3c4c7;
+	font-size: 0.82em;
+}
+
+.kennel-card__org {
+	font-weight: 700;
+}
+
+.kennel-card__contact,
+.kennel-card__more {
+	margin: 0.15em 0;
+	color: #50575e;
+}
+
+.kennel-card__url {
+	margin: 0.15em 0;
+	overflow-wrap: anywhere;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 0.95em;
+}
+
 /* ── Print ──────────────────────────────────────────────────────────────── */
 
 @media print {

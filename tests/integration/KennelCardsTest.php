@@ -35,6 +35,31 @@ final class KennelCardsTest extends PetTestCase {
 			->invoke( $this->cards, ...$args );
 	}
 
+	/**
+	 * The card carries the information Petfinder's did, since that is the
+	 * format the shelter asked to keep: identity, the attribute rows, health,
+	 * a photo, and where to find the listing.
+	 */
+	public function test_the_card_carries_the_expected_information(): void {
+		$id = $this->make_synced_pet(
+			array(
+				'name'          => 'Switzel',
+				'is_spayed'     => 'Yes',
+				'primary_breed' => 'Mixed Breed',
+			)
+		);
+		wp_set_object_terms( $id, 'mixed-breed', 'pet_breed' );
+		wp_set_object_terms( $id, 'senior', 'pet_age' );
+		wp_set_object_terms( $id, 'male', 'pet_sex' );
+
+		$html = strtolower( $this->call( 'render_card', $id ) );
+
+		$this->assertStringContainsString( 'switzel', $html, 'name' );
+		$this->assertStringContainsString( 'breed', $html, 'attribute rows' );
+		$this->assertStringContainsString( 'spayed', $html, 'health' );
+		$this->assertStringContainsString( get_permalink( $id ), $html, 'where to find the listing' );
+	}
+
 	public function test_the_card_design_resolves(): void {
 		$template = $this->call( 'get_card_template' );
 
@@ -52,22 +77,29 @@ final class KennelCardsTest extends PetTestCase {
 			)
 		);
 		wp_set_object_terms( $id, 'dog', 'pet_animal' );
+		// The attribute rows read taxonomy terms, which the real sync writes
+		// separately from the snapshot.
+		wp_set_object_terms( $id, 'Pit Bull Terrier', 'pet_breed' );
 
 		$html = $this->call( 'render_card', $id );
 
 		$this->assertNotEmpty( $html );
+		// Assert on the name and on pet data generally, not on one field's
+		// presence — the design is a template part the shelter edits, so any
+		// particular field is their choice rather than a contract.
 		$this->assertStringContainsString( 'Boris', $html, 'the name binding must resolve' );
-		$this->assertStringContainsString( '$150', $html, 'the formatted fee binding must resolve' );
+		$this->assertStringContainsString( 'Pit Bull Terrier', $html, 'pet data must reach the card' );
 	}
 
 	public function test_a_hand_entered_pet_renders_too(): void {
 		$id = $this->make_manual_pet( array( 'post_title' => 'Clover' ) );
-		update_post_meta( $id, $this->prefix . 'adoption_fee', '75' );
+		update_post_meta( $id, $this->prefix . 'spayed_neutered', 'yes' );
+		wp_set_object_terms( $id, 'beagle', 'pet_breed' );
 
 		$html = $this->call( 'render_card', $id );
 
 		$this->assertStringContainsString( 'Clover', $html );
-		$this->assertStringContainsString( '$75', $html, 'manual entry must reach the card, not just synced data' );
+		$this->assertStringContainsString( 'beagle', strtolower( $html ), 'manual entry must reach the card, not just synced data' );
 	}
 
 	/**
