@@ -1,12 +1,12 @@
 <?php
 /**
- * Petstablished Block Variations
+ * Shelter Pets Block Variations
  *
  * Registers block variations for core blocks pre-configured with pet data bindings.
  * These "Pet Name", "Pet Breed", etc. variations can be inserted anywhere the
  * petsync/pet-data binding source is available.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Petstablished_Variations {
+class Petsync_Variations {
 
 	/**
 	 * Variation definitions organized by core block type.
@@ -565,14 +565,14 @@ class Petstablished_Variations {
 			'simple'           => $this->build_simple_variations(),
 			'groups'           => $this->build_group_variations(),
 			'source'           => 'petsync/pet-data',
-			'placeholderImage' => PETSTABLISHED_SYNC_URL . 'assets/images/pet-placeholder.svg',
+			'placeholderImage' => PETSYNC_URL . 'assets/images/pet-placeholder.svg',
 		);
 
 		wp_enqueue_script(
 			'petstablished-variations',
-			PETSTABLISHED_SYNC_URL . 'assets/js/variations.js',
+			PETSYNC_URL . 'assets/js/variations.js',
 			array( 'wp-blocks', 'wp-dom-ready', 'wp-element', 'wp-i18n' ),
-			PETSTABLISHED_SYNC_VERSION,
+			PETSYNC_VERSION,
 			true
 		);
 

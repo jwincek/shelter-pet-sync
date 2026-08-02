@@ -5,19 +5,19 @@
  * Reads ability definitions from config/abilities.json and registers them
  * with the WordPress 6.9 Abilities API. Callbacks are resolved by convention:
  *
- *   'petsync/toggle-favorite' → Petstablished\Abilities\Favorites\toggle()
- *   'petsync/list-pets'       → Petstablished\Abilities\Pets\list_pets()
- *   'petsync/get-comparison'  → Petstablished\Abilities\Comparison\get()
+ *   'petsync/toggle-favorite' → Petsync\Abilities\Favorites\toggle()
+ *   'petsync/list-pets'       → Petsync\Abilities\Pets\list_pets()
+ *   'petsync/get-comparison'  → Petsync\Abilities\Comparison\get()
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Abilities;
+namespace Petsync\Abilities;
 
-use Petstablished\Core\Config;
+use Petsync\Core\Config;
 
 class Provider {
 
@@ -79,7 +79,7 @@ class Provider {
 	 * @since 1.0.0
 	 */
 	private static function load_callback_files(): void {
-		$base = PETSTABLISHED_SYNC_DIR . 'includes/abilities/';
+		$base = PETSYNC_DIR . 'includes/abilities/';
 
 		foreach ( self::$callback_files as $group => $file ) {
 			$path = $base . $file;
@@ -140,7 +140,7 @@ class Provider {
 	 * Convention: 'petsync/toggle-favorite' →
 	 *   1. Look up file group: 'favorites'
 	 *   2. Derive function: 'toggle' (strip common prefixes like 'get-', 'list-', 'batch-get-')
-	 *   3. Full callable: 'Petstablished\Abilities\Favorites\toggle'
+	 *   3. Full callable: 'Petsync\Abilities\Favorites\toggle'
 	 *
 	 * Special cases are handled by explicit name-to-function mapping.
 	 *
@@ -152,18 +152,18 @@ class Provider {
 	private static function resolve_callback( string $name ): ?callable {
 		// Explicit function mappings for non-obvious names.
 		$explicit_map = [
-			'petsync/get-pet'            => 'Petstablished\\Abilities\\Pets\\get',
-			'petsync/list-pets'          => 'Petstablished\\Abilities\\Pets\\list_pets',
-			'petsync/filter-pets'        => 'Petstablished\\Abilities\\Pets\\filter_pets',
-			'petsync/batch-get-pets'     => 'Petstablished\\Abilities\\Pets\\batch_get',
-			'petsync/get-filter-options' => 'Petstablished\\Abilities\\Pets\\get_filter_options',
-			'petsync/get-adoption-stats' => 'Petstablished\\Abilities\\Stats\\get_adoption_stats',
-			'petsync/toggle-favorite'    => 'Petstablished\\Abilities\\Favorites\\toggle',
-			'petsync/get-favorites'      => 'Petstablished\\Abilities\\Favorites\\get_favorites',
-			'petsync/clear-favorites'    => 'Petstablished\\Abilities\\Favorites\\clear_all',
-			'petsync/update-comparison'  => 'Petstablished\\Abilities\\Comparison\\update',
-			'petsync/get-comparison'     => 'Petstablished\\Abilities\\Comparison\\get_comparison',
-			'petsync/set-pet-gallery'    => 'Petstablished\\Abilities\\Gallery\\set_gallery',
+			'petsync/get-pet'            => 'Petsync\\Abilities\\Pets\\get',
+			'petsync/list-pets'          => 'Petsync\\Abilities\\Pets\\list_pets',
+			'petsync/filter-pets'        => 'Petsync\\Abilities\\Pets\\filter_pets',
+			'petsync/batch-get-pets'     => 'Petsync\\Abilities\\Pets\\batch_get',
+			'petsync/get-filter-options' => 'Petsync\\Abilities\\Pets\\get_filter_options',
+			'petsync/get-adoption-stats' => 'Petsync\\Abilities\\Stats\\get_adoption_stats',
+			'petsync/toggle-favorite'    => 'Petsync\\Abilities\\Favorites\\toggle',
+			'petsync/get-favorites'      => 'Petsync\\Abilities\\Favorites\\get_favorites',
+			'petsync/clear-favorites'    => 'Petsync\\Abilities\\Favorites\\clear_all',
+			'petsync/update-comparison'  => 'Petsync\\Abilities\\Comparison\\update',
+			'petsync/get-comparison'     => 'Petsync\\Abilities\\Comparison\\get_comparison',
+			'petsync/set-pet-gallery'    => 'Petsync\\Abilities\\Gallery\\set_gallery',
 		];
 
 		if ( isset( $explicit_map[ $name ] ) ) {

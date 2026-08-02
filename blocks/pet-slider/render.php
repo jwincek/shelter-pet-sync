@@ -16,7 +16,7 @@
  * and age group, excluding the current pet. Adapts display based on
  * result count (cards for 1-3, slider for 4+).
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -73,7 +73,7 @@ if ( $similar_pets_mode ) {
 			}
 		}
 		if ( ! $current_pet ) {
-			$current_pet = \Petstablished\Core\Pet_Hydrator::get( $current_post_id );
+			$current_pet = \Petsync\Core\Pet_Hydrator::get( $current_post_id );
 		}
 
 		if ( $current_pet ) {
@@ -133,7 +133,7 @@ if ( $list_ability ) {
 
 // Fallback: direct query builder (ability unavailable or failed).
 if ( empty( $pets ) ) {
-	$query = \Petstablished\Core\Query::for( 'vcps_pet' )
+	$query = \Petsync\Core\Query::for( 'vcps_pet' )
 		->status( 'available' );
 
 	if ( ! empty( $filter_animal ) ) {
@@ -262,7 +262,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 					>
 						<?php echo esc_html( $archive_link_text ); ?>
 						<?php
-						Petstablished_Icons::render(
+						Petsync_Icons::render(
 							'arrow-right',
 							array(
 								'width'  => 16,
@@ -293,7 +293,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 				>
 					<?php echo esc_html( $archive_link_text ); ?>
 					<?php
-					Petstablished_Icons::render(
+					Petsync_Icons::render(
 						'arrow-right',
 						array(
 							'width'  => 16,
@@ -347,7 +347,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 									aria-label="<?php esc_attr_e( 'Add to favorites', 'shelter-pets' ); ?>"
 								>
 									<?php
-									echo Petstablished_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
+									echo Petsync_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
 										array(
 											'width'  => 24,
 											'height' => 24,
@@ -364,7 +364,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 									aria-label="<?php esc_attr_e( 'Add to comparison', 'shelter-pets' ); ?>"
 								>
 									<?php
-									Petstablished_Icons::render(
+									Petsync_Icons::render(
 										'compare-grid',
 										array(
 											'width'  => 24,
@@ -406,7 +406,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 							>
 								<?php esc_html_e( 'Meet Me', 'shelter-pets' ); ?>
 								<?php
-								Petstablished_Icons::render(
+								Petsync_Icons::render(
 									'arrow-right',
 									array(
 										'width'  => 14,
@@ -441,7 +441,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 						>
 							<?php esc_html_e( 'Meet Me', 'shelter-pets' ); ?>
 							<?php
-							Petstablished_Icons::render(
+							Petsync_Icons::render(
 								'arrow-right',
 								array(
 									'width'  => 16,
@@ -484,7 +484,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 					>
 						<?php echo esc_html( $archive_link_text ); ?>
 						<?php
-						Petstablished_Icons::render(
+						Petsync_Icons::render(
 							'arrow-right',
 							array(
 								'width'  => 16,
@@ -509,7 +509,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 					>
 						<?php echo esc_html( $archive_link_text ); ?>
 						<?php
-						Petstablished_Icons::render(
+						Petsync_Icons::render(
 							'arrow-right',
 							array(
 								'width'  => 16,
@@ -545,7 +545,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 				aria-label="<?php esc_attr_e( 'Previous pet', 'shelter-pets' ); ?>"
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'chevron-left',
 					array(
 						'width'  => 24,
@@ -561,7 +561,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 				aria-label="<?php esc_attr_e( 'Next pet', 'shelter-pets' ); ?>"
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'chevron-right',
 					array(
 						'width'  => 24,
@@ -591,7 +591,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 				>
 					<?php echo esc_html( $archive_link_text ); ?>
 					<?php
-					Petstablished_Icons::render(
+					Petsync_Icons::render(
 						'arrow-right',
 						array(
 							'width'  => 16,

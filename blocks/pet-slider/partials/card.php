@@ -17,7 +17,7 @@
  *   $slide_class        (string) CSS classes for the <article> wrapper.
  *   $slide_directives   (string) Extra data-wp-* attributes for the <article>.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -70,7 +70,7 @@ $badge_pos = $badge_position ?? 'image-top';
 					<?php foreach ( $badges as $badge ) : ?>
 						<span class="pet-slider__badge <?php echo esc_attr( $badge['class'] ); ?>">
 							<?php
-							Petstablished_Icons::render(
+							Petsync_Icons::render(
 								$badge['icon'],
 								array(
 									'width'  => 12,
@@ -97,7 +97,7 @@ $badge_pos = $badge_position ?? 'image-top';
 							<?php foreach ( $badges as $badge ) : ?>
 								<span class="pet-slider__badge <?php echo esc_attr( $badge['class'] ); ?>">
 									<?php
-									Petstablished_Icons::render(
+									Petsync_Icons::render(
 										$badge['icon'],
 										array(
 											'width'  => 12,
@@ -119,7 +119,7 @@ $badge_pos = $badge_position ?? 'image-top';
 							<?php foreach ( $badges as $badge ) : ?>
 								<span class="pet-slider__badge <?php echo esc_attr( $badge['class'] ); ?>">
 									<?php
-									Petstablished_Icons::render(
+									Petsync_Icons::render(
 										$badge['icon'],
 										array(
 											'width'  => 12,
@@ -143,7 +143,7 @@ $badge_pos = $badge_position ?? 'image-top';
 						<?php foreach ( $badges as $badge ) : ?>
 							<span class="pet-slider__badge <?php echo esc_attr( $badge['class'] ); ?>">
 								<?php
-								Petstablished_Icons::render(
+								Petsync_Icons::render(
 									$badge['icon'],
 									array(
 										'width'  => 12,
@@ -180,7 +180,7 @@ $badge_pos = $badge_position ?? 'image-top';
 				aria-label="<?php esc_attr_e( 'Add to favorites', 'shelter-pets' ); ?>"
 			>
 				<?php
-				echo Petstablished_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
+				echo Petsync_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
 					array(
 						'width'  => 18,
 						'height' => 18,
@@ -198,7 +198,7 @@ $badge_pos = $badge_position ?? 'image-top';
 				aria-label="<?php esc_attr_e( 'Add to comparison', 'shelter-pets' ); ?>"
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'compare',
 					array(
 						'width'  => 18,

@@ -1,8 +1,8 @@
 <?php
 /**
- * Petstablished Admin - Settings & Sync UI
+ * Shelter Pets Admin - Settings & Sync UI
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Petstablished_Admin {
+class Petsync_Admin {
 
 	public const OPTION_NAME   = 'petsync_settings';
 	public const PAGE_SLUG     = 'shelter-pets';
@@ -23,7 +23,7 @@ class Petstablished_Admin {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'admin_notices', array( $this, 'display_notices' ) );
-		add_filter( 'plugin_action_links_' . plugin_basename( PETSTABLISHED_SYNC_FILE ), array( $this, 'add_settings_link' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( PETSYNC_FILE ), array( $this, 'add_settings_link' ) );
 	}
 
 	public function add_menu(): void {
@@ -142,7 +142,7 @@ class Petstablished_Admin {
 	 * Centralized so activation and settings-save use the same logic. The
 	 * SCHEDULE_6PM_SKIP_SUNDAY pseudo-interval is implemented on top of WP's
 	 * built-in 'daily' recurrence — anchored to 18:00 in the site timezone,
-	 * with the Sunday short-circuit handled by Petstablished_Sync::run_sync().
+	 * with the Sunday short-circuit handled by Petsync_Sync::run_sync().
 	 */
 	public static function reschedule_cron( bool $auto_sync, string $interval ): void {
 		wp_clear_scheduled_hook( 'petsync_scheduled_sync' );
@@ -445,7 +445,7 @@ class Petstablished_Admin {
 			return;
 		}
 
-		$entries = Petstablished_Sync_Log::all();
+		$entries = Petsync_Sync_Log::all();
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Sync Log', 'shelter-pets' ); ?></h1>
@@ -454,7 +454,7 @@ class Petstablished_Admin {
 				printf(
 					/* translators: %d: maximum number of log entries kept. */
 					esc_html__( 'Records of the most recent %d sync attempts. Newest first.', 'shelter-pets' ),
-					(int) Petstablished_Sync_Log::MAX_ENTRIES
+					(int) Petsync_Sync_Log::MAX_ENTRIES
 				);
 				?>
 			</p>
@@ -651,9 +651,9 @@ class Petstablished_Admin {
 
 		wp_enqueue_style(
 			'petstablished-admin',
-			PETSTABLISHED_SYNC_URL . 'assets/css/admin.css',
+			PETSYNC_URL . 'assets/css/admin.css',
 			array(),
-			PETSTABLISHED_SYNC_VERSION
+			PETSYNC_VERSION
 		);
 	}
 

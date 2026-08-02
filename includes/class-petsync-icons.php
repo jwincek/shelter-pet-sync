@@ -1,11 +1,11 @@
 <?php
 /**
- * Petstablished Icons - Centralized SVG Icon Library
+ * Shelter Pets Icons - Centralized SVG Icon Library
  *
  * Provides a single source of truth for all SVG icons used across blocks.
  * Supports customizable size, stroke width, and additional attributes.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Petstablished_Icons {
+class Petsync_Icons {
 
 	/**
 	 * Default icon attributes.

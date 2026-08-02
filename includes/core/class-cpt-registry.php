@@ -6,15 +6,15 @@
  * Reads from config/post-types.json, config/taxonomies.json, and
  * config/entities.json to auto-register everything at the `init` hook.
  *
- * This replaces the hardcoded Petstablished_CPT class.
+ * This replaces the hardcoded Petsync_CPT class.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since   1.0.0
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Core;
+namespace Petsync\Core;
 
 class CPT_Registry {
 

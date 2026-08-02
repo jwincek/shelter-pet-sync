@@ -6,7 +6,7 @@
  * Uses card layout on mobile, table layout on desktop.
  * Fully integrated with Interactivity API for reactive updates.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +19,7 @@ if ( ! isset( $_GET['compare'] ) || empty( $_GET['compare'] ) ) {
 }
 
 // Get comparison IDs from URL.
-$comparison_ids = Petstablished_Helpers::get_comparison();
+$comparison_ids = Petsync_Helpers::get_comparison();
 
 // If no valid pets to compare, show message and link back.
 if ( empty( $comparison_ids ) ) {
@@ -33,7 +33,7 @@ if ( empty( $comparison_ids ) ) {
 	<div <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?>>
 		<div class="pet-comparison__empty">
 			<?php
-			Petstablished_Icons::render(
+			Petsync_Icons::render(
 				'compare-grid',
 				array(
 					'width'        => 48,
@@ -64,11 +64,11 @@ $pets_query = get_posts(
 	)
 );
 
-$favorites = Petstablished_Helpers::get_favorites();
+$favorites = Petsync_Helpers::get_favorites();
 
 $pets = array_map(
 	function ( $post ) {
-		$data = \Petstablished\Core\Pet_Hydrator::hydrate( $post, 'comparison' );
+		$data = \Petsync\Core\Pet_Hydrator::hydrate( $post, 'comparison' );
 		return $data ?: [];
 	},
 	$pets_query
@@ -195,7 +195,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				data-wp-on--click="actions.copyCompareUrl"
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'share',
 					array(
 						'width'  => 16,
@@ -211,7 +211,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				data-wp-on--click="actions.clearAndRedirect"
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'trash',
 					array(
 						'width'  => 16,
@@ -245,7 +245,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					aria-label="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Remove %s', 'shelter-pets' ), $pet['name'] ) ); ?>"
 				>
 					<?php
-					Petstablished_Icons::render(
+					Petsync_Icons::render(
 						'x',
 						array(
 							'width'  => 16,
@@ -299,7 +299,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 							aria-pressed="<?php echo $is_favorited ? 'true' : 'false'; ?>"
 						>
 							<?php
-								echo Petstablished_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
+								echo Petsync_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
 									array(
 										'width'  => 18,
 										'height' => 18,
@@ -355,7 +355,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 								aria-label="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Remove %s', 'shelter-pets' ), $pet['name'] ) ); ?>"
 							>
 								<?php
-								Petstablished_Icons::render(
+								Petsync_Icons::render(
 									'x',
 									array(
 										'width'        => 12,
@@ -422,7 +422,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 								aria-label="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Favorite %s', 'shelter-pets' ), $pet['name'] ) ); ?>"
 							>
 								<?php
-									echo Petstablished_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
+									echo Petsync_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
 										array(
 											'width'  => 16,
 											'height' => 16,
@@ -452,7 +452,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			?>
 			<a href="<?php echo esc_url( $from_url ); ?>" class="pet-comparison__back-link pet-comparison__back-link--pet">
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'back',
 					array(
 						'width'  => 16,
@@ -475,7 +475,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		<?php endif; ?>
 		<a href="<?php echo esc_url( get_post_type_archive_link( 'vcps_pet' ) ); ?>" class="pet-comparison__back-link">
 			<?php
-			Petstablished_Icons::render(
+			Petsync_Icons::render(
 				'back',
 				array(
 					'width'  => 16,

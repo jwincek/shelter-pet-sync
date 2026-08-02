@@ -28,7 +28,7 @@
  * For counts and text, use petsync::state.favorites.length
  * which the SSR evaluates via the array .length handler (6.8+).
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $position     = $attributes['position'] ?? 'bottom-right';
 $show_compare = $attributes['showCompare'] ?? true;
-$favorites    = Petstablished_Helpers::get_favorites();
+$favorites    = Petsync_Helpers::get_favorites();
 $fav_count    = count( $favorites );
 
 // Enqueue the modal script module so the Interactivity API hydration
@@ -60,7 +60,7 @@ if ( $favorites ) {
 	);
 
 	foreach ( $posts as $post ) {
-		$pet = \Petstablished\Core\Pet_Hydrator::hydrate( $post, 'summary' );
+		$pet = \Petsync\Core\Pet_Hydrator::hydrate( $post, 'summary' );
 		if ( $pet ) {
 			$favorite_pets[] = $pet;
 		}
@@ -227,7 +227,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 								<?php else : ?>
 									<div class="pet-favorites-modal__card-placeholder">
 										<?php
-										Petstablished_Icons::render(
+										Petsync_Icons::render(
 											'paw',
 											array(
 												'width'  => 32,

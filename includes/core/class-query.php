@@ -15,7 +15,7 @@
  *         ->orderBy( 'date', 'DESC' )
  *         ->paginate( 1, 12 );
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since   1.0.0
  */
 
@@ -23,7 +23,7 @@
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Core;
+namespace Petsync\Core;
 
 use WP_Query;
 

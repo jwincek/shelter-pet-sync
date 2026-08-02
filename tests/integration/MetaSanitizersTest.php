@@ -6,17 +6,17 @@
  * the wrong one: it takes the ABSOLUTE value, so -5 silently resolved to
  * attachment 5 — a real, unrelated image rather than a rejected input.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Tests\Integration;
+namespace Petsync\Tests\Integration;
 
 final class MetaSanitizersTest extends PetTestCase {
 
 	public function test_editable_fields_are_registered_as_meta(): void {
-		$entity   = \Petstablished\Core\Config::get_path( 'entities', 'entities.vcps_pet', array() );
+		$entity   = \Petsync\Core\Config::get_path( 'entities', 'entities.vcps_pet', array() );
 		$editable = array_keys( $entity['editable_fields'] ?? array() );
 		$keys     = get_registered_meta_keys( 'post', 'vcps_pet' );
 

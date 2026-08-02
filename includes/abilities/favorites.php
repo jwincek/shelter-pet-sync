@@ -2,19 +2,19 @@
 /**
  * Favorites ability callbacks.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Abilities\Favorites;
+namespace Petsync\Abilities\Favorites;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Petstablished\Core\Pet_Hydrator;
+use Petsync\Core\Pet_Hydrator;
 
 /**
  * Toggle a pet in/out of favorites.
@@ -24,7 +24,7 @@ use Petstablished\Core\Pet_Hydrator;
  */
 function toggle( array $input ): array {
 	$id        = $input['id'];
-	$favorites = \Petstablished_Helpers::get_favorites();
+	$favorites = \Petsync_Helpers::get_favorites();
 	$key       = array_search( $id, $favorites, true );
 
 	if ( false !== $key ) {
@@ -36,7 +36,7 @@ function toggle( array $input ): array {
 	}
 
 	$favorites = array_values( $favorites );
-	\Petstablished_Helpers::save_favorites( $favorites );
+	\Petsync_Helpers::save_favorites( $favorites );
 
 	/**
 	 * Fires after a pet is toggled in/out of favorites.
@@ -62,7 +62,7 @@ function toggle( array $input ): array {
  * @return array
  */
 function clear_all( array $input = [] ): array {
-	\Petstablished_Helpers::save_favorites( [] );
+	\Petsync_Helpers::save_favorites( [] );
 
 	/**
 	 * Fires after all favorites are cleared.
@@ -80,7 +80,7 @@ function clear_all( array $input = [] ): array {
  * @return array
  */
 function get_favorites( array $input = [] ): array {
-	$favorites = \Petstablished_Helpers::get_favorites();
+	$favorites = \Petsync_Helpers::get_favorites();
 	$pets      = [];
 
 	if ( $favorites ) {

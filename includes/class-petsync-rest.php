@@ -18,13 +18,13 @@
  * - GET input is passed as URL-encoded `input` query parameter
  * - Endpoint path ends in /run (matching core pattern)
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since   1.0.0
  */
 
 declare( strict_types = 1 );
 
-class Petstablished_REST {
+class Petsync_REST {
 
 	/**
 	 * Abilities to expose via plugin REST routes.

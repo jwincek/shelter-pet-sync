@@ -27,7 +27,7 @@
  * (no rows left with post_type = 'pet'). Pass `--dry-run` style by
  * leaving DRY_RUN=true below to preview the count without writing.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 // declare( strict_types = 1 );

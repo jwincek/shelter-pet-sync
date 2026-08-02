@@ -7,13 +7,13 @@
  * v4.2.0: Adds favorites-modal and compare-bar script modules.
  * Adds loadOnClientNavigation for cross-page router support.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Blocks;
+namespace Petsync\Blocks;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,14 +38,14 @@ function register_stores(): void {
 		]
 	);
 
-	$comparison     = \Petstablished_Helpers::get_comparison();
+	$comparison     = \Petsync_Helpers::get_comparison();
 	$has_comparison = ! empty( $comparison );
 
 	// === Global Store State ===
 	wp_interactivity_state(
 		'petsync',
 		[
-			'favorites'            => \Petstablished_Helpers::get_favorites(),
+			'favorites'            => \Petsync_Helpers::get_favorites(),
 			'comparison'           => $comparison,
 			'comparisonMax'        => 4,
 			'pets'                 => array(),
@@ -87,24 +87,24 @@ function register_script_modules(): void {
 	// Utils module (shared dependency).
 	wp_register_script_module(
 		'petstablished-utils',
-		PETSTABLISHED_SYNC_URL . 'assets/js/utils.js',
+		PETSYNC_URL . 'assets/js/utils.js',
 		[ '@wordpress/interactivity' ],
-		PETSTABLISHED_SYNC_VERSION
+		PETSYNC_VERSION
 	);
 
 	// Global store module.
 	wp_register_script_module(
 		'petstablished-store',
-		PETSTABLISHED_SYNC_URL . 'assets/js/store.js',
+		PETSYNC_URL . 'assets/js/store.js',
 		[ '@wordpress/interactivity', 'petstablished-utils' ],
-		PETSTABLISHED_SYNC_VERSION
+		PETSYNC_VERSION
 	);
 	wp_enqueue_script_module( 'petstablished-store' );
 
 	// Grid store — interactivity-router is a dynamic dependency.
 	wp_register_script_module(
 		'petstablished-grid',
-		PETSTABLISHED_SYNC_URL . 'assets/js/interactivity/grid.js',
+		PETSYNC_URL . 'assets/js/interactivity/grid.js',
 		[
 			'@wordpress/interactivity',
 			'petstablished-store',
@@ -114,13 +114,13 @@ function register_script_modules(): void {
 				'import' => 'dynamic',
 			],
 		],
-		PETSTABLISHED_SYNC_VERSION
+		PETSYNC_VERSION
 	);
 
 	// Compare bar store — uses the router dynamically for viewComparison.
 	wp_register_script_module(
 		'petstablished-compare-bar',
-		PETSTABLISHED_SYNC_URL . 'assets/js/interactivity/compare-bar.js',
+		PETSYNC_URL . 'assets/js/interactivity/compare-bar.js',
 		[
 			'@wordpress/interactivity',
 			'petstablished-store',
@@ -130,19 +130,19 @@ function register_script_modules(): void {
 				'import' => 'dynamic',
 			],
 		],
-		PETSTABLISHED_SYNC_VERSION
+		PETSYNC_VERSION
 	);
 
 	// Favorites modal store — standalone, no router dependency.
 	wp_register_script_module(
 		'petstablished-favorites-modal',
-		PETSTABLISHED_SYNC_URL . 'assets/js/interactivity/favorites-modal.js',
+		PETSYNC_URL . 'assets/js/interactivity/favorites-modal.js',
 		[
 			'@wordpress/interactivity',
 			'petstablished-store',
 			'petstablished-utils',
 		],
-		PETSTABLISHED_SYNC_VERSION
+		PETSYNC_VERSION
 	);
 
 	/**

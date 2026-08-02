@@ -6,7 +6,7 @@
  * Works without JS as a plain anchor link; enhanced with smooth
  * scroll and show/hide via the Interactivity API.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -35,7 +35,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		aria-label="<?php esc_attr_e( 'Back to top', 'shelter-pets' ); ?>"
 	>
 		<?php
-		Petstablished_Icons::render(
+		Petsync_Icons::render(
 			'chevron-up',
 			array(
 				'width'  => 20,

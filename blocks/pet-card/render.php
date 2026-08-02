@@ -2,7 +2,7 @@
 /**
  * Pet Card Block - Server-side render
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  *
  * @var array    $attributes Block attributes.
@@ -28,7 +28,7 @@ if ( $ability ) {
 		$pet = $result;
 	}
 } else {
-	$pet = \Petstablished\Core\Pet_Hydrator::get( $post_id );
+	$pet = \Petsync\Core\Pet_Hydrator::get( $post_id );
 }
 
 $show_favorite = $attributes['showFavorite'] ?? true;
@@ -92,7 +92,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					data-wp-bind--aria-pressed="state.isFavorited"
 					data-wp-bind--aria-label="state.favoriteLabel"
 				>
-					<?php echo Petstablished_Icons::get_heart_interactive(); /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG. */ ?>
+					<?php echo Petsync_Icons::get_heart_interactive(); /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG. */ ?>
 					<span class="screen-reader-text"><?php esc_html_e( 'Favorite', 'shelter-pets' ); ?></span>
 				</button>
 			<?php endif; ?>
@@ -106,7 +106,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					data-wp-bind--aria-label="state.compareLabel"
 				>
 					<?php
-					Petstablished_Icons::render(
+					Petsync_Icons::render(
 						'compare-grid',
 						array(
 							'width'  => 16,

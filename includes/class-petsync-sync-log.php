@@ -1,10 +1,10 @@
 <?php
 /**
- * Petstablished Sync Log
+ * Shelter Pets Sync Log
  *
  * Rolling per-run audit trail for manual and cron-triggered syncs.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Petstablished_Sync_Log {
+class Petsync_Sync_Log {
 
 	public const OPTION_NAME = 'petsync_sync_log';
 	public const MAX_ENTRIES = 30;

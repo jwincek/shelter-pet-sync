@@ -11,7 +11,7 @@
  * (`editable_fields`), so adding a field is a config change rather than a code
  * change here or in the JavaScript.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since   1.0.0
  */
 
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Petstablished_Pet_Fields {
+class Petsync_Pet_Fields {
 
 	private const HANDLE = 'petsync-pet-fields';
 
@@ -45,9 +45,9 @@ class Petstablished_Pet_Fields {
 
 		wp_enqueue_script(
 			self::HANDLE,
-			PETSTABLISHED_SYNC_URL . 'assets/js/pet-fields.js',
+			PETSYNC_URL . 'assets/js/pet-fields.js',
 			array( 'wp-plugins', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-core-data', 'wp-i18n', 'wp-block-editor' ),
-			PETSTABLISHED_SYNC_VERSION,
+			PETSYNC_VERSION,
 			true
 		);
 
@@ -60,7 +60,7 @@ class Petstablished_Pet_Fields {
 	 * @return array
 	 */
 	private function get_panel_config(): array {
-		$entity   = \Petstablished\Core\Config::get_path( 'entities', 'entities.vcps_pet', array() );
+		$entity   = \Petsync\Core\Config::get_path( 'entities', 'entities.vcps_pet', array() );
 		$prefix   = $entity['meta_prefix'] ?? '_pet_';
 		$editable = $entity['editable_fields'] ?? array();
 		$groups   = $entity['editable_field_groups'] ?? array();

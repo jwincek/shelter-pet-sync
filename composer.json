@@ -1,6 +1,6 @@
 {
     "name": "jwincek/shelter-pets",
-    "description": "Sync adoptable pets from Petstablished into WordPress using the Abilities API, Block Bindings, and Interactivity API.",
+    "description": "Adoptable pet listings and printable kennel cards for animal shelters, with optional sync from Petstablished.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "require": {

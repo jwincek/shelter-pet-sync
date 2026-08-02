@@ -14,7 +14,7 @@
  * fixed slots with data-wp-bind directives that reference indexed state.
  * The global store's comparison array + pets cache drive the reactivity.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,7 +27,7 @@ if ( isset( $_GET['compare'] ) && ! empty( $_GET['compare'] ) ) {
 }
 
 $position    = $attributes['position'] ?? 'bottom';
-$comparison  = Petstablished_Helpers::get_comparison();
+$comparison  = Petsync_Helpers::get_comparison();
 $max_compare = 4;
 $archive_url = get_post_type_archive_link( 'vcps_pet' ) ?: home_url( '/pets/' );
 
@@ -48,7 +48,7 @@ if ( $comparison ) {
 		$pet_data                   = array(
 			'id'    => $post->ID,
 			'name'  => $post->post_title,
-			'image' => Petstablished_Helpers::get_image( $post->ID, 'thumbnail' ),
+			'image' => Petsync_Helpers::get_image( $post->ID, 'thumbnail' ),
 			'url'   => get_permalink( $post->ID ),
 		);
 		$compared_pets[ $post->ID ] = $pet_data;
@@ -118,7 +118,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		aria-label="<?php esc_attr_e( 'Show comparison bar', 'shelter-pets' ); ?>"
 	>
 		<?php
-		Petstablished_Icons::render(
+		Petsync_Icons::render(
 			'compare',
 			array(
 				'width'  => 14,
@@ -147,7 +147,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				aria-label="<?php esc_attr_e( 'Minimize comparison bar', 'shelter-pets' ); ?>"
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'chevron-down',
 					array(
 						'width'  => 16,
@@ -224,7 +224,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 							<?php echo $pet ? '' : 'hidden'; ?>
 						>
 						<?php
-						Petstablished_Icons::render(
+						Petsync_Icons::render(
 							'x',
 							array(
 								'width'  => 10,
@@ -268,7 +268,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				title="<?php esc_attr_e( 'Copy share link', 'shelter-pets' ); ?>"
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'share',
 					array(
 						'width'  => 16,

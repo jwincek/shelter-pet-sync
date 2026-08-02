@@ -14,7 +14,7 @@
  * <h1 class="wp-block-heading">Pet Name</h1>
  * <!-- /wp:heading -->
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -41,7 +41,7 @@ if ( ! $has_valid_pet ) {
 	<article <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?>>
 		<div class="pet-details__placeholder">
 			<?php
-			Petstablished_Icons::render(
+			Petsync_Icons::render(
 				'paw',
 				array(
 					'width'        => 48,
@@ -63,7 +63,7 @@ if ( ! $has_valid_pet ) {
 }
 
 // Shared helper: Abilities API → Hydrator fallback (per-request cached).
-$pet = petstablished_get_pet( (int) $post_id );
+$pet = petsync_get_pet( (int) $post_id );
 
 if ( ! $pet ) {
 	return;

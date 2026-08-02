@@ -1,7 +1,7 @@
 /**
  * Pet Favorites Modal Block - View Script Module
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 4.2.0
  */
 

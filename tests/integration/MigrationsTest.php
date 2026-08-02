@@ -7,12 +7,12 @@
  * that matters, because relabelling a pet nobody asked to relabel is worse
  * than leaving it alone.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Tests\Integration;
+namespace Petsync\Tests\Integration;
 
 final class MigrationsTest extends PetTestCase {
 
@@ -35,7 +35,7 @@ final class MigrationsTest extends PetTestCase {
 		petsync_migrate_2_provider_meta();
 
 		$this->assertSame(
-			\Petstablished_Sync::PROVIDER,
+			\Petsync_Sync::PROVIDER,
 			get_post_meta( $imported, $this->prefix . 'provider', true )
 		);
 	}

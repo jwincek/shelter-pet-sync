@@ -11,14 +11,14 @@
  * These assert an upper bound rather than an exact count, so ordinary changes
  * do not churn the test — but a per-pet query reappearing will blow through it.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Tests\Integration;
+namespace Petsync\Tests\Integration;
 
-use Petstablished\Core\Pet_Hydrator;
+use Petsync\Core\Pet_Hydrator;
 
 final class HydrationQueryCountTest extends PetTestCase {
 

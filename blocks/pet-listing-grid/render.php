@@ -16,14 +16,14 @@
  * - Router region wraps the grid for server-driven filter navigation
  * - Search highlighting via data-wp-watch on the grid container
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Petstablished\Core\Pet_Hydrator;
+use Petsync\Core\Pet_Hydrator;
 
 // Don't render listing grid when viewing comparison.
 if ( isset( $_GET['compare'] ) && ! empty( $_GET['compare'] ) ) {
@@ -190,8 +190,8 @@ foreach ( $pets as $pet ) {
 }
 
 // === Persisted State ===
-$favorites  = Petstablished_Helpers::get_favorites();
-$comparison = Petstablished_Helpers::get_comparison();
+$favorites  = Petsync_Helpers::get_favorites();
+$comparison = Petsync_Helpers::get_comparison();
 
 // === Router Region ID ===
 $region_id = 'pet-grid';
@@ -256,49 +256,49 @@ $inner_attributes = sprintf(
 
 // === Compatibility Filters Config ===
 $compat_icons = array(
-	'goodWithDogs'   => Petstablished_Icons::get(
+	'goodWithDogs'   => Petsync_Icons::get(
 		'dog',
 		array(
 			'width'  => 16,
 			'height' => 16,
 		)
 	),
-	'goodWithCats'   => Petstablished_Icons::get(
+	'goodWithCats'   => Petsync_Icons::get(
 		'cat',
 		array(
 			'width'  => 16,
 			'height' => 16,
 		)
 	),
-	'goodWithKids'   => Petstablished_Icons::get(
+	'goodWithKids'   => Petsync_Icons::get(
 		'child',
 		array(
 			'width'  => 16,
 			'height' => 16,
 		)
 	),
-	'shotsCurrent'   => Petstablished_Icons::get(
+	'shotsCurrent'   => Petsync_Icons::get(
 		'shield-check',
 		array(
 			'width'  => 16,
 			'height' => 16,
 		)
 	),
-	'spayedNeutered' => Petstablished_Icons::get(
+	'spayedNeutered' => Petsync_Icons::get(
 		'check',
 		array(
 			'width'  => 16,
 			'height' => 16,
 		)
 	),
-	'housebroken'    => Petstablished_Icons::get(
+	'housebroken'    => Petsync_Icons::get(
 		'house',
 		array(
 			'width'  => 16,
 			'height' => 16,
 		)
 	),
-	'specialNeeds'   => Petstablished_Icons::get(
+	'specialNeeds'   => Petsync_Icons::get(
 		'heart-special',
 		array(
 			'width'  => 16,
@@ -464,7 +464,7 @@ $filter_config = array(
 								aria-label="<?php esc_attr_e( 'Search', 'shelter-pets' ); ?>"
 							>
 								<?php
-								Petstablished_Icons::render(
+								Petsync_Icons::render(
 									'search',
 									array(
 										'width'  => 16,
@@ -594,7 +594,7 @@ $filter_config = array(
 									<span class="pet-listing-grid__compat-summary-count"><?php echo esc_html( $active_compat_count ); ?></span>
 								<?php endif; ?>
 								<?php
-								Petstablished_Icons::render(
+								Petsync_Icons::render(
 									'chevron-down',
 									array(
 										'width'  => 16,
@@ -625,7 +625,7 @@ $filter_config = array(
 											aria-pressed="<?php echo $url_compat[ $key ] ? 'true' : 'false'; ?>"
 											data-wp-bind--aria-pressed="context.compatFilters.<?php echo esc_attr( $key ); ?>"
 										>
-											<span class="pet-listing-grid__compat-chip-icon" aria-hidden="true"><?php echo $filter['icon']; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static plugin SVG from Petstablished_Icons. */ ?></span>
+											<span class="pet-listing-grid__compat-chip-icon" aria-hidden="true"><?php echo $filter['icon']; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static plugin SVG from Petsync_Icons. */ ?></span>
 											<span class="pet-listing-grid__compat-chip-label"><?php echo esc_html( $filter['label'] ); ?></span>
 											<span class="pet-listing-grid__compat-chip-count">(<?php echo esc_html( $count ); ?>)</span>
 										</button>
@@ -638,7 +638,7 @@ $filter_config = array(
 												data-compat-key="<?php echo esc_attr( $key ); ?>"
 												<?php checked( $url_compat[ $key ] ); ?>
 											>
-											<span class="pet-listing-grid__compat-checkbox-icon" aria-hidden="true"><?php echo $filter['icon']; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static plugin SVG from Petstablished_Icons. */ ?></span>
+											<span class="pet-listing-grid__compat-checkbox-icon" aria-hidden="true"><?php echo $filter['icon']; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static plugin SVG from Petsync_Icons. */ ?></span>
 											<span class="pet-listing-grid__compat-checkbox-label"><?php echo esc_html( $filter['label'] ); ?></span>
 											<span class="pet-listing-grid__compat-checkbox-count">(<?php echo esc_html( $count ); ?>)</span>
 										</label>
@@ -838,7 +838,7 @@ $filter_config = array(
 						<?php else : ?>
 							<div class="pet-listing-grid__card-placeholder">
 								<?php
-								Petstablished_Icons::render(
+								Petsync_Icons::render(
 									'paw',
 									array(
 										'width'        => 48,
@@ -950,7 +950,7 @@ $filter_config = array(
 								aria-label="<?php esc_attr_e( 'Toggle favorite', 'shelter-pets' ); ?>"
 							>
 								<?php
-								echo Petstablished_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
+								echo Petsync_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
 									array(),
 									"state.isFavorited ? 'currentColor' : 'none'",
 									$is_favorited ? 'currentColor' : 'none'
@@ -967,7 +967,7 @@ $filter_config = array(
 								data-wp-bind--disabled="state.isCompareDisabled"
 							>
 								<?php
-								Petstablished_Icons::render(
+								Petsync_Icons::render(
 									'compare',
 									array(
 										'width'  => 16,

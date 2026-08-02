@@ -5,7 +5,7 @@
  * Renders a breadcrumb trail: Home › Adoptable Pets › Pet Name.
  * Plain HTML — no core/button wrapper, no specificity issues.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -19,7 +19,7 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 	return;
 }
 
-$pet = petstablished_get_pet( (int) $post_id );
+$pet = petsync_get_pet( (int) $post_id );
 if ( ! $pet ) {
 	return;
 }

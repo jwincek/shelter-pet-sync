@@ -7,7 +7,7 @@
  * Since 3.0.0: showGallery/showActions attributes removed — InnerBlocks
  * composition controls which sections appear. Breadcrumb added to templates.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 3.0.0
  */
 

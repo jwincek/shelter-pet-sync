@@ -12,13 +12,13 @@
  *   schema properties into the current object (allOf-like behavior).
  * - References are resolved recursively but not circularly.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since   1.0.0
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Core;
+namespace Petsync\Core;
 
 class Config {
 

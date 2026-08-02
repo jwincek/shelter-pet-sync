@@ -8,7 +8,7 @@
  * Values with corresponding taxonomies link to the pet archive filtered
  * by that term (e.g., clicking "Labrador" → /adopt/pets/?filter_breed=labrador).
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -39,18 +39,18 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 }
 
 // Load pet data via Abilities API.
-$pet = petstablished_get_pet( (int) $post_id );
+$pet = petsync_get_pet( (int) $post_id );
 if ( ! $pet ) {
 	return;
 }
 
 // Taxonomy key → WordPress taxonomy slug mapping (for archive links).
-$taxonomy_map = Petstablished_Helpers::TAXONOMIES;
+$taxonomy_map = Petsync_Helpers::TAXONOMIES;
 
 // Pet archive base URL for filter links.
 $archive_url = get_post_type_archive_link( 'vcps_pet' );
 
-// Icon mapping — attribute key → icon name in Petstablished_Icons.
+// Icon mapping — attribute key → icon name in Petsync_Icons.
 $icon_map = array(
 	'breed'        => 'paw',
 	'age'          => 'clock',
@@ -174,7 +174,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			<dt class="pet-attributes__label">
 				<?php if ( $item['icon'] ) : ?>
 					<?php
-					Petstablished_Icons::render(
+					Petsync_Icons::render(
 						$item['icon'],
 						array(
 							'width'        => 14,

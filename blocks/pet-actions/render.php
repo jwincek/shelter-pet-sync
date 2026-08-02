@@ -11,7 +11,7 @@
  *   - Copy link to clipboard
  *   - Direct social links (Facebook, X/Twitter, Email)
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -33,7 +33,7 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 		<div <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?>>
 			<div class="pet-actions__placeholder">
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'heart',
 					array(
 						'width'        => 24,
@@ -52,7 +52,7 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 }
 
 // Shared helper: Abilities API → Hydrator fallback (per-request cached).
-$pet = petstablished_get_pet( (int) $post_id );
+$pet = petsync_get_pet( (int) $post_id );
 if ( ! $pet ) {
 	return;
 }
@@ -125,7 +125,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		?>
 		"
 	>
-		<?php echo Petstablished_Icons::get_heart_interactive(); /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG. */ ?>
+		<?php echo Petsync_Icons::get_heart_interactive(); /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG. */ ?>
 		<span class="pet-actions__label" data-wp-text="state.favoriteButtonText">
 			<?php
 			echo $is_favorited
@@ -159,7 +159,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		"
 	>
 		<?php
-		Petstablished_Icons::render(
+		Petsync_Icons::render(
 			'compare',
 			array(
 				'width'  => 20,
@@ -195,7 +195,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			"
 		>
 			<?php
-			Petstablished_Icons::render(
+			Petsync_Icons::render(
 				'share',
 				array(
 					'width'  => 20,
@@ -225,7 +225,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				hidden
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'share',
 					array(
 						'width'  => 18,
@@ -245,7 +245,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				role="menuitem"
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'link',
 					array(
 						'width'  => 18,
@@ -269,7 +269,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				role="menuitem"
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'facebook',
 					array(
 						'width'  => 18,
@@ -288,7 +288,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				role="menuitem"
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'x-twitter',
 					array(
 						'width'  => 18,
@@ -305,7 +305,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				role="menuitem"
 			>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'mail',
 					array(
 						'width'  => 18,

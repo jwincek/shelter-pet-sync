@@ -6,20 +6,20 @@
  * Each function receives validated input and returns data or WP_Error.
  * Built on the Query Builder and exposes do_action hooks for extensibility.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Abilities\Pets;
+namespace Petsync\Abilities\Pets;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Petstablished\Core\Pet_Hydrator;
-use Petstablished\Core\Query;
+use Petsync\Core\Pet_Hydrator;
+use Petsync\Core\Query;
 use WP_Error;
 
 /**
@@ -93,7 +93,7 @@ function list_pets( array $input = [] ): array {
 
 	// Cursor-based pagination (for infinite scroll).
 	if ( $cursor ) {
-		$cursor_data = \Petstablished_Helpers::decode_cursor( $cursor );
+		$cursor_data = \Petsync_Helpers::decode_cursor( $cursor );
 		if ( $cursor_data ) {
 			$query->withArgs(
 				[
@@ -127,7 +127,7 @@ function list_pets( array $input = [] ): array {
 
 		if ( $has_more && ! empty( $posts ) ) {
 			$last                 = end( $posts );
-			$result['nextCursor'] = \Petstablished_Helpers::encode_cursor( $last->ID, $last->post_date );
+			$result['nextCursor'] = \Petsync_Helpers::encode_cursor( $last->ID, $last->post_date );
 		}
 
 		return $result;
@@ -179,7 +179,7 @@ function filter_pets( array $input = [] ): array {
 
 	// Favorites-only filter.
 	if ( ! empty( $input['showFavoritesOnly'] ) ) {
-		$favorites = \Petstablished_Helpers::get_favorites();
+		$favorites = \Petsync_Helpers::get_favorites();
 		if ( empty( $favorites ) ) {
 			return [
 				'pets'       => [],
@@ -259,7 +259,7 @@ function batch_get( array $input ): array {
  * @return array
  */
 function get_filter_options( array $input = [] ): array {
-	return \Petstablished_Helpers::get_filter_options();
+	return \Petsync_Helpers::get_filter_options();
 }
 
 // ─── Internal Helpers ─────────────────────────────────────────────────
@@ -297,7 +297,7 @@ function build_base_query( array $input ): Query {
  */
 function calculate_filter_counts( array $input, array $all_ids = [] ): array {
 	$counts     = [];
-	$taxonomies = \Petstablished_Helpers::TAXONOMIES;
+	$taxonomies = \Petsync_Helpers::TAXONOMIES;
 
 	foreach ( $taxonomies as $key => $taxonomy ) {
 		$terms = get_terms(
@@ -319,7 +319,7 @@ function calculate_filter_counts( array $input, array $all_ids = [] ): array {
 
 		// Favorites filter.
 		if ( ! empty( $input['showFavoritesOnly'] ) ) {
-			$favorites = \Petstablished_Helpers::get_favorites();
+			$favorites = \Petsync_Helpers::get_favorites();
 			if ( ! empty( $favorites ) ) {
 				$cross_query->whereIn( $favorites );
 			}

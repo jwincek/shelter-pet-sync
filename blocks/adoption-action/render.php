@@ -7,7 +7,7 @@
  *   - pdf: renders a download link for an editor-selected PDF from the media library
  *   - page: links to an editor-selected internal page (e.g. Adoption Resources)
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -21,7 +21,7 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 	return;
 }
 
-$pet = petstablished_get_pet( (int) $post_id );
+$pet = petsync_get_pet( (int) $post_id );
 if ( ! $pet ) {
 	return;
 }
@@ -50,7 +50,7 @@ if ( $form_mode === 'pdf' ) {
 					download
 				>
 					<?php
-					Petstablished_Icons::render(
+					Petsync_Icons::render(
 						'download',
 						array(
 							'width'  => 18,
@@ -87,7 +87,7 @@ if ( $form_mode === 'pdf' ) {
 			>
 				<span><?php echo esc_html( $page_text ); ?></span>
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'arrow-right',
 					array(
 						'width'  => 18,
@@ -116,7 +116,7 @@ if ( $form_mode === 'pdf' ) {
 		>
 			<span><?php echo esc_html( $button_text ); ?></span>
 			<?php
-			Petstablished_Icons::render(
+			Petsync_Icons::render(
 				'external-link',
 				array(
 					'width'  => 18,
