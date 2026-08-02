@@ -63,7 +63,7 @@ Using Petstablished? Instead of step 3, go to **Pets → Sync Settings**, enter 
 
 = Do I need a Petstablished account? =
 
-No. You can add pets by hand from the WordPress editor — name, photo, description, species, breed, age, size, sex and colour, plus adoption fee, health and compatibility details. Every block works the same either way.
+No. You can add pets by hand from the WordPress editor — name, photo, description, species, breed, age, size, sex and color, plus adoption fee, health and compatibility details. Every block works the same either way.
 
 If you do use Petstablished, connect it and your listings are imported and kept up to date automatically.
 
@@ -92,6 +92,16 @@ No. The blocks use the WordPress Interactivity API and ship as ready-to-run sour
 = What happens to my data if I delete the plugin? =
 
 By default, deleting the plugin keeps your data — imported pets, settings, and template customizations all stay in place, so you can delete and reinstall without losing anything. Only temporary state (the sync schedule and caches) is cleaned up. To remove everything on deletion instead, enable **Delete all data when this plugin is deleted** under Pets → Sync Settings first. Imported pets can always be re-fetched with one Sync Now; pets you entered by hand exist only in WordPress, so keep the default unless you mean it.
+
+== Screenshots ==
+
+1. Your adoptable animals on your own site, indexed by search engines and matching your theme. Visitors filter by species, breed, age, size and temperament.
+2. Kennel cards printed straight from the same records that drive the website, four to a sheet. Nothing is retyped, so the card on the kennel and the listing online cannot disagree.
+3. Choose the animals, choose a size, print. Cards for a whole run of kennels in about a minute.
+4. Every animal gets a full page: photo gallery, health, temperament, and a way to apply.
+5. Add an animal by hand — adoption fee, health and temperament in grouped panels in the editor. No platform account is needed for any of it.
+6. Compare animals side by side, so a family can weigh up two dogs without losing track of either.
+7. Already using Petstablished? Connect it and your listings are imported and kept current on a schedule you choose.
 
 == Changelog ==
 
