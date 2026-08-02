@@ -471,6 +471,44 @@ if ( count( $distinct ) > 1 ) {
 	}
 }
 
+// ── Check 9: screenshot captions match the screenshot files ─────────────────
+// WordPress.org pairs `screenshot-N.png` in the SVN assets directory with the
+// Nth line of the readme's Screenshots section. A mismatch does not error
+// anywhere — the captions simply attach to the wrong images, or vanish.
+if ( isset( $readme_src ) ) {
+	$captions = [];
+	if ( preg_match( '/^== Screenshots ==\s*(.*?)(?=^== )/ms', $readme_src, $m ) ) {
+		if ( preg_match_all( '/^\s*(\d+)\.\s+\S/m', $m[1], $cm ) ) {
+			$captions = array_map( 'intval', $cm[1] );
+		}
+	}
+
+	$files = [];
+	foreach ( glob( $root . '/.wordpress-org/screenshot-*.{png,jpg,gif}', GLOB_BRACE ) ?: [] as $shot ) {
+		if ( preg_match( '/screenshot-(\d+)\./', basename( $shot ), $fm ) ) {
+			$files[] = (int) $fm[1];
+		}
+	}
+	sort( $files );
+
+	if ( $captions ) {
+		// Numbering must start at 1 and not skip — WordPress.org stops at the
+		// first gap, so a missing 3 hides 4 onwards.
+		$expected = range( 1, count( $captions ) );
+		if ( $captions !== $expected ) {
+			$add( 'error', 'screenshots', 'Screenshot captions are numbered ' . implode( ',', $captions ) . ' — they must run 1..' . count( $captions ) . ' with no gaps.' );
+		}
+
+		if ( ! $files ) {
+			$add( 'warning', 'screenshots', count( $captions ) . ' screenshot caption(s) written, but no screenshot-N files in .wordpress-org/ yet.' );
+		} elseif ( $files !== $expected ) {
+			$add( 'error', 'screenshots', 'Screenshot files are numbered ' . implode( ',', $files ) . ' but there are ' . count( $captions ) . ' caption(s) — every caption needs a matching file and vice versa.' );
+		}
+	} elseif ( $files ) {
+		$add( 'error', 'screenshots', count( $files ) . ' screenshot file(s) present with no == Screenshots == captions in readme.txt — they would appear unlabelled.' );
+	}
+}
+
 // ── Report ───────────────────────────────────────────────────────────────────
 $errors   = array_filter( $issues, static fn( $i ) => $i['level'] === 'error' );
 $warnings = array_filter( $issues, static fn( $i ) => $i['level'] === 'warning' );
