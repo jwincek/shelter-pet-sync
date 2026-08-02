@@ -4,7 +4,7 @@
  * Entry point for the comparison block's client-side interactivity.
  * Imports the comparison store to register it with the Interactivity API.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 4.3.0
  */
 

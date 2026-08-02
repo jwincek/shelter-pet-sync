@@ -6,7 +6,7 @@
  * grid matching the pet-attributes visual treatment. Positive values link
  * to the pet archive filtered by that compatibility trait.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -37,7 +37,7 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 }
 
 // Shared helper: Abilities API → Hydrator fallback.
-$pet = petstablished_get_pet( (int) $post_id );
+$pet = petsync_get_pet( (int) $post_id );
 if ( ! $pet ) {
 	return;
 }
@@ -165,7 +165,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			<?php endif; ?>
 				<span class="pet-compat__icon" aria-hidden="true">
 					<?php
-					Petstablished_Icons::render(
+					Petsync_Icons::render(
 						$item['icon'],
 						array(
 							'width'  => 20,
@@ -176,7 +176,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				</span>
 				<span class="pet-compat__label"><?php echo esc_html( $item['label'] ); ?></span>
 				<span class="pet-compat__status-badge">
-					<?php Petstablished_Icons::render( $icon_data['name'], $icon_data['attrs'] ); ?>
+					<?php Petsync_Icons::render( $icon_data['name'], $icon_data['attrs'] ); ?>
 					<span class="pet-compat__status-text"><?php echo esc_html( $status_text ); ?></span>
 				</span>
 			<?php if ( $item['link'] ) : ?>

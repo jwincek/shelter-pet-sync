@@ -2,19 +2,19 @@
 /**
  * Comparison ability callbacks.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Abilities\Comparison;
+namespace Petsync\Abilities\Comparison;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Petstablished\Core\Pet_Hydrator;
+use Petsync\Core\Pet_Hydrator;
 
 /**
  * Update comparison list (add, remove, clear, set).
@@ -24,7 +24,7 @@ use Petstablished\Core\Pet_Hydrator;
  */
 function update( array $input ): array {
 	$action   = $input['action'];
-	$ids      = \Petstablished_Helpers::get_comparison();
+	$ids      = \Petsync_Helpers::get_comparison();
 	$max      = 4;
 	$prev_ids = $ids;
 
@@ -45,7 +45,7 @@ function update( array $input ): array {
 			break;
 	}
 
-	\Petstablished_Helpers::save_comparison( $ids );
+	\Petsync_Helpers::save_comparison( $ids );
 
 	/**
 	 * Fires after the comparison list is updated.
@@ -91,7 +91,7 @@ function update( array $input ): array {
  * @return array
  */
 function get_comparison( array $input = [] ): array {
-	$ids  = \Petstablished_Helpers::get_comparison();
+	$ids  = \Petsync_Helpers::get_comparison();
 	$pets = [];
 
 	if ( $ids ) {

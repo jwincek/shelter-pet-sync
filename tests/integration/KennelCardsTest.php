@@ -6,23 +6,23 @@
  * — it is in the seam: resolving the part, establishing post context so the
  * bindings resolve, and putting the global $post back afterwards.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Tests\Integration;
+namespace Petsync\Tests\Integration;
 
-use Petstablished_Kennel_Cards;
+use Petsync_Kennel_Cards;
 use ReflectionMethod;
 
 final class KennelCardsTest extends PetTestCase {
 
-	private Petstablished_Kennel_Cards $cards;
+	private Petsync_Kennel_Cards $cards;
 
 	public function set_up(): void {
 		parent::set_up();
-		$this->cards = new Petstablished_Kennel_Cards();
+		$this->cards = new Petsync_Kennel_Cards();
 	}
 
 	/**
@@ -31,7 +31,7 @@ final class KennelCardsTest extends PetTestCase {
 	 * @return mixed
 	 */
 	private function call( string $method, ...$args ) {
-		return ( new ReflectionMethod( Petstablished_Kennel_Cards::class, $method ) )
+		return ( new ReflectionMethod( Petsync_Kennel_Cards::class, $method ) )
 			->invoke( $this->cards, ...$args );
 	}
 

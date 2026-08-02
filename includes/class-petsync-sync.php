@@ -1,10 +1,10 @@
 <?php
 /**
- * Petstablished Sync Handler
+ * Shelter Pets Sync Handler
  *
  * Handles synchronization of pets from Petstablished API.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Petstablished_Sync {
+class Petsync_Sync {
 
 	private const API_BASE = 'https://petstablished.com/api/v2/public/pets';
 
@@ -57,7 +57,7 @@ class Petstablished_Sync {
 			wp_send_json_error( 'Unauthorized' );
 		}
 
-		$settings = Petstablished_Admin::get_settings();
+		$settings = Petsync_Admin::get_settings();
 
 		if ( empty( $settings['public_key'] ) ) {
 			$this->record_error_run( 'manual', 'Public key not configured' );
@@ -199,8 +199,8 @@ class Petstablished_Sync {
 			$started = (int) ( $session['started'] ?? time() );
 			$ended   = time();
 
-			Petstablished_Sync_Log::record(
-				Petstablished_Sync_Log::build_entry(
+			Petsync_Sync_Log::record(
+				Petsync_Sync_Log::build_entry(
 					$started,
 					$ended,
 					'manual',
@@ -245,8 +245,8 @@ class Petstablished_Sync {
 	private function record_error_run( string $trigger, string $message, ?int $started = null ): void {
 		$ended   = time();
 		$started = $started ?? $ended;
-		Petstablished_Sync_Log::record(
-			Petstablished_Sync_Log::build_entry(
+		Petsync_Sync_Log::record(
+			Petsync_Sync_Log::build_entry(
 				$started,
 				$ended,
 				$trigger,
@@ -261,18 +261,18 @@ class Petstablished_Sync {
 
 	public function run_sync( string $trigger = 'cron' ): bool {
 		$started  = time();
-		$settings = Petstablished_Admin::get_settings();
+		$settings = Petsync_Admin::get_settings();
 
 		// Sunday skip: when the user has chosen the 6pm-skip-Sunday schedule
 		// and this cron run lands on a Sunday in the site timezone, record
 		// the skip and bail. Recording it is intentional — proves to the
 		// user that cron fired and made a deliberate decision.
 		if ( $trigger === 'cron'
-			&& $settings['sync_interval'] === Petstablished_Admin::SCHEDULE_6PM_SKIP_SUNDAY
+			&& $settings['sync_interval'] === Petsync_Admin::SCHEDULE_6PM_SKIP_SUNDAY
 			&& wp_date( 'w' ) === '0'
 		) {
-			Petstablished_Sync_Log::record(
-				Petstablished_Sync_Log::build_entry(
+			Petsync_Sync_Log::record(
+				Petsync_Sync_Log::build_entry(
 					$started,
 					time(),
 					$trigger,
@@ -325,8 +325,8 @@ class Petstablished_Sync {
 			$ended   = time();
 			$outcome = ( empty( $this->stats['errors'] ) && $result['complete'] ) ? 'success' : 'partial';
 
-			Petstablished_Sync_Log::record(
-				Petstablished_Sync_Log::build_entry(
+			Petsync_Sync_Log::record(
+				Petsync_Sync_Log::build_entry(
 					$started,
 					$ended,
 					$trigger,
@@ -615,7 +615,7 @@ class Petstablished_Sync {
 	 * @return string[] Whitelisted API keys.
 	 */
 	public static function get_retained_api_keys(): array {
-		$config = \Petstablished\Core\Config::get_path( 'entities', 'entities.vcps_pet', [] );
+		$config = \Petsync\Core\Config::get_path( 'entities', 'entities.vcps_pet', [] );
 
 		$keys = array();
 		foreach ( $config['api_fields'] ?? array() as $field ) {
@@ -732,7 +732,7 @@ class Petstablished_Sync {
 	 * @return array<string, string> API key => taxonomy slug.
 	 */
 	private static function get_taxonomy_source_map(): array {
-		return (array) \Petstablished\Core\Config::get_path(
+		return (array) \Petsync\Core\Config::get_path(
 			'entities',
 			'entities.vcps_pet.taxonomy_source_map',
 			array()
@@ -770,7 +770,7 @@ class Petstablished_Sync {
 	 * attributes are correctly cleared.
 	 */
 	private function update_attribute_terms( int $post_id, array $data ): void {
-		$config    = \Petstablished\Core\Config::get_path( 'entities', 'entities.vcps_pet', [] );
+		$config    = \Petsync\Core\Config::get_path( 'entities', 'entities.vcps_pet', [] );
 		$attr_map  = $config['attribute_map'] ?? [];
 		$truthy    = $config['attribute_truthy_values'] ?? [ 'yes', 'Yes', '1', 'true' ];
 		$truthy_lc = array_map( 'strtolower', $truthy );

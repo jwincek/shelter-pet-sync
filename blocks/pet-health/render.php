@@ -8,7 +8,7 @@
  * The displayMode attribute selects 'all', 'known' (default), or 'positive';
  * declawed is suppressed for non-cat animals regardless of toggle.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -39,7 +39,7 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 }
 
 // Shared helper: Abilities API → Hydrator fallback.
-$pet = petstablished_get_pet( (int) $post_id );
+$pet = petsync_get_pet( (int) $post_id );
 if ( ! $pet ) {
 	return;
 }
@@ -190,7 +190,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			<span class="pet-health__icon" aria-hidden="true">
 				<?php
 				$icon = $status_icons[ $item['status'] ];
-				Petstablished_Icons::render( $icon['name'], $icon['attrs'] );
+				Petsync_Icons::render( $icon['name'], $icon['attrs'] );
 				?>
 			</span>
 			<span class="pet-health__label"><?php echo esc_html( $item['label'] ); ?></span>

@@ -4,7 +4,7 @@
  * Entry point for the slider block's client-side interactivity.
  * Imports and re-exports from the shared slider module.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 2.1.0
  */
 

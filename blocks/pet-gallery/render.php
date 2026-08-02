@@ -12,7 +12,7 @@
  * Data is loaded via the Abilities API (petsync/get-pet) which
  * shares the per-request cache with other blocks on the page.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -35,7 +35,7 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 		<div <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?>>
 			<div class="pet-gallery__placeholder">
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'image-placeholder',
 					array(
 						'width'        => 48,
@@ -54,7 +54,7 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 }
 
 // Shared helper: Abilities API → Hydrator fallback (per-request cached).
-$pet = petstablished_get_pet( (int) $post_id );
+$pet = petsync_get_pet( (int) $post_id );
 
 if ( ! $pet ) {
 	return;
@@ -120,7 +120,7 @@ if ( ! $has_featured && ! $has_thumbnails ) {
 		<div <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?>>
 			<div class="pet-gallery__placeholder">
 				<?php
-				Petstablished_Icons::render(
+				Petsync_Icons::render(
 					'image-placeholder',
 					array(
 						'width'        => 48,

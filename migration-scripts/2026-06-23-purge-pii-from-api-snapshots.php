@@ -10,7 +10,7 @@
  * coordinates, and internal admin links. The plugin only ever uses ~28 of them.
  *
  * The sync now persists only the display-relevant whitelist
- * (Petstablished_Sync::normalize_api_response()), and the hydrator no longer
+ * (Petsync_Sync::normalize_api_response()), and the hydrator no longer
  * surfaces the raw snapshot at all. This script retroactively slims every
  * snapshot already in the database so the historical PII is removed at rest,
  * and applies the new "don't show in public search" rule to existing rows.
@@ -29,7 +29,7 @@
  * Idempotent: re-running on already-slimmed snapshots is a no-op. Set
  * DRY_RUN to true to report what would change without writing.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 // declare( strict_types = 1 );
@@ -39,8 +39,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 1 );
 }
 
-if ( ! class_exists( 'Petstablished_Sync' ) ) {
-	WP_CLI::error( 'Petstablished_Sync is not loaded — is the plugin active?' );
+if ( ! class_exists( 'Petsync_Sync' ) ) {
+	WP_CLI::error( 'Petsync_Sync is not loaded — is the plugin active?' );
 }
 
 // Flip to true to preview without writing.
@@ -85,7 +85,7 @@ foreach ( $post_ids as $post_id ) {
 		++$unpublished;
 	}
 
-	$slim = Petstablished_Sync::normalize_api_response( $data );
+	$slim = Petsync_Sync::normalize_api_response( $data );
 
 	// Already slim? Skip the write.
 	if ( count( $slim ) === count( $data ) ) {

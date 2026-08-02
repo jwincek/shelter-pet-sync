@@ -11,7 +11,7 @@
  * migrations, meta sanitisation — only exists once WordPress has registered
  * things, so it cannot be covered by the unit suite.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );

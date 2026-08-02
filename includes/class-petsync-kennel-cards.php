@@ -11,7 +11,7 @@
  * already has. This screen only chooses pets and lays the rendered cards out
  * for a printer.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since   1.0.0
  */
 
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Petstablished_Kennel_Cards {
+class Petsync_Kennel_Cards {
 
 	private const PAGE_SLUG = 'petsync-kennel-cards';
 	private const PART_SLUG = 'kennel-card';
@@ -72,9 +72,9 @@ class Petstablished_Kennel_Cards {
 
 		wp_enqueue_style(
 			'petsync-kennel-cards',
-			PETSTABLISHED_SYNC_URL . 'assets/css/kennel-cards.css',
+			PETSYNC_URL . 'assets/css/kennel-cards.css',
 			array(),
-			PETSTABLISHED_SYNC_VERSION
+			PETSYNC_VERSION
 		);
 	}
 
@@ -311,7 +311,7 @@ class Petstablished_Kennel_Cards {
 	/**
 	 * The kennel-card part, preferring a Site Editor customization.
 	 *
-	 * Uses the plural API because that is what Petstablished_Templates filters,
+	 * Uses the plural API because that is what Petsync_Templates filters,
 	 * and its handler already resolves a user's edit before falling back to the
 	 * file shipped with the plugin.
 	 *

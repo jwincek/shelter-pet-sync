@@ -16,13 +16,13 @@
  *   $pets = Pet_Hydrator::hydrate_many( $posts, 'grid' );
  *   $pet  = Pet_Hydrator::hydrate( $post, 'summary' );
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Core;
+namespace Petsync\Core;
 
 use WP_Post;
 
@@ -517,7 +517,7 @@ class Pet_Hydrator {
 			'gallery' => self::compute_gallery( $id ),
 			'gallery_count' => count( self::compute_gallery( $id ) ),
 			'is_new' => self::compute_is_new( $id, $post ),
-			'favorited' => in_array( $id, \Petstablished_Helpers::get_favorites(), true ),
+			'favorited' => in_array( $id, \Petsync_Helpers::get_favorites(), true ),
 			'description' => wp_kses_post( wpautop( $post->post_content ) ),
 			'videos' => self::compute_videos( $entity ),
 			'is_bonded_pair' => self::compute_is_bonded_pair( $id ),

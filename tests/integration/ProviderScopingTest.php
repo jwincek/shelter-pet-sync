@@ -7,12 +7,12 @@
  * side, quietly draft one. Both failures are silent: the pet simply stops
  * being what the shelter typed.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Tests\Integration;
+namespace Petsync\Tests\Integration;
 
 final class ProviderScopingTest extends PetTestCase {
 
@@ -47,7 +47,7 @@ final class ProviderScopingTest extends PetTestCase {
 	public function test_the_lookup_finds_its_own_pet(): void {
 		$id = $this->make_synced_pet( array( 'id' => 12345 ) );
 
-		$this->assertSame( array( $id ), $this->sync_lookup( '12345', \Petstablished_Sync::PROVIDER ) );
+		$this->assertSame( array( $id ), $this->sync_lookup( '12345', \Petsync_Sync::PROVIDER ) );
 	}
 
 	public function test_the_lookup_never_matches_a_hand_entered_pet(): void {
@@ -59,7 +59,7 @@ final class ProviderScopingTest extends PetTestCase {
 
 		$this->assertSame(
 			array(),
-			$this->sync_lookup( '12345', \Petstablished_Sync::PROVIDER ),
+			$this->sync_lookup( '12345', \Petsync_Sync::PROVIDER ),
 			'a pet with no provider must never be claimed by a sync'
 		);
 	}
@@ -72,7 +72,7 @@ final class ProviderScopingTest extends PetTestCase {
 			$this->sync_lookup( '12345', 'shelterluv' ),
 			'record IDs are unique only within a provider'
 		);
-		$this->assertNotEmpty( $this->sync_lookup( '12345', \Petstablished_Sync::PROVIDER ) );
+		$this->assertNotEmpty( $this->sync_lookup( '12345', \Petsync_Sync::PROVIDER ) );
 	}
 
 	/**
@@ -94,7 +94,7 @@ final class ProviderScopingTest extends PetTestCase {
 				'meta_query'  => array(
 					array(
 						'key'   => $this->prefix . 'provider',
-						'value' => \Petstablished_Sync::PROVIDER,
+						'value' => \Petsync_Sync::PROVIDER,
 					),
 				),
 			)
@@ -109,7 +109,7 @@ final class ProviderScopingTest extends PetTestCase {
 		$id = $this->make_synced_pet();
 
 		$this->assertSame(
-			\Petstablished_Sync::PROVIDER,
+			\Petsync_Sync::PROVIDER,
 			get_post_meta( $id, $this->prefix . 'provider', true )
 		);
 	}

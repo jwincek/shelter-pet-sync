@@ -9,15 +9,15 @@
  * children were advertised as good with exactly those — 22 of 93 published
  * pets on the site where it was found.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Tests\Unit;
+namespace Petsync\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Petstablished\Core\Pet_Hydrator;
+use Petsync\Core\Pet_Hydrator;
 use ReflectionMethod;
 
 final class TristateTest extends TestCase {

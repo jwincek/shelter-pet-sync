@@ -25,7 +25,7 @@
  * Editor template customizations and users' saved lists, which is why
  * it is opt-in.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
@@ -125,7 +125,7 @@ function vcps_uninstall_site(): bool {
 
 	// Site Editor customizations of plugin templates, saved under this
 	// plugin's wp_theme term (see
-	// Petstablished_Templates::get_customized_template()); inert without
+	// Petsync_Templates::get_customized_template()); inert without
 	// the plugin.
 	$template_ids = get_posts(
 		array(

@@ -7,20 +7,20 @@
  * gallery is a content operation, so it sits behind `edit_posts` and gives
  * automation the same capability the editor sidebar has.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Abilities\Gallery;
+namespace Petsync\Abilities\Gallery;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Petstablished\Core\Config;
-use Petstablished\Core\Pet_Hydrator;
+use Petsync\Core\Config;
+use Petsync\Core\Pet_Hydrator;
 use WP_Error;
 
 /**

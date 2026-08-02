@@ -6,7 +6,7 @@
  * repeated across every block's render.php. They are intentionally
  * global-namespaced for ergonomic use in templates.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param string $profile Hydration profile: 'full', 'summary', 'grid'.
  * @return array|null Hydrated pet entity or null.
  */
-function petstablished_get_pet( int $post_id, string $profile = 'full' ): ?array {
+function petsync_get_pet( int $post_id, string $profile = 'full' ): ?array {
 	// Abilities API path — validates permissions, fires hooks.
 	if ( function_exists( 'wp_get_ability' ) ) {
 		$ability = wp_get_ability( 'petsync/get-pet' );
@@ -44,5 +44,5 @@ function petstablished_get_pet( int $post_id, string $profile = 'full' ): ?array
 	}
 
 	// Fallback — direct hydration.
-	return \Petstablished\Core\Pet_Hydrator::get( $post_id, $profile );
+	return \Petsync\Core\Pet_Hydrator::get( $post_id, $profile );
 }

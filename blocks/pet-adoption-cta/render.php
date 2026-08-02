@@ -6,7 +6,7 @@
  * is composed from InnerBlocks — primarily native core blocks with Block Bindings
  * and the petsync/adoption-action child block.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 

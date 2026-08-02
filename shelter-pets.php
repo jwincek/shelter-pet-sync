@@ -12,7 +12,7 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: shelter-pets
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
@@ -22,30 +22,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants.
-define( 'PETSTABLISHED_SYNC_VERSION', '1.0.0' );
-define( 'PETSTABLISHED_SYNC_FILE', __FILE__ );
-define( 'PETSTABLISHED_SYNC_DIR', plugin_dir_path( __FILE__ ) );
-define( 'PETSTABLISHED_SYNC_URL', plugin_dir_url( __FILE__ ) );
+define( 'PETSYNC_VERSION', '1.0.0' );
+define( 'PETSYNC_FILE', __FILE__ );
+define( 'PETSYNC_DIR', plugin_dir_path( __FILE__ ) );
+define( 'PETSYNC_URL', plugin_dir_url( __FILE__ ) );
 
 // Autoload classes.
 spl_autoload_register(
 	function ( string $class ): void {
-		// Legacy classes: Petstablished_Foo → includes/class-petstablished-foo.php
-		if ( str_starts_with( $class, 'Petstablished_' ) ) {
-				$file = PETSTABLISHED_SYNC_DIR . 'includes/class-' . strtolower( str_replace( '_', '-', $class ) ) . '.php';
+		// Legacy classes: Petsync_Foo → includes/class-petsync-foo.php
+		if ( str_starts_with( $class, 'Petsync_' ) ) {
+				$file = PETSYNC_DIR . 'includes/class-' . strtolower( str_replace( '_', '-', $class ) ) . '.php';
 			if ( file_exists( $file ) ) {
 				require_once $file;
 				return;
 			}
 		}
 
-		// Namespaced classes: Petstablished\Core\Config → includes/core/class-config.php
-		if ( str_starts_with( $class, 'Petstablished\\' ) ) {
-			$relative = substr( $class, strlen( 'Petstablished\\' ) );
+		// Namespaced classes: Petsync\Core\Config → includes/core/class-config.php
+		if ( str_starts_with( $class, 'Petsync\\' ) ) {
+			$relative = substr( $class, strlen( 'Petsync\\' ) );
 			$parts    = explode( '\\', $relative );
 			$name     = array_pop( $parts ); // Class name.
 			$dir      = strtolower( implode( '/', $parts ) ); // Sub-directory.
-			$file     = PETSTABLISHED_SYNC_DIR . 'includes/' . $dir . '/class-' . strtolower( str_replace( '_', '-', $name ) ) . '.php';
+			$file     = PETSYNC_DIR . 'includes/' . $dir . '/class-' . strtolower( str_replace( '_', '-', $name ) ) . '.php';
 
 			if ( file_exists( $file ) ) {
 				require_once $file;
@@ -66,20 +66,20 @@ register_activation_hook(
 	__FILE__,
 	function (): void {
 		// Initialize config so CPT_Registry can read post-types.json.
-		\Petstablished\Core\Config::init( PETSTABLISHED_SYNC_DIR . 'config/' );
+		\Petsync\Core\Config::init( PETSYNC_DIR . 'config/' );
 
 		// Register CPTs and taxonomies so WP knows about the rewrite rules.
-		\Petstablished\Core\CPT_Registry::register_post_types();
-		\Petstablished\Core\CPT_Registry::register_taxonomies();
+		\Petsync\Core\CPT_Registry::register_post_types();
+		\Petsync\Core\CPT_Registry::register_taxonomies();
 
 		// Flush rewrite rules so /pets/ and taxonomy archives work immediately.
 		flush_rewrite_rules();
 
 		// Schedule cron sync. Route through the shared helper so the 6pm-anchor
 		// and Sunday-skip semantics apply identically at activation and settings save.
-		$settings = Petstablished_Admin::get_settings();
+		$settings = Petsync_Admin::get_settings();
 		if ( ! wp_next_scheduled( 'petsync_scheduled_sync' ) ) {
-			Petstablished_Admin::reschedule_cron( $settings['auto_sync'], $settings['sync_interval'] );
+			Petsync_Admin::reschedule_cron( $settings['auto_sync'], $settings['sync_interval'] );
 		}
 	}
 );
@@ -100,12 +100,12 @@ register_deactivation_hook(
 /**
  * Initialize the plugin.
  */
-function petstablished_sync_init(): void {
+function petsync_init(): void {
 	// Initialize config loader.
-	\Petstablished\Core\Config::init( PETSTABLISHED_SYNC_DIR . 'config/' );
+	\Petsync\Core\Config::init( PETSYNC_DIR . 'config/' );
 
 	// Config-driven CPT, taxonomy, and meta registration.
-	\Petstablished\Core\CPT_Registry::init();
+	\Petsync\Core\CPT_Registry::init();
 
 	// Apply compatibility filters (?compat_goodWithDogs=1 etc.) to the pet
 	// archive / taxonomy main query. Compatibility data lives in the
@@ -120,7 +120,7 @@ function petstablished_sync_init(): void {
 				return;
 			}
 
-			$entities   = \Petstablished\Core\Config::get_item( 'entities', 'entities', [] );
+			$entities   = \Petsync\Core\Config::get_item( 'entities', 'entities', [] );
 			$taxonomies = array_column( $entities['vcps_pet']['taxonomies'] ?? [], 'taxonomy' );
 
 			if ( ! $query->is_post_type_archive( 'vcps_pet' ) && ! $query->is_tax( $taxonomies ) ) {
@@ -128,7 +128,7 @@ function petstablished_sync_init(): void {
 			}
 
 			// camelCase URL key (compat_<key>) => pet_attribute term slug.
-			// Mirrors \Petstablished\Abilities\Pets\COMPAT_MAP and the grid block's URL params.
+			// Mirrors \Petsync\Abilities\Pets\COMPAT_MAP and the grid block's URL params.
 			$compat_map    = [
 				'goodWithDogs'   => 'good-with-dogs',
 				'goodWithCats'   => 'good-with-cats',
@@ -177,14 +177,14 @@ function petstablished_sync_init(): void {
 	);
 
 	// Template helpers — shared functions for block render callbacks.
-	require_once PETSTABLISHED_SYNC_DIR . 'includes/template-helpers.php';
+	require_once PETSYNC_DIR . 'includes/template-helpers.php';
 
 	// Core functionality.
-	new Petstablished_Blocks();
-	new Petstablished_Variations();
-	new Petstablished_Templates();
+	new Petsync_Blocks();
+	new Petsync_Variations();
+	new Petsync_Templates();
 
-	// Config-driven abilities registration (replaces old Petstablished_Abilities class).
+	// Config-driven abilities registration (replaces old Petsync_Abilities class).
 	add_action(
 		'wp_abilities_api_categories_init',
 		function () {
@@ -197,25 +197,25 @@ function petstablished_sync_init(): void {
 			);
 		}
 	);
-	add_action( 'wp_abilities_api_init', [ \Petstablished\Abilities\Provider::class, 'register' ] );
+	add_action( 'wp_abilities_api_init', [ \Petsync\Abilities\Provider::class, 'register' ] );
 
 	// Plugin-scoped REST routes for client-side ability execution.
 	// The core Abilities REST API at /wp-abilities/v1/ requires an authenticated
 	// user for ALL endpoints. Favorites and comparison must work for anonymous
 	// front-end visitors, so we register thin routes that delegate to the
 	// abilities directly while respecting each ability's permission_callback.
-	require_once PETSTABLISHED_SYNC_DIR . 'includes/class-petstablished-rest.php';
-	add_action( 'rest_api_init', [ 'Petstablished_REST', 'register_routes' ] );
+	require_once PETSYNC_DIR . 'includes/class-petsync-rest.php';
+	add_action( 'rest_api_init', [ 'Petsync_REST', 'register_routes' ] );
 
 	// Admin & Sync (admin only).
 	if ( is_admin() ) {
-		new Petstablished_Admin();
-		new Petstablished_Pet_Fields();
-		new Petstablished_Kennel_Cards();
+		new Petsync_Admin();
+		new Petsync_Pet_Fields();
+		new Petsync_Kennel_Cards();
 	}
-	new Petstablished_Sync();
+	new Petsync_Sync();
 }
-add_action( 'plugins_loaded', 'petstablished_sync_init' );
+add_action( 'plugins_loaded', 'petsync_init' );
 
 /**
  * Stored-data schema version this build of the plugin expects.
@@ -297,8 +297,8 @@ function petsync_migrate_1_option_names(): void {
 
 	// Move the scheduled sync to the renamed hook.
 	wp_clear_scheduled_hook( 'petstablished_scheduled_sync' );
-	$settings = Petstablished_Admin::get_settings();
-	Petstablished_Admin::reschedule_cron( (bool) $settings['auto_sync'], $settings['sync_interval'] );
+	$settings = Petsync_Admin::get_settings();
+	Petsync_Admin::reschedule_cron( (bool) $settings['auto_sync'], $settings['sync_interval'] );
 }
 
 /**
@@ -341,7 +341,7 @@ function petsync_migrate_2_provider_meta(): void {
 	);
 
 	foreach ( $pet_ids as $pet_id ) {
-		update_post_meta( $pet_id, '_pet_provider', Petstablished_Sync::PROVIDER );
+		update_post_meta( $pet_id, '_pet_provider', Petsync_Sync::PROVIDER );
 	}
 }
 
@@ -359,7 +359,7 @@ function petsync_migrate_2_provider_meta(): void {
  * nothing is relabelled.
  */
 function petsync_migrate_3_default_status(): void {
-	$taxonomies = \Petstablished\Core\Config::get_item( 'taxonomies', 'taxonomies', array() );
+	$taxonomies = \Petsync\Core\Config::get_item( 'taxonomies', 'taxonomies', array() );
 	$default    = $taxonomies['pet_status']['default_term'] ?? null;
 
 	if ( ! $default ) {

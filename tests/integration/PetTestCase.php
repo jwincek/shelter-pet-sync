@@ -2,15 +2,15 @@
 /**
  * Shared base for pet integration tests.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Tests\Integration;
+namespace Petsync\Tests\Integration;
 
-use Petstablished\Core\CPT_Registry;
-use Petstablished\Core\Pet_Hydrator;
+use Petsync\Core\CPT_Registry;
+use Petsync\Core\Pet_Hydrator;
 use WP_UnitTestCase;
 
 abstract class PetTestCase extends WP_UnitTestCase {
@@ -85,7 +85,7 @@ abstract class PetTestCase extends WP_UnitTestCase {
 		);
 
 		update_post_meta( $id, $this->prefix . 'ps_id', (string) $api['id'] );
-		update_post_meta( $id, $this->prefix . 'provider', \Petstablished_Sync::PROVIDER );
+		update_post_meta( $id, $this->prefix . 'provider', \Petsync_Sync::PROVIDER );
 		update_post_meta( $id, $this->prefix . 'api_response', wp_json_encode( $api ) );
 
 		Pet_Hydrator::flush_cache();

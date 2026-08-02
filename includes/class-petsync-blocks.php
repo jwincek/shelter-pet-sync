@@ -1,6 +1,6 @@
 <?php
 /**
- * Petstablished Blocks - Block Bindings + Interactivity API
+ * Shelter Pets Blocks - Block Bindings + Interactivity API
  *
  * Handles block bindings source registration, interactivity state,
  * and no-build block registration.
@@ -10,7 +10,7 @@
  * - Block stores (petsync/gallery, etc.): Block-specific UI state
  * - viewScriptModule in block.json: Automatic loading when block renders
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Petstablished_Blocks {
+class Petsync_Blocks {
 
 	public const NAMESPACE = 'petsync';
 
@@ -105,7 +105,7 @@ class Petstablished_Blocks {
 			}
 		} else {
 			// Fallback if Abilities API not available (e.g. WP < 6.9).
-			$pet = \Petstablished\Core\Pet_Hydrator::get( $post_id );
+			$pet = \Petsync\Core\Pet_Hydrator::get( $post_id );
 			if ( ! $pet ) {
 				return $this->get_placeholder( $key );
 			}
@@ -208,7 +208,7 @@ class Petstablished_Blocks {
 	// === Block Registration ===
 
 	public function register_blocks(): void {
-		$blocks_dir = PETSTABLISHED_SYNC_DIR . 'blocks/';
+		$blocks_dir = PETSYNC_DIR . 'blocks/';
 
 		foreach ( self::BLOCKS as $block_name ) {
 			$block_path = $blocks_dir . $block_name;
@@ -230,17 +230,17 @@ class Petstablished_Blocks {
 		}
 
 		// Load centralized store registration.
-		require_once PETSTABLISHED_SYNC_DIR . 'includes/blocks/register-stores.php';
+		require_once PETSYNC_DIR . 'includes/blocks/register-stores.php';
 
-		\Petstablished\Blocks\register_script_modules();
-		\Petstablished\Blocks\register_stores();
+		\Petsync\Blocks\register_script_modules();
+		\Petsync\Blocks\register_stores();
 
 		// Enqueue minimal styles.
 		wp_enqueue_style(
 			self::NAMESPACE . '-frontend',
-			PETSTABLISHED_SYNC_URL . 'assets/css/frontend.css',
+			PETSYNC_URL . 'assets/css/frontend.css',
 			array(),
-			PETSTABLISHED_SYNC_VERSION
+			PETSYNC_VERSION
 		);
 	}
 
@@ -251,7 +251,7 @@ class Petstablished_Blocks {
 		}
 
 		// Check pet taxonomy archives.
-		foreach ( Petstablished_Helpers::TAXONOMIES as $taxonomy ) {
+		foreach ( Petsync_Helpers::TAXONOMIES as $taxonomy ) {
 			if ( is_tax( $taxonomy ) ) {
 				return true;
 			}
@@ -296,44 +296,44 @@ class Petstablished_Blocks {
 		// Main blocks registration script.
 		wp_enqueue_script(
 			self::NAMESPACE . '-blocks-editor',
-			PETSTABLISHED_SYNC_URL . 'assets/js/blocks-editor.js',
+			PETSYNC_URL . 'assets/js/blocks-editor.js',
 			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render', 'wp-data', 'wp-core-data' ),
-			PETSTABLISHED_SYNC_VERSION,
+			PETSYNC_VERSION,
 			true
 		);
 
 		// Slider block editor controls.
 		wp_enqueue_script(
 			self::NAMESPACE . '-slider-editor',
-			PETSTABLISHED_SYNC_URL . 'blocks/pet-slider/editor.js',
+			PETSYNC_URL . 'blocks/pet-slider/editor.js',
 			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-hooks', 'wp-compose', 'wp-data' ),
-			PETSTABLISHED_SYNC_VERSION,
+			PETSYNC_VERSION,
 			true
 		);
 
 		// Listing grid block editor controls.
 		wp_enqueue_script(
 			self::NAMESPACE . '-listing-grid-editor',
-			PETSTABLISHED_SYNC_URL . 'blocks/pet-listing-grid/editor.js',
+			PETSYNC_URL . 'blocks/pet-listing-grid/editor.js',
 			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-hooks', 'wp-compose' ),
-			PETSTABLISHED_SYNC_VERSION,
+			PETSYNC_VERSION,
 			true
 		);
 
 		// Editor styles.
 		wp_enqueue_style(
 			self::NAMESPACE . '-editor',
-			PETSTABLISHED_SYNC_URL . 'assets/css/editor.css',
+			PETSYNC_URL . 'assets/css/editor.css',
 			array(),
-			PETSTABLISHED_SYNC_VERSION
+			PETSYNC_VERSION
 		);
 
 		// Binding helper sidebar script.
 		wp_enqueue_script(
 			self::NAMESPACE . '-binding-helper',
-			PETSTABLISHED_SYNC_URL . 'assets/js/editor.js',
+			PETSYNC_URL . 'assets/js/editor.js',
 			array( 'wp-plugins', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data' ),
-			PETSTABLISHED_SYNC_VERSION,
+			PETSYNC_VERSION,
 			true
 		);
 
@@ -350,7 +350,7 @@ class Petstablished_Blocks {
 		$keys = array();
 
 		// Taxonomy keys.
-		foreach ( array_keys( Petstablished_Helpers::TAXONOMIES ) as $key ) {
+		foreach ( array_keys( Petsync_Helpers::TAXONOMIES ) as $key ) {
 			$keys[] = array(
 				'key'    => $key,
 				'type'   => 'taxonomy',

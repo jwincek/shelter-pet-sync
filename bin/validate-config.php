@@ -29,7 +29,7 @@
  *
  * Exit code: 1 if any ERROR-level issue is found (warnings do not fail CI).
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
@@ -374,7 +374,7 @@ foreach ( $ref_names as $name => $where ) {
 }
 
 // ── Check 7: change-detection hash covers every consumed API field ───────────
-$sync_src = $read( 'includes/class-petstablished-sync.php' );
+$sync_src = $read( 'includes/class-petsync-sync.php' );
 $consumed = [];
 foreach ( (array) ( $entity['api_fields'] ?? [] ) as $cfg ) {
 	if ( ! empty( $cfg['api_key'] ) ) {
@@ -426,8 +426,8 @@ if ( isset( $main_file ) && is_file( $main_file ) ) {
 		$add( 'error', 'version', 'No "Version:" header found in ' . basename( $main_file ) . '.' );
 	}
 
-	if ( preg_match( "/define\(\s*'PETSTABLISHED_SYNC_VERSION'\s*,\s*'([^']+)'/", $main_src, $m ) ) {
-		$version_sources[ basename( $main_file ) . ' (PETSTABLISHED_SYNC_VERSION)' ] = $m[1];
+	if ( preg_match( "/define\(\s*'PETSYNC_VERSION'\s*,\s*'([^']+)'/", $main_src, $m ) ) {
+		$version_sources[ basename( $main_file ) . ' (PETSYNC_VERSION)' ] = $m[1];
 	}
 }
 

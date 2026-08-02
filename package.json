@@ -1,7 +1,7 @@
 {
 	"name": "shelter-pets",
 	"version": "1.0.0",
-	"description": "Sync adoptable pets from Petstablished into WordPress.",
+	"description": "Adoptable pet listings and printable kennel cards for animal shelters, with optional sync from Petstablished.",
 	"private": true,
 	"scripts": {
 		"wp-env": "wp-env",

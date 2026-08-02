@@ -4,7 +4,7 @@
  * Shows the button after scrolling past a configurable threshold.
  * Uses a passive scroll listener for performance.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 4.3.0
  */
 

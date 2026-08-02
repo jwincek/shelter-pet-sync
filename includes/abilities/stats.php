@@ -4,13 +4,13 @@
  *
  * Provides aggregate adoption statistics for block bindings and archive pages.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Abilities\Stats;
+namespace Petsync\Abilities\Stats;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

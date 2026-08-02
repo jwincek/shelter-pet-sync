@@ -1,10 +1,10 @@
 <?php
 /**
- * Petstablished Shared Helpers
+ * Shelter Pets Shared Helpers
  *
  * Single source of truth for data formatting, storage, and utilities.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Petstablished_Helpers {
+class Petsync_Helpers {
 
 	/** Taxonomy mapping. */
 	public const TAXONOMIES = array(
@@ -46,7 +46,7 @@ class Petstablished_Helpers {
 	 * @return array Decoded API response.
 	 */
 	public static function get_api_data( int $id ): array {
-		return \Petstablished\Core\Pet_Hydrator::get_api_data( $id );
+		return \Petsync\Core\Pet_Hydrator::get_api_data( $id );
 	}
 
 	// === Pet Data Formatting ===

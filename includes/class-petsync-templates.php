@@ -1,10 +1,10 @@
 <?php
 /**
- * Petstablished Templates
+ * Shelter Pets Templates
  *
  * Registers block templates for pet archive and single views.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  * @since 1.0.0
  */
 
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Petstablished_Templates {
+class Petsync_Templates {
 
 	public function __construct() {
 		add_filter( 'get_block_templates', array( $this, 'add_templates' ), 10, 3 );
@@ -159,7 +159,7 @@ class Petstablished_Templates {
 
 	private function build_template_object( string $slug, array $data, string $type = 'wp_template' ): WP_Block_Template {
 		$dir     = 'wp_template_part' === $type ? 'parts' : 'templates';
-		$file    = PETSTABLISHED_SYNC_DIR . $dir . '/' . $slug . '.html';
+		$file    = PETSYNC_DIR . $dir . '/' . $slug . '.html';
 		$content = file_exists( $file ) ? file_get_contents( $file ) : '';
 
 		$template                 = new WP_Block_Template();

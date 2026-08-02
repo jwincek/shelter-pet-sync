@@ -5,7 +5,7 @@
  * Progressive enhancement: Works as plain HTML form (no JS required),
  * enhanced with Interactivity API for instant filtering.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ if ( $ability ) {
 		$options = $result;
 	}
 } else {
-	$options = Petstablished_Helpers::get_filter_options();
+	$options = Petsync_Helpers::get_filter_options();
 }
 $layout = $attributes['layout'] ?? 'horizontal';
 
@@ -220,7 +220,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 						<?php endif; ?>
 					</span>
 					<?php
-					Petstablished_Icons::render(
+					Petsync_Icons::render(
 						'chevron-down',
 						array(
 							'width'  => 20,

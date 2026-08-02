@@ -6,14 +6,14 @@
  * hand-entered pets silently lose every field a sync would have supplied, or
  * — worse — imported pets start reading back values nobody entered.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Tests\Integration;
+namespace Petsync\Tests\Integration;
 
-use Petstablished\Core\Pet_Hydrator;
+use Petsync\Core\Pet_Hydrator;
 
 final class HydratorPrecedenceTest extends PetTestCase {
 

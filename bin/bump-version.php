@@ -3,7 +3,7 @@
  * Version bumper for Shelter Pets.
  *
  * The plugin version is declared in a lot of places — the header, the
- * PETSTABLISHED_SYNC_VERSION constant, readme.txt's Stable tag, package.json,
+ * PETSYNC_VERSION constant, readme.txt's Stable tag, package.json,
  * and one per block.json. Hand-editing that many files per release is how the
  * header and Stable tag drift apart, and a Stable tag that doesn't match the
  * tagged release makes WordPress.org serve the wrong code or nothing at all.
@@ -22,7 +22,7 @@
  *
  * Exit code: 1 on bad input or if nothing could be written.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
@@ -92,7 +92,7 @@ $patch = static function ( string $path, string $pattern, string $replacement, s
 $patch( $main_file, '/^(\s*\*\s*Version:\s*)\S+/m', '${1}' . $version, 'header' );
 
 // Runtime constant.
-$patch( $main_file, "/(define\(\s*'PETSTABLISHED_SYNC_VERSION'\s*,\s*')[^']+(')/", '${1}' . $version . '${2}', 'constant' );
+$patch( $main_file, "/(define\(\s*'PETSYNC_VERSION'\s*,\s*')[^']+(')/", '${1}' . $version . '${2}', 'constant' );
 
 // readme.txt Stable tag — the one WordPress.org actually reads.
 $patch( $root . '/readme.txt', '/^(Stable tag:\s*)\S+/mi', '${1}' . $version, 'Stable tag' );

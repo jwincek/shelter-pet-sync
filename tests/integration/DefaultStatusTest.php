@@ -13,12 +13,12 @@
  * why there is also a wp_after_insert_post backstop, and why this file tests
  * each path separately.
  *
- * @package Petstablished_Sync
+ * @package Shelter_Pets
  */
 
 declare( strict_types = 1 );
 
-namespace Petstablished\Tests\Integration;
+namespace Petsync\Tests\Integration;
 
 use WP_REST_Request;
 
