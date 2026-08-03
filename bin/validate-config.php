@@ -353,7 +353,12 @@ foreach ( array_merge(
 ) as $jf ) {
 	$src = (string) file_get_contents( $jf );
 	// Method shorthand: `name( args ) {` or `*name() {`.
-	if ( preg_match_all( '/^\s*\*?\s*([a-zA-Z_]\w*)\s*\([^)]*\)\s*\{/m', $src, $dm ) ) {
+	//
+	// The argument class excludes newlines deliberately. With a plain [^)]*
+	// the opening `store( 'ns', {` line matches, and the match then runs on to
+	// the first `)` anywhere below — swallowing the first real method in the
+	// store and reporting it as undefined.
+	if ( preg_match_all( '/^[ \t]*\*?[ \t]*([a-zA-Z_]\w*)\s*\([^)\n]*\)\s*\{/m', $src, $dm ) ) {
 		foreach ( $dm[1] as $n ) {
 			$defined_methods[ $n ] = true;
 		}
