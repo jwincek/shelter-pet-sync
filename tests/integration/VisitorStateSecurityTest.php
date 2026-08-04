@@ -57,10 +57,12 @@ final class VisitorStateSecurityTest extends PetTestCase {
 		update_user_meta( $user, '_pet_comparison', array( 999 ) );
 		wp_set_current_user( 0 );
 
-		\Petsync\Abilities\Comparison\update( array(
-			'id'     => $pet,
-			'action' => 'add',
-		) );
+		\Petsync\Abilities\Comparison\update(
+			array(
+				'id'     => $pet,
+				'action' => 'add',
+			)
+		);
 
 		$this->assertSame(
 			array( 999 ),
@@ -75,10 +77,12 @@ final class VisitorStateSecurityTest extends PetTestCase {
 		$pet = $this->make_manual_pet();
 
 		wp_set_current_user( 0 );
-		$result = \Petsync\Abilities\Gallery\set_gallery( array(
-			'id'             => $pet,
-			'attachment_ids' => array(),
-		) );
+		$result = \Petsync\Abilities\Gallery\set_gallery(
+			array(
+				'id'             => $pet,
+				'attachment_ids' => array(),
+			)
+		);
 
 		$this->assertInstanceOf( \WP_Error::class, $result, 'an anonymous caller must not edit pet content' );
 		$this->assertSame( 'cannot_edit_pet', $result->get_error_code() );
