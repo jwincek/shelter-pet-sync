@@ -298,8 +298,15 @@ class Petsync_Helpers {
 		}
 
 		// Always set cookie for cross-session persistence.
-		$expires = time() + ( 30 * DAY_IN_SECONDS );
-		setcookie( 'pet_favorites', wp_json_encode( $ids ), $expires, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), false );
+		//
+		// Guarded on headers_sent(): the call cannot succeed once output has
+		// begun, and unguarded it emits a PHP warning into the response — which
+		// happens for real whenever a theme or another plugin prints early, not
+		// only under test.
+		if ( ! headers_sent() ) {
+			$expires = time() + ( 30 * DAY_IN_SECONDS );
+			setcookie( 'pet_favorites', wp_json_encode( $ids ), $expires, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), false );
+		}
 	}
 
 	// === Comparison Storage ===
@@ -334,8 +341,11 @@ class Petsync_Helpers {
 			update_user_meta( get_current_user_id(), '_pet_comparison', $ids );
 		}
 
-		$expires = time() + ( 30 * DAY_IN_SECONDS );
-		setcookie( 'pet_comparison', wp_json_encode( $ids ), $expires, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), false );
+		// See the note on the favorites cookie above.
+		if ( ! headers_sent() ) {
+			$expires = time() + ( 30 * DAY_IN_SECONDS );
+			setcookie( 'pet_comparison', wp_json_encode( $ids ), $expires, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), false );
+		}
 	}
 
 	public static function validate_pet_ids( array $ids ): array {

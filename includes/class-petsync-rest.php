@@ -92,6 +92,35 @@ class Petsync_REST {
 	/**
 	 * Permission check — delegates to the ability's own permission_callback.
 	 *
+	 * Some abilities routed through here are deliberately public: favorites and
+	 * comparison are visitor features that must work for anonymous users, so
+	 * their permission callback returns true rather than requiring a login.
+	 *
+	 * That combination — a writable route whose permission is effectively
+	 * always-true — is the shape a CSRF review looks for, so the reasoning is
+	 * recorded here rather than left to be re-derived.
+	 *
+	 * There is no cross-site write path to a logged-in user's data:
+	 *
+	 * 1. Those abilities persist through Petsync_Helpers, which writes user
+	 *    meta ONLY when get_current_user_id() is non-zero, and otherwise sets a
+	 *    cookie in the caller's own browser.
+	 * 2. Core's rest_cookie_check_errors() (wp-includes/rest-api.php) rejects a
+	 *    cookie-authenticated REST request carrying an INVALID nonce with a 403,
+	 *    and for a request carrying NO nonce it calls wp_set_current_user( 0 )
+	 *    and continues — its own comment reads "No nonce at all, so act as if
+	 *    it's an unauthenticated request."
+	 *
+	 * So a forged cross-site request never reaches the user-meta branch: it
+	 * either fails outright or is downgraded to anonymous, where the only thing
+	 * it can affect is a cookie on the victim's own browser. Adding a nonce
+	 * check here would not close a hole; it would break anonymous favorites,
+	 * which are a feature rather than an oversight.
+	 *
+	 * Abilities that write CONTENT rather than visitor state are a different
+	 * matter and carry real capability checks — see petsync/set-pet-gallery,
+	 * which requires edit_posts plus edit_post on the specific pet.
+	 *
 	 * @param \WP_REST_Request $request
 	 * @return bool|\WP_Error
 	 */
