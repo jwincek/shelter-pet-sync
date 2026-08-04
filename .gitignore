@@ -33,3 +33,6 @@ debug.log
 
 # PHPUnit run cache (generated).
 .phpunit.result.cache
+
+# Draft screenshots pending review; the final set goes in .wordpress-org/.
+/screenshots-draft/
