@@ -70,10 +70,23 @@ class Petsync_Kennel_Cards {
 			return;
 		}
 
+		// The card design is built from core blocks — wp:columns, wp:image,
+		// wp:group — and their layout CSS is not loaded on an admin screen.
+		// Without this the two-column card collapses into a single stack and
+		// the printed sheet looks nothing like the design in the Site Editor.
+		// Nothing catches this but looking: the markup is correct either way.
+		wp_enqueue_style( 'wp-block-library' );
+
+		// Theme presets, so a card styled with theme colours or spacing in the
+		// Site Editor prints the way it previewed there.
+		if ( function_exists( 'wp_enqueue_global_styles' ) ) {
+			wp_enqueue_global_styles();
+		}
+
 		wp_enqueue_style(
 			'petsync-kennel-cards',
 			PETSYNC_URL . 'assets/css/kennel-cards.css',
-			array(),
+			array( 'wp-block-library' ),
 			PETSYNC_VERSION
 		);
 	}
