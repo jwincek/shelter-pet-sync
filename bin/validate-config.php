@@ -331,50 +331,189 @@ foreach ( array_keys( $editable_groups ) as $group_slug ) {
 	}
 }
 
-// ── Check 6 (heuristic): interactivity action/callback references resolve ─────
-$ref_names = [];
-foreach ( array_merge(
-	glob( $root . '/blocks/*/render.php' ),
-	glob( $root . '/blocks/*/partials/*.php' ),
-	glob( $root . '/blocks/*/template-default.php' )
-) as $pf ) {
-	$src = (string) file_get_contents( $pf );
-	if ( preg_match_all( '/(?:actions|callbacks)\.([a-zA-Z_]\w*)/', $src, $rm ) ) {
-		foreach ( $rm[1] as $n ) {
-			$ref_names[ $n ][] = str_replace( $root . '/', '', $pf );
-		}
+// ── Check 6: interactivity state/action/callback references resolve ──────────
+//
+// Failures in this layer are silent: a directive naming something no store
+// defines throws nothing, logs nothing, and fails no test. It simply does not
+// work in the browser. Nothing else in CI can see that, which is why this check
+// earns its complexity.
+//
+// The previous version of this check was namespace-blind — it pooled every
+// store's method names into one flat set, so a reference in petsync/slider was
+// satisfied by a definition in petsync/grid. It also only looked at `actions.`
+// and `callbacks.`, never `state.`, which is where derived getters live. Both
+// gaps hid a real bug (a hero-image crossfade that never fired), so the check is
+// now resolved per namespace and covers all three kinds.
+
+/** Blank out comments, preserving byte offsets so line numbers stay correct. */
+$ia_strip = static function ( string $s ): string {
+	$blank = static fn( array $m ): string => preg_replace( '/[^\n]/', ' ', $m[0] );
+	$s     = preg_replace_callback( '#/\*.*?\*/#s', $blank, $s );
+	$s     = preg_replace_callback( '#^\s*//[^\n]*#m', $blank, $s );
+	$s     = preg_replace_callback( '#<!--.*?-->#s', $blank, $s );
+	return $s;
+};
+
+/** $i points at '{'; return the offset just past its match, string-aware. */
+$ia_brace = static function ( string $s, int $i ): int {
+	$d = 0; $n = strlen( $s ); $in = false; $q = '';
+	while ( $i < $n ) {
+		$c = $s[ $i ];
+		if ( $in ) {
+			if ( '\\' === $c ) { $i += 2; continue; }
+			if ( $c === $q ) { $in = false; }
+		} elseif ( '"' === $c || "'" === $c || '`' === $c ) {
+			$in = true; $q = $c;
+		} elseif ( '{' === $c ) { ++$d;
+		} elseif ( '}' === $c ) { if ( 0 === --$d ) { return $i + 1; } }
+		++$i;
 	}
-}
-$defined_methods = [];
+	return $n;
+};
+
+/** Top-level keys of an object-literal body (outer braces already removed). */
+$ia_keys = static function ( string $body ): array {
+	$keys = []; $i = 0; $n = strlen( $body ); $depth = 0;
+	$in = false; $q = ''; $item_start = true;
+	while ( $i < $n ) {
+		$c = $body[ $i ];
+		if ( $in ) {
+			if ( '\\' === $c ) { $i += 2; continue; }
+			if ( $c === $q ) { $in = false; }
+			++$i; continue;
+		}
+		if ( '"' === $c || "'" === $c || '`' === $c ) { $in = true; $q = $c; ++$i; continue; }
+		if ( '{' === $c || '[' === $c || '(' === $c ) { ++$depth; ++$i; continue; }
+		if ( '}' === $c || ']' === $c || ')' === $c ) { --$depth; ++$i; continue; }
+		if ( 0 === $depth ) {
+			if ( $item_start && preg_match( '/^\s*(?:(?:async|get|set)\s+)*\*?\s*([A-Za-z_$][\w$]*)\s*(?=[:(])/', substr( $body, $i ), $m ) ) {
+				$keys[]     = $m[1];
+				$i         += strlen( $m[0] );
+				$item_start = false;
+				continue;
+			}
+			if ( ',' === $c ) { $item_start = true; }
+		}
+		++$i;
+	}
+	return $keys;
+};
+
+// What each namespace defines, from JS stores…
+$ia_defined = [];
 foreach ( array_merge(
-	glob( $root . '/assets/js/store.js' ),
+	glob( $root . '/assets/js/*.js' ),
 	glob( $root . '/assets/js/interactivity/*.js' ),
 	glob( $root . '/blocks/*/view.js' )
 ) as $jf ) {
-	$src = (string) file_get_contents( $jf );
-	// Method shorthand: `name( args ) {` or `*name() {`.
-	//
-	// The argument class excludes newlines deliberately. With a plain [^)]*
-	// the opening `store( 'ns', {` line matches, and the match then runs on to
-	// the first `)` anywhere below — swallowing the first real method in the
-	// store and reporting it as undefined.
-	if ( preg_match_all( '/^[ \t]*\*?[ \t]*([a-zA-Z_]\w*)\s*\([^)\n]*\)\s*\{/m', $src, $dm ) ) {
-		foreach ( $dm[1] as $n ) {
-			$defined_methods[ $n ] = true;
-		}
+	$src = $ia_strip( (string) file_get_contents( $jf ) );
+	if ( ! preg_match_all( '/store\(\s*[\'"]([\w\/-]+)[\'"]\s*,\s*\{/', $src, $sm, PREG_OFFSET_CAPTURE ) ) {
+		continue;
 	}
-	// Property form: `name: function`, `name: async ...`, `name: (` (arrow),
-	// or `name: wrapper(` (e.g. `navigateToPage: withSyncEvent( function* ...)`).
-	if ( preg_match_all( '/([a-zA-Z_]\w*)\s*:\s*(?:async\s+)?(?:function\b|[a-zA-Z_$][\w$]*\s*\(|\()/', $src, $dm2 ) ) {
-		foreach ( $dm2[1] as $n ) {
-			$defined_methods[ $n ] = true;
+	foreach ( $sm[0] as $k => $whole ) {
+		$ns   = $sm[1][ $k ][0];
+		$ob   = strpos( $src, '{', $whole[1] + strlen( $whole[0] ) - 1 );
+		$body = substr( $src, $ob + 1, $ia_brace( $src, $ob ) - $ob - 2 );
+		foreach ( [ 'state', 'actions', 'callbacks' ] as $kind ) {
+			if ( ! preg_match( '/(^|[,{\s])' . $kind . '\s*:\s*\{/', $body, $km, PREG_OFFSET_CAPTURE ) ) {
+				continue;
+			}
+			$sb  = strpos( $body, '{', $km[0][1] );
+			$sub = substr( $body, $sb + 1, $ia_brace( $body, $sb ) - $sb - 2 );
+			foreach ( $ia_keys( $sub ) as $key ) {
+				$ia_defined[ $ns ][ $kind ][ $key ] = true;
+			}
 		}
 	}
 }
-$js_keywords = [ 'if', 'for', 'while', 'switch', 'catch', 'function', 'return' ];
-foreach ( $ref_names as $name => $where ) {
-	if ( ! isset( $defined_methods[ $name ] ) && ! in_array( $name, $js_keywords, true ) ) {
-		$add( 'warning', 'interactivity', "actions/callbacks.$name is referenced in " . implode( ', ', array_unique( $where ) ) . ' but no matching method is defined in any store/view.js.' );
+// …and from state seeded server-side.
+foreach ( array_merge(
+	glob( $root . '/includes/*.php' ),
+	glob( $root . '/includes/**/*.php' ),
+	glob( $root . '/blocks/*/render.php' )
+) as $pf ) {
+	$src = (string) file_get_contents( $pf );
+	if ( ! preg_match_all( '/wp_interactivity_state\(\s*[\'"]([\w\/-]+)[\'"]\s*,\s*(?:\[|array\()/', $src, $wm, PREG_OFFSET_CAPTURE ) ) {
+		continue;
+	}
+	foreach ( $wm[0] as $k => $whole ) {
+		$ns = $wm[1][ $k ][0];
+		$st = $whole[1] + strlen( $whole[0] ) - 1;
+		$d  = 0; $i = $st; $n = strlen( $src );
+		while ( $i < $n ) {
+			if ( '[' === $src[ $i ] || '(' === $src[ $i ] ) { ++$d; } elseif ( ']' === $src[ $i ] || ')' === $src[ $i ] ) { if ( 0 === --$d ) { break; } }
+			++$i;
+		}
+		if ( preg_match_all( '/[\'"](\w+)[\'"]\s*=>/', substr( $src, $st, $i - $st ), $km ) ) {
+			foreach ( $km[1] as $key ) {
+				$ia_defined[ $ns ]['state'][ $key ] = true;
+			}
+		}
+	}
+}
+
+// Which namespace is in scope where. Covers the three declaration forms used
+// here: literal attribute, attrs-array entry, and array assignment.
+$ns_re    = '/data-wp-interactive[\'"]?\]?\s*(?:=>|=)\s*[\'"]([\w\/-]+)[\'"]/';
+$ia_files = array_merge(
+	glob( $root . '/blocks/*/render.php' ),
+	glob( $root . '/blocks/*/partials/*.php' ),
+	glob( $root . '/blocks/*/template-default.php' ),
+	glob( $root . '/parts/*.html' )
+);
+// A partial declares no namespace of its own; it inherits the one in scope at
+// its include site.
+$ia_inherited = [];
+foreach ( $ia_files as $pf ) {
+	$src = $ia_strip( (string) file_get_contents( $pf ) );
+	if ( ! preg_match_all( '/(?:include|require)(?:_once)?\s*\(?\s*__DIR__\s*\.\s*[\'"]([^\'"]+)[\'"]/', $src, $im, PREG_OFFSET_CAPTURE ) ) {
+		continue;
+	}
+	preg_match_all( $ns_re, $src, $dm, PREG_OFFSET_CAPTURE );
+	foreach ( $im[1] as $k => $target ) {
+		$prev = null;
+		foreach ( $dm[1] as $d ) {
+			if ( $d[1] < $im[0][ $k ][1] ) { $prev = $d[0]; }
+		}
+		if ( null !== $prev ) {
+			$ia_inherited[ realpath( dirname( $pf ) . '/' . ltrim( $target[0], '/' ) ) ?: '' ] = $prev;
+		}
+	}
+}
+
+foreach ( $ia_files as $pf ) {
+	$src  = $ia_strip( (string) file_get_contents( $pf ) );
+	$name = str_replace( $root . '/', '', $pf );
+	preg_match_all( $ns_re, $src, $dm, PREG_OFFSET_CAPTURE );
+	if ( ! preg_match_all( '/data-wp-[a-z-]+(?:--[\w.:-]+)?\s*(?:=>|=)\s*[\'"]([^\'"]+)[\'"]/', $src, $rm, PREG_OFFSET_CAPTURE ) ) {
+		continue;
+	}
+	foreach ( $rm[1] as $k => $expr ) {
+		$pos = $rm[0][ $k ][1];
+		if ( ! preg_match_all( '/(?:([\w\/-]+)::)?\b(actions|state|callbacks)\.([\w$]+)/', $expr[0], $refs, PREG_SET_ORDER ) ) {
+			continue;
+		}
+		$scope = $ia_inherited[ realpath( $pf ) ?: '' ] ?? null;
+		foreach ( $dm[1] as $d ) {
+			if ( $d[1] <= $pos ) { $scope = $d[0]; }
+		}
+		foreach ( $refs as $ref ) {
+			[ , $explicit, $kind, $member ] = $ref;
+			$ns = '' !== $explicit ? $explicit : $scope;
+			if ( null === $ns ) {
+				$add( 'warning', 'interactivity', "$name: {$kind}.{$member} has no data-wp-interactive namespace in scope." );
+				continue;
+			}
+			if ( isset( $ia_defined[ $ns ][ $kind ][ $member ] ) ) {
+				continue;
+			}
+			// Several stores deliberately re-expose the global petsync store.
+			if ( 'petsync' !== $ns && isset( $ia_defined['petsync'][ $kind ][ $member ] ) ) {
+				continue;
+			}
+			$line = substr_count( substr( $src, 0, $pos ), "\n" ) + 1;
+			$add( 'error', 'interactivity', "$name:$line references {$kind}.{$member} in namespace '{$ns}', which defines no such member." );
+		}
 	}
 }
 
