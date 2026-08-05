@@ -334,7 +334,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 							class="pet-slider__hero-image"
 							data-wp-bind--src="state.currentPetImage"
 							data-wp-bind--alt="state.currentPetName"
-							data-wp-class--is-transitioning="state.isTransitioning"
+							data-wp-class--is-transitioning="context.isTransitioning"
 						>
 						
 						<?php if ( $show_quick_actions ) : ?>
