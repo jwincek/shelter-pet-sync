@@ -242,4 +242,41 @@ final class KennelCardsTest extends PetTestCase {
 		$this->assertArrayHasKey( 'all', $options );
 		$this->assertArrayHasKey( 'available', $options, 'statuses in use should be offered' );
 	}
+
+	/**
+	 * The print sheet renders whatever pet IDs the query string names, guarding
+	 * the post type but not the post status — so a pet the sync has drafted (a
+	 * withdrawn or adopted listing) renders like any other.
+	 *
+	 * That is only safe while everyone who can reach the page may already read
+	 * unpublished pets. This asserts the property rather than the capability
+	 * string, so it keeps holding if the constant is renamed and starts failing
+	 * the moment the page is opened back up to Contributors or Authors.
+	 */
+	public function test_only_roles_that_may_read_unpublished_pets_can_print_cards(): void {
+		$capability = ( new \ReflectionClass( Petsync_Kennel_Cards::class ) )
+			->getConstant( 'CAPABILITY' );
+
+		$this->assertIsString( $capability );
+
+		foreach ( array( 'administrator', 'editor' ) as $name ) {
+			$role = get_role( $name );
+			$this->assertTrue(
+				(bool) $role?->has_cap( $capability ),
+				"$name should be able to print kennel cards"
+			);
+			$this->assertTrue(
+				(bool) $role?->has_cap( 'read_private_posts' ),
+				"$name can print cards, so must also be entitled to read unpublished pets"
+			);
+		}
+
+		foreach ( array( 'contributor', 'author', 'subscriber' ) as $name ) {
+			$role = get_role( $name );
+			$this->assertFalse(
+				(bool) $role?->has_cap( $capability ),
+				"$name cannot read unpublished pets, so must not be able to print them"
+			);
+		}
+	}
 }

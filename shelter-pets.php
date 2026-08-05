@@ -91,6 +91,11 @@ register_deactivation_hook(
 	__FILE__,
 	function (): void {
 		wp_clear_scheduled_hook( 'petsync_scheduled_sync' );
+		// Also the pre-1.0 hook name, matching uninstall.php. The rename
+		// migration normally clears this, but it only runs once an admin page
+		// has loaded — deactivating straight after an upgrade would otherwise
+		// leave a recurring event scheduled against a hook nothing answers.
+		wp_clear_scheduled_hook( 'petstablished_scheduled_sync' );
 
 		// Flush rewrite rules to remove our custom rules cleanly.
 		flush_rewrite_rules();

@@ -25,7 +25,23 @@ class Petsync_Kennel_Cards {
 
 	private const PAGE_SLUG = 'petsync-kennel-cards';
 	private const PART_SLUG = 'kennel-card';
-	private const CAPABILITY = 'edit_posts';
+
+	/**
+	 * Printing kennel cards is a staff function, not a contributor one.
+	 *
+	 * This was `edit_posts`, which includes Contributors and Authors. The print
+	 * sheet renders whatever pet IDs arrive in the query string, and while it
+	 * guards the post TYPE it does not check post status — so a pet drafted by
+	 * the sync (a withdrawn or adopted listing; see remove_stale_pets() and the
+	 * dont_show_in_public_search mapping) could be rendered by someone with no
+	 * right to read it. `edit_others_posts` is Editor and up, and those roles
+	 * already hold read_private_posts, so the status question resolves itself
+	 * rather than needing a second per-post check on every card.
+	 *
+	 * The CPT uses the default 'post' capability_type, so this maps to the
+	 * standard role grants.
+	 */
+	private const CAPABILITY = 'edit_others_posts';
 
 	/**
 	 * Card sizes, as CSS class plus how many fit a Letter/A4 sheet.
@@ -233,8 +249,11 @@ class Petsync_Kennel_Cards {
 	 */
 	private function render_print_sheet(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen; no state is changed.
-		$ids = isset( $_GET['pets'] ) ? array_map( 'absint', (array) wp_unslash( $_GET['pets'] ) ) : array();
-		$ids = array_values( array_filter( $ids ) );
+		// intval rather than absint: absint takes the absolute value, so ?pets[]=-5
+		// would silently resolve to pet 5 — a real, unrelated animal — instead of
+		// being rejected. Same reasoning as the gallery ability's ID handling.
+		$ids = isset( $_GET['pets'] ) ? array_map( 'intval', (array) wp_unslash( $_GET['pets'] ) ) : array();
+		$ids = array_values( array_filter( $ids, static fn( int $id ): bool => $id > 0 ) );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen; no state is changed.
 		$size  = isset( $_GET['size'] ) ? sanitize_key( wp_unslash( $_GET['size'] ) ) : 'index';
