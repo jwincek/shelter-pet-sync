@@ -230,7 +230,7 @@ add_action( 'plugins_loaded', 'petsync_init' );
  * plugin's DATA version and is deliberately independent of the release version
  * in the plugin header — most releases change no stored data at all.
  */
-define( 'PETSYNC_DB_VERSION', 3 );
+define( 'PETSYNC_DB_VERSION', 4 );
 
 /**
  * The ordered migration list.
@@ -247,6 +247,7 @@ function petsync_get_migrations(): array {
 		1 => 'petsync_migrate_1_option_names',
 		2 => 'petsync_migrate_2_provider_meta',
 		3 => 'petsync_migrate_3_default_status',
+		4 => 'petsync_migrate_4_template_namespace',
 	);
 }
 
@@ -263,13 +264,32 @@ function petsync_maybe_upgrade(): void {
 		return;
 	}
 
+	// Record only what actually completed. A migration may signal failure by
+	// returning false, in which case the rail stops and the stored version
+	// keeps the last good step, so the failed one runs again next load.
+	//
+	// Without this the version advanced unconditionally, which made any
+	// migration failure both silent and permanent — the worst combination, and
+	// the one this codebase treats as the bug worth designing against.
+	//
+	// Migrations returning void are unaffected: null is not identical to false.
+	$completed = $installed;
+
 	foreach ( petsync_get_migrations() as $version => $callback ) {
-		if ( $version > $installed && is_callable( $callback ) ) {
-			call_user_func( $callback );
+		if ( $version <= $installed || ! is_callable( $callback ) ) {
+			continue;
 		}
+
+		if ( false === call_user_func( $callback ) ) {
+			break;
+		}
+
+		$completed = $version;
 	}
 
-	update_option( 'petsync_db_version', PETSYNC_DB_VERSION, true );
+	if ( $completed > $installed ) {
+		update_option( 'petsync_db_version', $completed, true );
+	}
 }
 add_action( 'init', 'petsync_maybe_upgrade', 20 );
 
@@ -397,4 +417,114 @@ function petsync_migrate_3_default_status(): void {
 
 		wp_set_object_terms( $pet_id, $default, 'pet_status' );
 	}
+}
+
+/**
+ * Migration 4 — carry Site Editor customizations across the plugin's renames.
+ *
+ * The Site Editor stores a customized plugin template as a wp_template or
+ * wp_template_part post filed under a `wp_theme` term named after the PLUGIN,
+ * not the active theme. That term name is a storage key, so each time this
+ * plugin was renamed the lookup started asking for a name nothing was filed
+ * under. The customizations were never deleted — they became unreachable, and
+ * the front end quietly fell back to the bundled template file. Silent, and it
+ * reads as "the design reverted" rather than as an error.
+ *
+ * This happened across two renames (vcpahumane-pet-sync -> shelter-pet-sync ->
+ * shelter-pets) with no migration to carry the term along. An install can be
+ * upgrading across both at once, so every legacy name is checked, oldest first.
+ *
+ * Two paths, because a term name is unique within the taxonomy:
+ *
+ *   - No current term yet: rename the legacy one in place. Cheapest, and it
+ *     preserves every object relationship untouched.
+ *   - A current term already exists: move the posts onto it and drop the empty
+ *     legacy term. This is the partially-migrated case — someone customized a
+ *     template after the rename, so both terms hold real work and neither can
+ *     simply be discarded.
+ *
+ * Idempotent: the legacy term is gone afterwards, so a second run finds nothing.
+ */
+function petsync_migrate_4_template_namespace(): bool {
+	if ( ! taxonomy_exists( 'wp_theme' ) ) {
+		// Nothing this migration can act on, which is a completed no-op rather
+		// than a failure — wp_theme is core and always registered in practice.
+		return true;
+	}
+
+	foreach ( Petsync_Templates::LEGACY_NAMESPACES as $legacy ) {
+		$legacy_term = get_term_by( 'name', $legacy, 'wp_theme' );
+
+		if ( ! $legacy_term instanceof WP_Term ) {
+			continue;
+		}
+
+		$current = get_term_by( 'name', Petsync_Templates::THEME_NAMESPACE, 'wp_theme' );
+
+		if ( ! $current instanceof WP_Term ) {
+			$renamed = wp_update_term(
+				$legacy_term->term_id,
+				'wp_theme',
+				array(
+					'name' => Petsync_Templates::THEME_NAMESPACE,
+					'slug' => Petsync_Templates::THEME_NAMESPACE,
+				)
+			);
+
+			// A slug collision is the realistic failure here: some other
+			// wp_theme term already holds this slug under a different name, so
+			// get_term_by( 'name', … ) above found nothing but wp_update_term
+			// still returns duplicate_term_slug.
+			//
+			// The slug is cosmetic. get_customized_template() matches on
+			// 'field' => 'name', so retry with the name alone and let
+			// WordPress derive a unique slug.
+			if ( is_wp_error( $renamed ) ) {
+				$renamed = wp_update_term(
+					$legacy_term->term_id,
+					'wp_theme',
+					array( 'name' => Petsync_Templates::THEME_NAMESPACE )
+				);
+			}
+
+			// Still no. Report failure rather than leaving the install marked
+			// as migrated: the customizations are intact but unreachable, and
+			// the only way they are ever found again is if this runs later.
+			if ( is_wp_error( $renamed ) ) {
+				return false;
+			}
+
+			continue;
+		}
+
+		// Everything filed under a term named after this plugin belongs to this
+		// plugin, including customizations of templates no longer shipped —
+		// which are exactly the ones a shelter would be upset to lose. Move the
+		// term's whole contents rather than filtering to current slugs.
+		$orphaned = get_posts(
+			array(
+				'post_type'        => array( 'wp_template', 'wp_template_part' ),
+				'post_status'      => 'any',
+				'numberposts'      => -1,
+				'fields'           => 'ids',
+				'suppress_filters' => false,
+				'tax_query'        => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- one-time migration, not a request-path query.
+					array(
+						'taxonomy'         => 'wp_theme',
+						'field'            => 'term_id',
+						'terms'            => $legacy_term->term_id,
+						'include_children' => false,
+					),
+				),
+			)
+		);
+
+		foreach ( $orphaned as $post_id ) {
+			wp_set_object_terms( $post_id, array( $current->term_id ), 'wp_theme', false );
+		}
+
+		wp_delete_term( $legacy_term->term_id, 'wp_theme' );
+	}
+
+	return true;
 }
