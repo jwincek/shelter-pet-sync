@@ -54,5 +54,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Built on the WordPress Abilities API and Block Bindings; server-rendered blocks with no build step.
 - Uninstall handler with an opt-in "Delete all data when this plugin is deleted" setting (default off, so delete + reinstall loses nothing). Ephemeral state (cron event, transients) is always cleaned up; pets, `pet_*` taxonomy terms, Site Editor template customizations, options, and per-user favorites/comparison meta are removed only when opted in (multisite-aware).
 
-[Unreleased]: https://github.com/jwincek/shelter-pets/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/jwincek/shelter-pets/releases/tag/v1.0.0
+[Unreleased]: https://github.com/jwincek/shelterkit-pets/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/jwincek/shelterkit-pets/releases/tag/v1.0.0
