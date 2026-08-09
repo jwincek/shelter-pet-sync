@@ -355,15 +355,25 @@ $wrapper_attributes = get_block_wrapper_attributes( $wrapper_attrs );
 	<?php endif; ?>
 
 	<?php if ( ! $is_editor && $has_lightbox ) : ?>
-	<!-- Lightbox — navigates the complete gallery -->
-	<div
+	<!--
+		Lightbox — navigates the complete gallery.
+
+		A native <dialog> opened with showModal(), which promotes it to the
+		browser's top layer. That matters structurally: the top layer sits
+		outside the stacking-context tree, so no ancestor can trap it. This
+		element stays nested inside .pet-details__gallery-col, which is
+		position:sticky and therefore always creates a stacking context — which
+		is what previously left the whole page painted on top of the lightbox.
+
+		role/aria-modal/tabindex are omitted deliberately: showModal() provides
+		modal semantics, focus containment and Escape natively.
+	-->
+	<dialog
 		class="pet-gallery__lightbox"
-		data-wp-bind--hidden="!context.isOpen"
+		data-wp-watch="callbacks.syncLightbox"
+		data-wp-on--close="actions.handleDialogClose"
 		data-wp-on--keydown="actions.handleKeydown"
-		role="dialog"
-		aria-modal="true"
 		aria-label="<?php esc_attr_e( 'Image gallery', 'shelter-pets' ); ?>"
-		tabindex="-1"
 	>
 		<div
 			class="pet-gallery__lightbox-backdrop"
@@ -413,7 +423,7 @@ $wrapper_attributes = get_block_wrapper_attributes( $wrapper_attrs );
 			/
 			<span data-wp-text="state.totalImages"><?php echo count( $lightbox_images ); ?></span>
 		</div>
-	</div>
+	</dialog>
 	<?php endif; ?>
 
 </div>

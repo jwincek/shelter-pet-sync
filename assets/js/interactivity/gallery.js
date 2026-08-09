@@ -60,15 +60,12 @@ const { state, actions } = store( 'petsync/gallery', {
 			// Remember the trigger so close() can return focus to it.
 			ctx._triggerElement = ref;
 
-			// Prevent body scroll while lightbox is open.
+			// Prevent body scroll while lightbox is open. A modal dialog does not
+			// reliably lock background scrolling on its own.
 			overflowLock.lock();
 
-			// Focus the lightbox so keyboard events reach its keydown handler.
-			requestAnimationFrame( () => {
-				ref?.closest( '[data-wp-interactive]' )
-					?.querySelector( '.pet-gallery__lightbox' )
-					?.focus();
-			} );
+			// No manual focus call: callbacks.syncLightbox calls showModal(),
+			// which focuses the dialog and contains focus within it.
 		},
 
 		close() {
@@ -102,9 +99,31 @@ const { state, actions } = store( 'petsync/gallery', {
 		},
 
 		/**
+		 * The dialog closed by a route other than actions.close() — Escape, or
+		 * a form[method=dialog] submission. Without this the store would still
+		 * believe the lightbox is open, callbacks.syncLightbox would see no
+		 * change to make, and the lightbox could never be reopened.
+		 *
+		 * Guarded so the ordinary path does not recurse: actions.close() sets
+		 * isOpen false, the watch calls dialog.close(), the browser fires
+		 * `close`, and this returns immediately.
+		 */
+		handleDialogClose() {
+			const ctx = getContext();
+			if ( ! ctx.isOpen ) {
+				return;
+			}
+			actions.close();
+		},
+
+		/**
 		 * Keyboard handler — bound via data-wp-on--keydown on the lightbox.
-		 * Because the lightbox receives focus when opened, this handles
-		 * all keyboard navigation without needing document-level listeners.
+		 * showModal() focuses the dialog and contains focus, so these reach it
+		 * without document-level listeners.
+		 *
+		 * Escape is deliberately absent: a modal dialog dismisses on Escape
+		 * natively, and handleDialogClose syncs the store afterwards. Handling
+		 * it here as well would close it twice.
 		 * @param event
 		 */
 		handleKeydown( event ) {
@@ -114,10 +133,6 @@ const { state, actions } = store( 'petsync/gallery', {
 			}
 
 			switch ( event.key ) {
-				case 'Escape':
-					actions.close();
-					event.preventDefault();
-					break;
 				case 'ArrowRight':
 					actions.next();
 					event.preventDefault();
@@ -133,6 +148,47 @@ const { state, actions } = store( 'petsync/gallery', {
 			// Only close if clicking the backdrop itself, not the image.
 			if ( event.target === event.currentTarget ) {
 				actions.close();
+			}
+		},
+	},
+
+	callbacks: {
+		/**
+		 * Drive the native dialog from context.isOpen.
+		 *
+		 * The lightbox is a <dialog>, and only showModal() promotes an element
+		 * into the browser's top layer. That is the whole point of the element
+		 * choice: the top layer is outside the stacking-context tree, so the
+		 * position:sticky ancestor that used to bury the lightbox cannot reach
+		 * it. Toggling an attribute would not do this — the promotion happens
+		 * as a side effect of the method call, so it has to be imperative.
+		 *
+		 * Both branches check dialog.open first, which makes this idempotent
+		 * and keeps it from fighting the browser: showModal() on an already
+		 * open dialog throws InvalidStateError.
+		 */
+		syncLightbox() {
+			const { ref } = getElement();
+
+			// The typeof guard is not redundant. Where <dialog> is unsupported
+			// HTMLDialogElement is undefined, and `instanceof undefined` throws
+			// a TypeError rather than returning false — which would take the
+			// whole store down instead of degrading to a lightbox that does not
+			// open. Theoretical on any browser this plugin supports, but the
+			// failure mode is bad enough to be worth two words.
+			if (
+				typeof HTMLDialogElement === 'undefined' ||
+				! ( ref instanceof HTMLDialogElement )
+			) {
+				return;
+			}
+
+			const ctx = getContext();
+
+			if ( ctx.isOpen && ! ref.open ) {
+				ref.showModal();
+			} else if ( ! ctx.isOpen && ref.open ) {
+				ref.close();
 			}
 		},
 	},
