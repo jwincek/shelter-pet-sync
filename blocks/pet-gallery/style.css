@@ -197,18 +197,50 @@
 	border: 0;
 }
 
-/* Lightbox */
+/*
+ * Lightbox — a native <dialog> opened with showModal().
+ *
+ * No z-index here on purpose. showModal() puts the element in the browser's top
+ * layer, which is painted above every stacking context regardless of z-index, so
+ * a value would be inert and misleading. It also cannot be trapped: the previous
+ * `z-index: 10000` was scoped inside .pet-details__gallery-col, which is
+ * position:sticky and so always creates a stacking context.
+ */
 .pet-gallery__lightbox {
 	position: fixed;
 	inset: 0;
-	z-index: 10000;
+
+	/* Reset the UA dialog box, which is fit-content sized with auto margins,
+	   a solid border, 1em padding and an opaque background. */
+	width: 100%;
+	max-width: none;
+	height: 100%;
+	max-height: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	overflow: hidden;
+}
+
+/*
+ * Scoped to [open] deliberately. Unscoped, this `display: flex` would override
+ * the UA's `dialog:not([open]) { display: none }` and leave the lightbox on
+ * screen permanently.
+ */
+.pet-gallery__lightbox[open] {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-.pet-gallery__lightbox[hidden] {
-	display: none;
+/*
+ * The visible scrim is .pet-gallery__lightbox-backdrop, which is a real element
+ * because it also handles click-to-close. Left alone, the UA ::backdrop would
+ * darken on top of that one.
+ */
+.pet-gallery__lightbox::backdrop {
+	background: transparent;
 }
 
 .pet-gallery__lightbox-backdrop {
