@@ -8,7 +8,7 @@
 	"description": "Display pet health information like vaccinations, spay/neuter status, and more.",
 	"keywords": ["pet", "health", "vaccinations", "spayed", "neutered", "hypoallergenic", "declawed"],
 	"ancestor": ["petsync/pet-details"],
-	"textdomain": "shelter-pets",
+	"textdomain": "shelterkit-pets",
 	"usesContext": ["postId", "postType"],
 	"attributes": {
 		"displayMode": {

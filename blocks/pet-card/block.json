@@ -11,7 +11,7 @@
 		"animal",
 		"adoption"
 	],
-	"textdomain": "shelter-pets",
+	"textdomain": "shelterkit-pets",
 	"attributes": {
 		"showFavorite": {
 			"type": "boolean",

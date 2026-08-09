@@ -1,6 +1,6 @@
 <?php
 /**
- * Version bumper for Shelter Pets.
+ * Version bumper for ShelterKit Pets.
  *
  * The plugin version is declared in a lot of places — the header, the
  * PETSYNC_VERSION constant, readme.txt's Stable tag, package.json,
@@ -22,7 +22,7 @@
  *
  * Exit code: 1 on bad input or if nothing could be written.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );

@@ -2,7 +2,7 @@
 /**
  * Shared base for pet integration tests.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );

@@ -5,7 +5,7 @@
  * Progressive enhancement: Works as plain HTML form (no JS required),
  * enhanced with Interactivity API for instant filtering.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -54,95 +54,95 @@ $current_compat = array(
 
 $filters = array(
 	'animal' => array(
-		'label'   => __( 'Animal', 'shelter-pets' ),
+		'label'   => __( 'Animal', 'shelterkit-pets' ),
 		'show'    => $attributes['showAnimal'] ?? true,
 		'options' => $options['animal'] ?? array(),
-		'all'     => __( 'All Animals', 'shelter-pets' ),
+		'all'     => __( 'All Animals', 'shelterkit-pets' ),
 	),
 	'breed'  => array(
-		'label'   => __( 'Breed', 'shelter-pets' ),
+		'label'   => __( 'Breed', 'shelterkit-pets' ),
 		'show'    => $attributes['showBreed'] ?? true,
 		'options' => $options['breed'] ?? array(),
-		'all'     => __( 'All Breeds', 'shelter-pets' ),
+		'all'     => __( 'All Breeds', 'shelterkit-pets' ),
 	),
 	'age'    => array(
-		'label'   => __( 'Age', 'shelter-pets' ),
+		'label'   => __( 'Age', 'shelterkit-pets' ),
 		'show'    => $attributes['showAge'] ?? true,
 		'options' => $options['age'] ?? array(),
-		'all'     => __( 'Any Age', 'shelter-pets' ),
+		'all'     => __( 'Any Age', 'shelterkit-pets' ),
 	),
 	'sex'    => array(
-		'label'   => __( 'Sex', 'shelter-pets' ),
+		'label'   => __( 'Sex', 'shelterkit-pets' ),
 		'show'    => $attributes['showSex'] ?? true,
 		'options' => $options['sex'] ?? array(),
-		'all'     => __( 'Any', 'shelter-pets' ),
+		'all'     => __( 'Any', 'shelterkit-pets' ),
 	),
 	'size'   => array(
-		'label'   => __( 'Size', 'shelter-pets' ),
+		'label'   => __( 'Size', 'shelterkit-pets' ),
 		'show'    => $attributes['showSize'] ?? true,
 		'options' => $options['size'] ?? array(),
-		'all'     => __( 'Any Size', 'shelter-pets' ),
+		'all'     => __( 'Any Size', 'shelterkit-pets' ),
 	),
 	'status' => array(
-		'label'   => __( 'Status', 'shelter-pets' ),
+		'label'   => __( 'Status', 'shelterkit-pets' ),
 		'show'    => $attributes['showStatus'] ?? false,
 		'options' => $options['status'] ?? array(),
-		'all'     => __( 'Any Status', 'shelter-pets' ),
+		'all'     => __( 'Any Status', 'shelterkit-pets' ),
 	),
 );
 
 // Compatibility/meta filters configuration.
 $compat_filters = array(
 	'good_with_dogs'  => array(
-		'label' => __( 'Good with dogs', 'shelter-pets' ),
+		'label' => __( 'Good with dogs', 'shelterkit-pets' ),
 		'icon'  => '🐕',
 		'show'  => $attributes['showGoodWithDogs'] ?? true,
 		'group' => 'compatibility',
 	),
 	'good_with_cats'  => array(
-		'label' => __( 'Good with cats', 'shelter-pets' ),
+		'label' => __( 'Good with cats', 'shelterkit-pets' ),
 		'icon'  => '🐈',
 		'show'  => $attributes['showGoodWithCats'] ?? true,
 		'group' => 'compatibility',
 	),
 	'good_with_kids'  => array(
-		'label' => __( 'Good with kids', 'shelter-pets' ),
+		'label' => __( 'Good with kids', 'shelterkit-pets' ),
 		'icon'  => '👶',
 		'show'  => $attributes['showGoodWithKids'] ?? true,
 		'group' => 'compatibility',
 	),
 	'shots_current'   => array(
-		'label' => __( 'Shots current', 'shelter-pets' ),
+		'label' => __( 'Shots current', 'shelterkit-pets' ),
 		'icon'  => '💉',
 		'show'  => $attributes['showShotsCurrent'] ?? true,
 		'group' => 'health',
 	),
 	'spayed_neutered' => array(
-		'label' => __( 'Spayed/Neutered', 'shelter-pets' ),
+		'label' => __( 'Spayed/Neutered', 'shelterkit-pets' ),
 		'icon'  => '✓',
 		'show'  => $attributes['showSpayedNeutered'] ?? true,
 		'group' => 'health',
 	),
 	'housebroken'     => array(
-		'label' => __( 'Housebroken', 'shelter-pets' ),
+		'label' => __( 'Housebroken', 'shelterkit-pets' ),
 		'icon'  => '🏠',
 		'show'  => $attributes['showHousebroken'] ?? true,
 		'group' => 'health',
 	),
 	'special_needs'   => array(
-		'label' => __( 'Special needs', 'shelter-pets' ),
+		'label' => __( 'Special needs', 'shelterkit-pets' ),
 		'icon'  => '❤️',
 		'show'  => $attributes['showSpecialNeeds'] ?? true,
 		'group' => 'health',
 	),
 	'hypoallergenic'  => array(
-		'label' => __( 'Hypoallergenic', 'shelter-pets' ),
+		'label' => __( 'Hypoallergenic', 'shelterkit-pets' ),
 		'icon'  => '✨',
 		'show'  => $attributes['showHypoallergenic'] ?? true,
 		'group' => 'health',
 	),
 	'declawed'        => array(
-		'label' => __( 'Declawed', 'shelter-pets' ),
+		'label' => __( 'Declawed', 'shelterkit-pets' ),
 		'icon'  => '🐾',
 		'show'  => $attributes['showDeclawed'] ?? false,
 		'group' => 'health',
@@ -172,7 +172,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 		method="get" 
 		action="<?php echo esc_url( $archive_url ); ?>"
 		role="search"
-		aria-label="<?php esc_attr_e( 'Filter pets', 'shelter-pets' ); ?>"
+		aria-label="<?php esc_attr_e( 'Filter pets', 'shelterkit-pets' ); ?>"
 	>
 		<div class="pet-filters__fields">
 			<?php foreach ( $filters as $key => $filter ) : ?>
@@ -214,7 +214,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 					data-wp-bind--aria-expanded="state.compatFiltersExpanded"
 				>
 					<span class="pet-filters__compat-toggle-text">
-						<?php esc_html_e( 'More Filters', 'shelter-pets' ); ?>
+						<?php esc_html_e( 'More Filters', 'shelterkit-pets' ); ?>
 						<?php if ( $active_compat_count > 0 ) : ?>
 							<span class="pet-filters__compat-badge"><?php echo esc_html( $active_compat_count ); ?></span>
 						<?php endif; ?>
@@ -239,7 +239,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 				>
 					<?php if ( $compatibility_style === 'chips' ) : ?>
 						<!-- Chip-style filters -->
-						<div class="pet-filters__chips" role="group" aria-label="<?php esc_attr_e( 'Compatibility filters', 'shelter-pets' ); ?>">
+						<div class="pet-filters__chips" role="group" aria-label="<?php esc_attr_e( 'Compatibility filters', 'shelterkit-pets' ); ?>">
 							<?php foreach ( $compat_filters as $key => $filter ) : ?>
 								<?php if ( $filter['show'] ) : ?>
 									<label class="pet-filters__chip <?php echo $current_compat[ $key ] === 'yes' ? 'pet-filters__chip--active' : ''; ?>">
@@ -268,7 +268,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 
 							<?php if ( ! empty( $compat_group ) ) : ?>
 								<fieldset class="pet-filters__checkbox-group">
-									<legend class="pet-filters__checkbox-legend"><?php esc_html_e( 'Good with', 'shelter-pets' ); ?></legend>
+									<legend class="pet-filters__checkbox-legend"><?php esc_html_e( 'Good with', 'shelterkit-pets' ); ?></legend>
 									<?php foreach ( $compat_group as $key => $filter ) : ?>
 										<label class="pet-filters__checkbox-label">
 											<input
@@ -288,7 +288,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 
 							<?php if ( ! empty( $health_group ) ) : ?>
 								<fieldset class="pet-filters__checkbox-group">
-									<legend class="pet-filters__checkbox-legend"><?php esc_html_e( 'Health & Training', 'shelter-pets' ); ?></legend>
+									<legend class="pet-filters__checkbox-legend"><?php esc_html_e( 'Health & Training', 'shelterkit-pets' ); ?></legend>
 									<?php foreach ( $health_group as $key => $filter ) : ?>
 										<label class="pet-filters__checkbox-label">
 											<input
@@ -313,12 +313,12 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 
 		<div class="pet-filters__actions">
 			<button type="submit" class="pet-filters__submit">
-				<?php esc_html_e( 'Apply Filters', 'shelter-pets' ); ?>
+				<?php esc_html_e( 'Apply Filters', 'shelterkit-pets' ); ?>
 			</button>
 
 			<?php if ( array_filter( $current ) || array_filter( $current_compat ) ) : ?>
 				<a href="<?php echo esc_url( $archive_url ); ?>" class="pet-filters__reset">
-					<?php esc_html_e( 'Reset', 'shelter-pets' ); ?>
+					<?php esc_html_e( 'Reset', 'shelterkit-pets' ); ?>
 				</a>
 			<?php endif; ?>
 
@@ -336,7 +336,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 			>
 				<?php
 				/* translators: default label before JS hydrates */
-				esc_html_e( "\u{2665} Favorites", 'shelter-pets' );
+				esc_html_e( "\u{2665} Favorites", 'shelterkit-pets' );
 				?>
 			</button>
 		</div>
@@ -350,7 +350,7 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 				<?php
 				printf(
 					/* translators: %d: number of active filters */
-					esc_html( _n( '%d filter active', '%d filters active', $active_count, 'shelter-pets' ) ),
+					esc_html( _n( '%d filter active', '%d filters active', $active_count, 'shelterkit-pets' ) ),
 					(int) $active_count
 				);
 				?>

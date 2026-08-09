@@ -12,7 +12,7 @@
  * Data is loaded via the Abilities API (petsync/get-pet) which
  * shares the per-request cache with other blocks on the page.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -44,8 +44,8 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 					)
 				);
 				?>
-				<p><?php esc_html_e( 'Pet Gallery', 'shelter-pets' ); ?></p>
-				<small><?php esc_html_e( 'Displays pet photos with lightbox. Requires pet context.', 'shelter-pets' ); ?></small>
+				<p><?php esc_html_e( 'Pet Gallery', 'shelterkit-pets' ); ?></p>
+				<small><?php esc_html_e( 'Displays pet photos with lightbox. Requires pet context.', 'shelterkit-pets' ); ?></small>
 			</div>
 		</div>
 		<?php
@@ -129,8 +129,8 @@ if ( ! $has_featured && ! $has_thumbnails ) {
 					)
 				);
 				?>
-				<p><?php esc_html_e( 'No photos available', 'shelter-pets' ); ?></p>
-				<small><?php esc_html_e( 'Add a featured image or gallery to this pet.', 'shelter-pets' ); ?></small>
+				<p><?php esc_html_e( 'No photos available', 'shelterkit-pets' ); ?></p>
+				<small><?php esc_html_e( 'Add a featured image or gallery to this pet.', 'shelterkit-pets' ); ?></small>
 			</div>
 		</div>
 		<?php
@@ -156,21 +156,21 @@ if ( ( $attributes['showBadgeStatus'] ?? true ) && $status ) {
 
 if ( ( $attributes['showBadgeNew'] ?? true ) && ! empty( $pet['is_new'] ) ) {
 	$below_badges[] = array(
-		'label' => __( 'New', 'shelter-pets' ),
+		'label' => __( 'New', 'shelterkit-pets' ),
 		'class' => 'pet-gallery__badge--new',
 	);
 }
 
 if ( ( $attributes['showBadgeBondedPair'] ?? true ) && ! empty( $pet['is_bonded_pair'] ) ) {
 	$below_badges[] = array(
-		'label' => __( 'Bonded Pair', 'shelter-pets' ),
+		'label' => __( 'Bonded Pair', 'shelterkit-pets' ),
 		'class' => 'pet-gallery__badge--bonded',
 	);
 }
 
 if ( ( $attributes['showBadgeSpecialNeeds'] ?? true ) && isset( $pet['special_needs'] ) && 'yes' === strtolower( (string) $pet['special_needs'] ) ) {
 	$below_badges[] = array(
-		'label' => __( 'Special Needs', 'shelter-pets' ),
+		'label' => __( 'Special Needs', 'shelterkit-pets' ),
 		'class' => 'pet-gallery__badge--special-needs',
 	);
 }
@@ -229,7 +229,7 @@ $wrapper_attributes = get_block_wrapper_attributes( $wrapper_attrs );
 			echo esc_attr(
 				sprintf(
 				/* translators: %s: pet name */
-					__( 'View photos of %s', 'shelter-pets' ),
+					__( 'View photos of %s', 'shelterkit-pets' ),
 					$pet_name
 				)
 			);
@@ -278,7 +278,7 @@ $wrapper_attributes = get_block_wrapper_attributes( $wrapper_attrs );
 					echo esc_attr(
 						sprintf(
 						/* translators: 1: pet name, 2: image number, 3: total images */
-							__( 'View %1$s photo %2$d of %3$d', 'shelter-pets' ),
+							__( 'View %1$s photo %2$d of %3$d', 'shelterkit-pets' ),
 							$pet_name,
 							$lightbox_index + 1,
 							count( $lightbox_images )
@@ -320,7 +320,7 @@ $wrapper_attributes = get_block_wrapper_attributes( $wrapper_attrs );
 			echo esc_html(
 				sprintf(
 				/* translators: %s: pet name */
-					_n( 'Video of %s', 'Videos of %s', count( $videos ), 'shelter-pets' ),
+					_n( 'Video of %s', 'Videos of %s', count( $videos ), 'shelterkit-pets' ),
 					$pet_name
 				)
 			);
@@ -337,7 +337,7 @@ $wrapper_attributes = get_block_wrapper_attributes( $wrapper_attrs );
 						echo esc_attr(
 							sprintf(
 							/* translators: %s: pet name */
-								__( 'Video of %s', 'shelter-pets' ),
+								__( 'Video of %s', 'shelterkit-pets' ),
 								$pet_name
 							)
 						);
@@ -373,7 +373,7 @@ $wrapper_attributes = get_block_wrapper_attributes( $wrapper_attrs );
 		data-wp-watch="callbacks.syncLightbox"
 		data-wp-on--close="actions.handleDialogClose"
 		data-wp-on--keydown="actions.handleKeydown"
-		aria-label="<?php esc_attr_e( 'Image gallery', 'shelter-pets' ); ?>"
+		aria-label="<?php esc_attr_e( 'Image gallery', 'shelterkit-pets' ); ?>"
 	>
 		<div
 			class="pet-gallery__lightbox-backdrop"
@@ -395,7 +395,7 @@ $wrapper_attributes = get_block_wrapper_attributes( $wrapper_attrs );
 			type="button"
 			class="pet-gallery__lightbox-nav pet-gallery__lightbox-nav--prev"
 			data-wp-on--click="actions.prev"
-			aria-label="<?php esc_attr_e( 'Previous image', 'shelter-pets' ); ?>"
+			aria-label="<?php esc_attr_e( 'Previous image', 'shelterkit-pets' ); ?>"
 		>
 			<span aria-hidden="true">‹</span>
 		</button>
@@ -404,7 +404,7 @@ $wrapper_attributes = get_block_wrapper_attributes( $wrapper_attrs );
 			type="button"
 			class="pet-gallery__lightbox-nav pet-gallery__lightbox-nav--next"
 			data-wp-on--click="actions.next"
-			aria-label="<?php esc_attr_e( 'Next image', 'shelter-pets' ); ?>"
+			aria-label="<?php esc_attr_e( 'Next image', 'shelterkit-pets' ); ?>"
 		>
 			<span aria-hidden="true">›</span>
 		</button>
@@ -413,7 +413,7 @@ $wrapper_attributes = get_block_wrapper_attributes( $wrapper_attrs );
 			type="button"
 			class="pet-gallery__lightbox-close"
 			data-wp-on--click="actions.close"
-			aria-label="<?php esc_attr_e( 'Close gallery', 'shelter-pets' ); ?>"
+			aria-label="<?php esc_attr_e( 'Close gallery', 'shelterkit-pets' ); ?>"
 		>
 			<span aria-hidden="true">×</span>
 		</button>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Shelter Pets
+ * Plugin Name: ShelterKit Pets
  * Plugin URI: https://github.com/jwincek/shelter-pets
  * Description: Adoptable pet listings for animal shelters — blocks for cards, grids, filters, galleries, favorites and comparison, with sync from Petstablished.
  * Version: 1.0.0
@@ -10,9 +10,9 @@
  * Author URI: https://github.com/jwincek
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: shelter-pets
+ * Text Domain: shelterkit-pets
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );
@@ -196,8 +196,8 @@ function petsync_init(): void {
 			wp_register_ability_category(
 				'pets',
 				[
-					'label'       => __( 'Pets', 'shelter-pets' ),
-					'description' => __( 'Pet adoption data operations.', 'shelter-pets' ),
+					'label'       => __( 'Pets', 'shelterkit-pets' ),
+					'description' => __( 'Pet adoption data operations.', 'shelterkit-pets' ),
 				]
 			);
 		}
@@ -230,7 +230,7 @@ add_action( 'plugins_loaded', 'petsync_init' );
  * plugin's DATA version and is deliberately independent of the release version
  * in the plugin header — most releases change no stored data at all.
  */
-define( 'PETSYNC_DB_VERSION', 4 );
+define( 'PETSYNC_DB_VERSION', 5 );
 
 /**
  * The ordered migration list.
@@ -248,6 +248,13 @@ function petsync_get_migrations(): array {
 		2 => 'petsync_migrate_2_provider_meta',
 		3 => 'petsync_migrate_3_default_status',
 		4 => 'petsync_migrate_4_template_namespace',
+		// The same callable again, deliberately. It is driven entirely by
+		// Petsync_Templates::THEME_NAMESPACE and LEGACY_NAMESPACES, so the
+		// shelter-pets -> shelterkit-pets rename needs no new logic — only a
+		// new version, because installs already at 4 will never re-run 4.
+		//
+		// Point any future rename at this same callable in the same way.
+		5 => 'petsync_migrate_4_template_namespace',
 	);
 }
 
@@ -430,9 +437,10 @@ function petsync_migrate_3_default_status(): void {
  * the front end quietly fell back to the bundled template file. Silent, and it
  * reads as "the design reverted" rather than as an error.
  *
- * This happened across two renames (vcpahumane-pet-sync -> shelter-pet-sync ->
- * shelter-pets) with no migration to carry the term along. An install can be
- * upgrading across both at once, so every legacy name is checked, oldest first.
+ * This happened across the renames vcpahumane-pet-sync -> shelter-pet-sync ->
+ * shelter-pets, with no migration to carry the term along. An install can be
+ * upgrading across several at once, so every legacy name is checked, oldest
+ * first. The move to shelterkit-pets is handled the same way, by migration 5.
  *
  * Two paths, because a term name is unique within the taxonomy:
  *

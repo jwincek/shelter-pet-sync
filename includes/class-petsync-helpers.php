@@ -1,10 +1,10 @@
 <?php
 /**
- * Shelter Pets Shared Helpers
+ * ShelterKit Pets Shared Helpers
  *
  * Single source of truth for data formatting, storage, and utilities.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -398,9 +398,9 @@ class Petsync_Helpers {
 		$items    = array();
 
 		$checks = array(
-			'is_ok_with_other_dogs' => __( 'dogs', 'shelter-pets' ),
-			'is_ok_with_other_cats' => __( 'cats', 'shelter-pets' ),
-			'is_ok_with_other_kids' => __( 'kids', 'shelter-pets' ),
+			'is_ok_with_other_dogs' => __( 'dogs', 'shelterkit-pets' ),
+			'is_ok_with_other_cats' => __( 'cats', 'shelterkit-pets' ),
+			'is_ok_with_other_kids' => __( 'kids', 'shelterkit-pets' ),
 		);
 
 		$truthy = array( 'yes', '1', 'true' );
@@ -411,6 +411,6 @@ class Petsync_Helpers {
 			}
 		}
 
-		return $items ? sprintf( /* translators: %s: comma-separated compatibility list */ __( 'Good with %s', 'shelter-pets' ), implode( ', ', $items ) ) : '';
+		return $items ? sprintf( /* translators: %s: comma-separated compatibility list */ __( 'Good with %s', 'shelterkit-pets' ), implode( ', ', $items ) ) : '';
 	}
 }

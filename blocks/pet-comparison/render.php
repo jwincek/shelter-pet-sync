@@ -6,7 +6,7 @@
  * Uses card layout on mobile, table layout on desktop.
  * Fully integrated with Interactivity API for reactive updates.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,10 +42,10 @@ if ( empty( $comparison_ids ) ) {
 				)
 			);
 			?>
-			<h3><?php esc_html_e( 'No pets to compare', 'shelter-pets' ); ?></h3>
-			<p><?php esc_html_e( 'The pets in this comparison link may no longer be available.', 'shelter-pets' ); ?></p>
+			<h3><?php esc_html_e( 'No pets to compare', 'shelterkit-pets' ); ?></h3>
+			<p><?php esc_html_e( 'The pets in this comparison link may no longer be available.', 'shelterkit-pets' ); ?></p>
 			<a href="<?php echo esc_url( get_post_type_archive_link( 'vcps_pet' ) ); ?>" class="pet-comparison__browse-btn">
-				<?php esc_html_e( 'Browse Available Pets', 'shelter-pets' ); ?>
+				<?php esc_html_e( 'Browse Available Pets', 'shelterkit-pets' ); ?>
 			</a>
 		</div>
 	</div>
@@ -92,11 +92,11 @@ foreach ( $pets as &$pet ) {
 	$pet['compatibility_display'] = $pet['compatibility'] ?: '—';
 	$pet['fee_display']           = $pet['adoption_fee_formatted'] ?: '—';
 	$pet['special_needs_display'] = ( isset( $pet['special_needs'] ) && 'yes' === strtolower( (string) $pet['special_needs'] ) )
-		? ( $pet['special_needs_detail'] ?: __( 'Yes', 'shelter-pets' ) )
-		: __( 'None', 'shelter-pets' );
-	$pet['shots_display']         = ! empty( $pet['shots_current'] ) ? __( 'Current', 'shelter-pets' ) : '—';
-	$pet['fixed_display']         = ! empty( $pet['spayed_neutered'] ) ? __( 'Yes', 'shelter-pets' ) : '—';
-	$pet['housebroken_display']   = ! empty( $pet['housebroken'] ) ? __( 'Yes', 'shelter-pets' ) : '—';
+		? ( $pet['special_needs_detail'] ?: __( 'Yes', 'shelterkit-pets' ) )
+		: __( 'None', 'shelterkit-pets' );
+	$pet['shots_display']         = ! empty( $pet['shots_current'] ) ? __( 'Current', 'shelterkit-pets' ) : '—';
+	$pet['fixed_display']         = ! empty( $pet['spayed_neutered'] ) ? __( 'Yes', 'shelterkit-pets' ) : '—';
+	$pet['housebroken_display']   = ! empty( $pet['housebroken'] ) ? __( 'Yes', 'shelterkit-pets' ) : '—';
 }
 unset( $pet );
 
@@ -105,55 +105,55 @@ $comparison_attrs = array();
 if ( $show_breed ) {
 	$comparison_attrs[] = array(
 		'key'   => 'breed',
-		'label' => __( 'Breed', 'shelter-pets' ),
+		'label' => __( 'Breed', 'shelterkit-pets' ),
 	);
 }
 if ( $show_age ) {
 	$comparison_attrs[] = array(
 		'key'   => 'age',
-		'label' => __( 'Age', 'shelter-pets' ),
+		'label' => __( 'Age', 'shelterkit-pets' ),
 	);
 }
 if ( $show_sex ) {
 	$comparison_attrs[] = array(
 		'key'   => 'sex',
-		'label' => __( 'Sex', 'shelter-pets' ),
+		'label' => __( 'Sex', 'shelterkit-pets' ),
 	);
 }
 if ( $show_size ) {
 	$comparison_attrs[] = array(
 		'key'   => 'size',
-		'label' => __( 'Size', 'shelter-pets' ),
+		'label' => __( 'Size', 'shelterkit-pets' ),
 	);
 }
 if ( $show_compatibility ) {
 	$comparison_attrs[] = array(
 		'key'   => 'compatibility_display',
-		'label' => __( 'Good With', 'shelter-pets' ),
+		'label' => __( 'Good With', 'shelterkit-pets' ),
 	);
 }
 if ( $show_adoption_fee ) {
 	$comparison_attrs[] = array(
 		'key'   => 'fee_display',
-		'label' => __( 'Adoption Fee', 'shelter-pets' ),
+		'label' => __( 'Adoption Fee', 'shelterkit-pets' ),
 	);
 }
 // Additional comparison attributes.
 $comparison_attrs[] = array(
 	'key'   => 'special_needs_display',
-	'label' => __( 'Special Needs', 'shelter-pets' ),
+	'label' => __( 'Special Needs', 'shelterkit-pets' ),
 );
 $comparison_attrs[] = array(
 	'key'   => 'shots_display',
-	'label' => __( 'Vaccinations', 'shelter-pets' ),
+	'label' => __( 'Vaccinations', 'shelterkit-pets' ),
 );
 $comparison_attrs[] = array(
 	'key'   => 'fixed_display',
-	'label' => __( 'Spayed/Neutered', 'shelter-pets' ),
+	'label' => __( 'Spayed/Neutered', 'shelterkit-pets' ),
 );
 $comparison_attrs[] = array(
 	'key'   => 'housebroken_display',
-	'label' => __( 'Housebroken', 'shelter-pets' ),
+	'label' => __( 'Housebroken', 'shelterkit-pets' ),
 );
 
 // Pre-compute difference highlighting — for each attribute, check if all
@@ -185,7 +185,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 	<!-- Header -->
 	<div class="pet-comparison__header">
 		<h2 class="pet-comparison__title">
-			<?php esc_html_e( 'Compare Pets', 'shelter-pets' ); ?>
+			<?php esc_html_e( 'Compare Pets', 'shelterkit-pets' ); ?>
 			<span class="pet-comparison__count">(<span data-wp-text="petsync::state.comparisonCount"><?php echo count( $pets ); ?></span>)</span>
 		</h2>
 		<div class="pet-comparison__actions">
@@ -203,7 +203,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					)
 				);
 				?>
-				<span><?php esc_html_e( 'Share', 'shelter-pets' ); ?></span>
+				<span><?php esc_html_e( 'Share', 'shelterkit-pets' ); ?></span>
 			</button>
 			<button
 				type="button"
@@ -219,7 +219,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					)
 				);
 				?>
-				<span><?php esc_html_e( 'Clear All', 'shelter-pets' ); ?></span>
+				<span><?php esc_html_e( 'Clear All', 'shelterkit-pets' ); ?></span>
 			</button>
 		</div>
 	</div>
@@ -242,7 +242,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					type="button"
 					class="pet-comparison__card-remove"
 					data-wp-on--click="actions.removeAndRefresh"
-					aria-label="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Remove %s', 'shelter-pets' ), $pet['name'] ) ); ?>"
+					aria-label="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Remove %s', 'shelterkit-pets' ), $pet['name'] ) ); ?>"
 				>
 					<?php
 					Petsync_Icons::render(
@@ -288,7 +288,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 
 					<div class="pet-comparison__card-actions">
 						<a href="<?php echo esc_url( $pet['url'] ); ?>" class="pet-comparison__card-btn pet-comparison__card-btn--primary">
-							<?php esc_html_e( 'View Details', 'shelter-pets' ); ?>
+							<?php esc_html_e( 'View Details', 'shelterkit-pets' ); ?>
 						</a>
 						<button
 							type="button"
@@ -321,7 +321,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			<thead>
 				<tr>
 					<th class="pet-comparison__th-label">
-						<span class="screen-reader-text"><?php esc_html_e( 'Attribute', 'shelter-pets' ); ?></span>
+						<span class="screen-reader-text"><?php esc_html_e( 'Attribute', 'shelterkit-pets' ); ?></span>
 					</th>
 					<?php
 					foreach ( $pets as $pet ) :
@@ -338,7 +338,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 								<a href="<?php echo esc_url( $pet['url'] ); ?>" class="pet-comparison__th-image-link">
 									<img 
 										src="<?php echo esc_url( $pet['image'] ); ?>" 
-										alt="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Photo of %s', 'shelter-pets' ), $pet['name'] ) ); ?>"
+										alt="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Photo of %s', 'shelterkit-pets' ), $pet['name'] ) ); ?>"
 										class="pet-comparison__th-image"
 									>
 								</a>
@@ -352,7 +352,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 								type="button"
 								class="pet-comparison__th-remove"
 								data-wp-on--click="actions.removeAndRefresh"
-								aria-label="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Remove %s', 'shelter-pets' ), $pet['name'] ) ); ?>"
+								aria-label="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Remove %s', 'shelterkit-pets' ), $pet['name'] ) ); ?>"
 							>
 								<?php
 								Petsync_Icons::render(
@@ -378,7 +378,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 						<th class="pet-comparison__td-label" scope="row">
 							<?php echo esc_html( $attr['label'] ); ?>
 							<?php if ( $differs ) : ?>
-								<span class="pet-comparison__diff-indicator" aria-hidden="true" title="<?php esc_attr_e( 'Values differ', 'shelter-pets' ); ?>"></span>
+								<span class="pet-comparison__diff-indicator" aria-hidden="true" title="<?php esc_attr_e( 'Values differ', 'shelterkit-pets' ); ?>"></span>
 							<?php endif; ?>
 						</th>
 						<?php
@@ -395,7 +395,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				<!-- Actions row -->
 				<tr class="pet-comparison__tr-actions">
 					<th class="pet-comparison__td-label" scope="row">
-						<span class="screen-reader-text"><?php esc_html_e( 'Actions', 'shelter-pets' ); ?></span>
+						<span class="screen-reader-text"><?php esc_html_e( 'Actions', 'shelterkit-pets' ); ?></span>
 					</th>
 					<?php
 					foreach ( $pets as $pet ) :
@@ -410,7 +410,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 							<?php echo wp_interactivity_data_wp_context( $pet_context ); /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_interactivity_data_wp_context() returns an escaped attribute. */ ?>
 						>
 							<a href="<?php echo esc_url( $pet['url'] ); ?>" class="pet-comparison__btn-view">
-								<?php esc_html_e( 'View', 'shelter-pets' ); ?>
+								<?php esc_html_e( 'View', 'shelterkit-pets' ); ?>
 							</a>
 							<button
 								type="button"
@@ -419,7 +419,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 								data-wp-bind--aria-pressed="state.isFavorited"
 								data-wp-class--is-favorited="state.isFavorited"
 								aria-pressed="<?php echo $is_favorited ? 'true' : 'false'; ?>"
-								aria-label="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Favorite %s', 'shelter-pets' ), $pet['name'] ) ); ?>"
+								aria-label="<?php echo esc_attr( sprintf( /* translators: %s: pet name */ __( 'Favorite %s', 'shelterkit-pets' ), $pet['name'] ) ); ?>"
 							>
 								<?php
 									echo Petsync_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
@@ -464,11 +464,11 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				if ( $from_pet_name ) {
 					printf(
 						/* translators: %s: pet name */
-						esc_html__( 'Continue viewing %s', 'shelter-pets' ),
+						esc_html__( 'Continue viewing %s', 'shelterkit-pets' ),
 						esc_html( $from_pet_name )
 					);
 				} else {
-					esc_html_e( 'Back to pet profile', 'shelter-pets' );
+					esc_html_e( 'Back to pet profile', 'shelterkit-pets' );
 				}
 				?>
 			</a>
@@ -483,7 +483,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				)
 			);
 			?>
-			<?php esc_html_e( 'Back to all pets', 'shelter-pets' ); ?>
+			<?php esc_html_e( 'Back to all pets', 'shelterkit-pets' ); ?>
 		</a>
 	</div>
 

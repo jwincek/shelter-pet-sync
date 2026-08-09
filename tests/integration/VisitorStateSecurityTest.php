@@ -8,7 +8,7 @@
  * behaviour it depends on, so a future change that quietly makes anonymous
  * writes touch user data fails here rather than in a security report.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );

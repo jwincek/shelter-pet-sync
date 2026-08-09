@@ -7,7 +7,7 @@
 	"category": "widgets",
 	"description": "Display a filterable grid of adoptable pets with instant client-side filtering.",
 	"keywords": ["pet", "listing", "grid", "archive", "adoption"],
-	"textdomain": "shelter-pets",
+	"textdomain": "shelterkit-pets",
 	"attributes": {
 		"columns": {
 			"type": "integer",

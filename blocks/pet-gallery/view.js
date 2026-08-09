@@ -5,7 +5,7 @@
  * Imports from the shared gallery store module which registers
  * the petsync/gallery namespace with the Interactivity API.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 3.0.0
  */
 

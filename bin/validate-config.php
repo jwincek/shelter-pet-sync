@@ -1,6 +1,6 @@
 <?php
 /**
- * Config-contract validator for Shelter Pets.
+ * Config-contract validator for ShelterKit Pets.
  *
  * Static analysis — no WordPress, no Composer dependencies. It cross-checks
  * the JSON config (config/*.json) against the PHP that consumes it, catching
@@ -29,7 +29,7 @@
  *
  * Exit code: 1 if any ERROR-level issue is found (warnings do not fail CI).
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );

@@ -1,5 +1,5 @@
 /**
- * Capture WordPress.org screenshots for Shelter Pets.
+ * Capture WordPress.org screenshots for ShelterKit Pets.
  *
  * Follows the conventions in wp-content/plugins/CLAUDE.md:
  *   - channel:'chrome', because the cached chromium predates this Playwright
@@ -147,7 +147,7 @@ async function shot( page, selector, file, opts = {} ) {
 	}
 
 	// 7. Sync settings.
-	await page.goto( `${ SITE }/wp-admin/edit.php?post_type=vcps_pet&page=shelter-pets`, { waitUntil: 'networkidle' } );
+	await page.goto( `${ SITE }/wp-admin/edit.php?post_type=vcps_pet&page=shelterkit-pets`, { waitUntil: 'networkidle' } );
 	await shot( page, '.wrap', 'screenshot-7.png', { settle: 800, cap: { sel: '.wrap', h: 1400 } } );
 
 	await browser.close();

@@ -12,7 +12,7 @@
  *   schema properties into the current object (allOf-like behavior).
  * - References are resolved recursively but not circularly.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since   1.0.0
  */
 

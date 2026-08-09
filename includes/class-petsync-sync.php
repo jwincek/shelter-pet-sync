@@ -1,10 +1,10 @@
 <?php
 /**
- * Shelter Pets Sync Handler
+ * ShelterKit Pets Sync Handler
  *
  * Handles synchronization of pets from Petstablished API.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 

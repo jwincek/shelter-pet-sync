@@ -5,7 +5,7 @@
  * A compact control that opens the favorites modal. For a richer experience,
  * use the pet-favorites-modal block instead.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,7 +28,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		type="button"
 		class="pet-favorites-toggle__btn"
 		data-wp-on--click="actions.openFavoritesModal"
-		aria-label="<?php esc_attr_e( 'View favorites', 'shelter-pets' ); ?>"
+		aria-label="<?php esc_attr_e( 'View favorites', 'shelterkit-pets' ); ?>"
 	>
 		<?php
 		echo Petsync_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
@@ -42,7 +42,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		?>
 
 		<span class="pet-favorites-toggle__label">
-			<?php esc_html_e( 'Favorites', 'shelter-pets' ); ?>
+			<?php esc_html_e( 'Favorites', 'shelterkit-pets' ); ?>
 		</span>
 
 		<?php if ( $show_count ) : ?>

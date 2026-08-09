@@ -1,6 +1,6 @@
 <?php
 /**
- * Shelter Pets Blocks - Block Bindings + Interactivity API
+ * ShelterKit Pets Blocks - Block Bindings + Interactivity API
  *
  * Handles block bindings source registration, interactivity state,
  * and no-build block registration.
@@ -10,7 +10,7 @@
  * - Block stores (petsync/gallery, etc.): Block-specific UI state
  * - viewScriptModule in block.json: Automatic loading when block renders
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -63,7 +63,7 @@ class Petsync_Blocks {
 		register_block_bindings_source(
 			'petsync/pet-data',
 			array(
-				'label'              => __( 'Pet Data', 'shelter-pets' ),
+				'label'              => __( 'Pet Data', 'shelterkit-pets' ),
 				'get_value_callback' => array( $this, 'get_binding_value' ),
 				'uses_context'       => array( 'postId', 'postType' ),
 			)
@@ -73,7 +73,7 @@ class Petsync_Blocks {
 		register_block_bindings_source(
 			'petsync/adoption-stats',
 			array(
-				'label'              => __( 'Adoption Statistics', 'shelter-pets' ),
+				'label'              => __( 'Adoption Statistics', 'shelterkit-pets' ),
 				'get_value_callback' => array( $this, 'get_stats_binding_value' ),
 				'uses_context'       => array(),
 			)
@@ -116,7 +116,7 @@ class Petsync_Blocks {
 
 		// Format for display.
 		if ( is_bool( $value ) ) {
-			return $value ? __( 'Yes', 'shelter-pets' ) : __( 'No', 'shelter-pets' );
+			return $value ? __( 'Yes', 'shelterkit-pets' ) : __( 'No', 'shelterkit-pets' );
 		}
 
 		return is_scalar( $value ) ? (string) $value : null;
@@ -124,12 +124,12 @@ class Petsync_Blocks {
 
 	private function get_placeholder( string $key ): string {
 		$placeholders = array(
-			'status' => __( '[Status]', 'shelter-pets' ),
-			'animal' => __( '[Animal]', 'shelter-pets' ),
-			'breed'  => __( '[Breed]', 'shelter-pets' ),
-			'age'    => __( '[Age]', 'shelter-pets' ),
-			'sex'    => __( '[Sex]', 'shelter-pets' ),
-			'size'   => __( '[Size]', 'shelter-pets' ),
+			'status' => __( '[Status]', 'shelterkit-pets' ),
+			'animal' => __( '[Animal]', 'shelterkit-pets' ),
+			'breed'  => __( '[Breed]', 'shelterkit-pets' ),
+			'age'    => __( '[Age]', 'shelterkit-pets' ),
+			'sex'    => __( '[Sex]', 'shelterkit-pets' ),
+			'size'   => __( '[Size]', 'shelterkit-pets' ),
 		);
 		return $placeholders[ $key ] ?? '[' . ucfirst( str_replace( '_', ' ', $key ) ) . ']';
 	}
@@ -355,7 +355,7 @@ class Petsync_Blocks {
 				'key'    => $key,
 				'type'   => 'taxonomy',
 				'source' => 'petsync/pet-data',
-				'desc'   => sprintf( /* translators: %s: pet field name */ __( 'Pet %s', 'shelter-pets' ), ucfirst( $key ) ),
+				'desc'   => sprintf( /* translators: %s: pet field name */ __( 'Pet %s', 'shelterkit-pets' ), ucfirst( $key ) ),
 			);
 		}
 

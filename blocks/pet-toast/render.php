@@ -11,7 +11,7 @@
  * visibility: the compare bar previously hosted the only toast, which
  * made messages invisible whenever the bar itself was hidden.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.1.0
  */
 

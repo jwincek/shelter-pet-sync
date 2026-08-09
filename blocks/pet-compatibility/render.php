@@ -6,7 +6,7 @@
  * grid matching the pet-attributes visual treatment. Positive values link
  * to the pet archive filtered by that compatibility trait.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -27,8 +27,8 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 		?>
 		<div <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?>>
 			<div class="pet-compat__placeholder">
-				<p><?php esc_html_e( 'Pet Compatibility', 'shelter-pets' ); ?></p>
-				<small><?php esc_html_e( 'Good with dogs, cats, and children. Requires pet context.', 'shelter-pets' ); ?></small>
+				<p><?php esc_html_e( 'Pet Compatibility', 'shelterkit-pets' ); ?></p>
+				<small><?php esc_html_e( 'Good with dogs, cats, and children. Requires pet context.', 'shelterkit-pets' ); ?></small>
 			</div>
 		</div>
 		<?php
@@ -49,21 +49,21 @@ $archive_url = get_post_type_archive_link( 'vcps_pet' );
 $compat_defs = array(
 	array(
 		'toggle' => 'showDogs',
-		'label'  => __( 'Dogs', 'shelter-pets' ),
+		'label'  => __( 'Dogs', 'shelterkit-pets' ),
 		'key'    => 'ok_with_dogs',
 		'icon'   => 'dog',
 		'filter' => 'compat_goodWithDogs',
 	),
 	array(
 		'toggle' => 'showCats',
-		'label'  => __( 'Cats', 'shelter-pets' ),
+		'label'  => __( 'Cats', 'shelterkit-pets' ),
 		'key'    => 'ok_with_cats',
 		'icon'   => 'cat',
 		'filter' => 'compat_goodWithCats',
 	),
 	array(
 		'toggle' => 'showKids',
-		'label'  => __( 'Children', 'shelter-pets' ),
+		'label'  => __( 'Children', 'shelterkit-pets' ),
 		'key'    => 'ok_with_kids',
 		'icon'   => 'child',
 		'filter' => 'compat_goodWithKids',
@@ -102,9 +102,9 @@ if ( empty( $items ) ) {
 
 // Status labels for screen readers and the visible status text.
 $status_labels = array(
-	'yes'     => __( 'Yes', 'shelter-pets' ),
-	'no'      => __( 'No', 'shelter-pets' ),
-	'unknown' => __( 'Ask us', 'shelter-pets' ),
+	'yes'     => __( 'Yes', 'shelterkit-pets' ),
+	'no'      => __( 'No', 'shelterkit-pets' ),
+	'unknown' => __( 'Ask us', 'shelterkit-pets' ),
 );
 
 // Status icons.
@@ -141,8 +141,8 @@ $display_style = $attributes['displayStyle'] ?? 'cards';
 // every visible item is "yes". Fall back to the neutral heading ("Good with")
 // if any item is "no" or "unknown".
 $all_positive     = ! array_filter( $items, fn( $i ) => $i['status'] !== 'yes' );
-$positive_heading = $attributes['positiveHeadingText'] ?? __( 'Plays nicely with', 'shelter-pets' );
-$neutral_heading  = $attributes['headingText'] ?? __( 'Good with', 'shelter-pets' );
+$positive_heading = $attributes['positiveHeadingText'] ?? __( 'Plays nicely with', 'shelterkit-pets' );
+$neutral_heading  = $attributes['headingText'] ?? __( 'Good with', 'shelterkit-pets' );
 $heading_text     = $all_positive ? $positive_heading : $neutral_heading;
 
 $wrapper_attributes = get_block_wrapper_attributes(

@@ -25,7 +25,7 @@
  * Editor template customizations and users' saved lists, which is why
  * it is opt-in.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
@@ -135,7 +135,7 @@ function vcps_uninstall_site(): bool {
 	// legacy option names below. The list is duplicated from
 	// Petsync_Templates::LEGACY_NAMESPACES because the plugin is not loaded
 	// during uninstall and the constant is unreachable here.
-	$theme_names = array( 'shelter-pets', 'shelter-pet-sync', 'vcpahumane-pet-sync' );
+	$theme_names = array( 'shelterkit-pets', 'shelter-pets', 'shelter-pet-sync', 'vcpahumane-pet-sync', 'petstablished-sync' );
 
 	$template_ids = get_posts(
 		array(

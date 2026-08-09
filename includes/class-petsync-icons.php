@@ -1,11 +1,11 @@
 <?php
 /**
- * Shelter Pets Icons - Centralized SVG Icon Library
+ * ShelterKit Pets Icons - Centralized SVG Icon Library
  *
  * Provides a single source of truth for all SVG icons used across blocks.
  * Supports customizable size, stroke width, and additional attributes.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 

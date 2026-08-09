@@ -4,7 +4,7 @@
  *
  * Provides aggregate adoption statistics for block bindings and archive pages.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 

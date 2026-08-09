@@ -17,7 +17,7 @@
  *   $slide_class        (string) CSS classes for the <article> wrapper.
  *   $slide_directives   (string) Extra data-wp-* attributes for the <article>.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -36,7 +36,7 @@ $badges = array();
 if ( ! empty( $show_badges ) ) {
 	if ( ! empty( $pet['special_needs'] ) && strtolower( $pet['special_needs'] ) === 'yes' ) {
 		$badges[] = array(
-			'label' => __( 'Special Needs', 'shelter-pets' ),
+			'label' => __( 'Special Needs', 'shelterkit-pets' ),
 			'class' => 'pet-slider__badge--special-needs',
 			'icon'  => 'heart-special',
 		);
@@ -45,9 +45,9 @@ if ( ! empty( $show_badges ) ) {
 		$pair_name = '';
 		if ( ! empty( $pet['bonded_pair_names'][0]['name'] ) ) {
 			/* translators: %s: bonded partner pet name */
-			$pair_name = sprintf( __( 'Bonded with %s', 'shelter-pets' ), $pet['bonded_pair_names'][0]['name'] );
+			$pair_name = sprintf( __( 'Bonded with %s', 'shelterkit-pets' ), $pet['bonded_pair_names'][0]['name'] );
 		} else {
-			$pair_name = __( 'Bonded Pair', 'shelter-pets' );
+			$pair_name = __( 'Bonded Pair', 'shelterkit-pets' );
 		}
 		$badges[] = array(
 			'label' => $pair_name,
@@ -177,7 +177,7 @@ $badge_pos = $badge_position ?? 'image-top';
 				data-wp-on--click="actions.toggleFavorite"
 				data-wp-bind--aria-pressed="state.isFavorited"
 				data-wp-class--is-active="state.isFavorited"
-				aria-label="<?php esc_attr_e( 'Add to favorites', 'shelter-pets' ); ?>"
+				aria-label="<?php esc_attr_e( 'Add to favorites', 'shelterkit-pets' ); ?>"
 			>
 				<?php
 				echo Petsync_Icons::get_heart_interactive( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG.
@@ -195,7 +195,7 @@ $badge_pos = $badge_position ?? 'image-top';
 				data-wp-bind--aria-pressed="state.isInComparison"
 				data-wp-class--is-active="state.isInComparison"
 				data-wp-bind--disabled="state.isCompareDisabled"
-				aria-label="<?php esc_attr_e( 'Add to comparison', 'shelter-pets' ); ?>"
+				aria-label="<?php esc_attr_e( 'Add to comparison', 'shelterkit-pets' ); ?>"
 			>
 				<?php
 				Petsync_Icons::render(

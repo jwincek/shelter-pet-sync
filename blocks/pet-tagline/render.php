@@ -7,7 +7,7 @@
  * the pet archive filtered by that value, matching the filter URL pattern
  * used by the pet-filters and pet-listing-grid blocks.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 

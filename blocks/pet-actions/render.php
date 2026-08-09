@@ -11,7 +11,7 @@
  *   - Copy link to clipboard
  *   - Direct social links (Facebook, X/Twitter, Email)
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -42,8 +42,8 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 					)
 				);
 				?>
-				<p><?php esc_html_e( 'Pet Actions', 'shelter-pets' ); ?></p>
-				<small><?php esc_html_e( 'Favorite, compare, and share buttons. Requires pet context.', 'shelter-pets' ); ?></small>
+				<p><?php esc_html_e( 'Pet Actions', 'shelterkit-pets' ); ?></p>
+				<small><?php esc_html_e( 'Favorite, compare, and share buttons. Requires pet context.', 'shelterkit-pets' ); ?></small>
 			</div>
 		</div>
 		<?php
@@ -75,7 +75,7 @@ $share_url   = rawurlencode( $pet_url );
 $share_title = rawurlencode(
 	sprintf(
 	/* translators: %s: pet name */
-		__( 'Meet %s — Available for Adoption', 'shelter-pets' ),
+		__( 'Meet %s — Available for Adoption', 'shelterkit-pets' ),
 		$pet_name
 	)
 );
@@ -117,8 +117,8 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		echo esc_attr(
 			sprintf(
 				$is_favorited
-				? /* translators: %s: pet name */ __( 'Unfavorite %s', 'shelter-pets' )
-				: /* translators: %s: pet name */ __( 'Favorite %s', 'shelter-pets' ),
+				? /* translators: %s: pet name */ __( 'Unfavorite %s', 'shelterkit-pets' )
+				: /* translators: %s: pet name */ __( 'Favorite %s', 'shelterkit-pets' ),
 				$pet_name
 			)
 		);
@@ -129,8 +129,8 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		<span class="pet-actions__label" data-wp-text="state.favoriteButtonText">
 			<?php
 			echo $is_favorited
-				? esc_html__( 'Unfavorite', 'shelter-pets' )
-				: esc_html__( 'Favorite', 'shelter-pets' );
+				? esc_html__( 'Unfavorite', 'shelterkit-pets' )
+				: esc_html__( 'Favorite', 'shelterkit-pets' );
 			?>
 		</span>
 	</button>
@@ -151,7 +151,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		echo esc_attr(
 			sprintf(
 			/* translators: %s: pet name */
-				__( 'Add %s to comparison', 'shelter-pets' ),
+				__( 'Add %s to comparison', 'shelterkit-pets' ),
 				$pet_name
 			)
 		);
@@ -168,7 +168,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		);
 		?>
 		<span class="pet-actions__label" data-wp-text="state.compareButtonText">
-			<?php esc_html_e( 'Compare', 'shelter-pets' ); ?>
+			<?php esc_html_e( 'Compare', 'shelterkit-pets' ); ?>
 		</span>
 	</button>
 	<?php endif; ?>
@@ -187,7 +187,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			echo esc_attr(
 				sprintf(
 				/* translators: %s: pet name */
-					__( 'Share %s', 'shelter-pets' ),
+					__( 'Share %s', 'shelterkit-pets' ),
 					$pet_name
 				)
 			);
@@ -203,7 +203,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				)
 			);
 			?>
-			<span class="pet-actions__label"><?php esc_html_e( 'Share', 'shelter-pets' ); ?></span>
+			<span class="pet-actions__label"><?php esc_html_e( 'Share', 'shelterkit-pets' ); ?></span>
 		</button>
 
 		<div
@@ -212,7 +212,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			data-wp-on-document--click="actions.closeShareMenuOnOutsideClick"
 			data-wp-on-document--keydown="actions.closeShareMenuOnEscape"
 			role="menu"
-			aria-label="<?php esc_attr_e( 'Share options', 'shelter-pets' ); ?>"
+			aria-label="<?php esc_attr_e( 'Share options', 'shelterkit-pets' ); ?>"
 			hidden
 		>
 			<!-- Native share (hidden if Web Share API unavailable — handled via CSS/JS) -->
@@ -233,7 +233,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					)
 				);
 				?>
-				<span><?php esc_html_e( 'Share via…', 'shelter-pets' ); ?></span>
+				<span><?php esc_html_e( 'Share via…', 'shelterkit-pets' ); ?></span>
 			</button>
 
 			<!-- Copy link -->
@@ -254,7 +254,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				);
 				?>
 				<span data-wp-text="state.copyButtonText">
-					<?php esc_html_e( 'Copy link', 'shelter-pets' ); ?>
+					<?php esc_html_e( 'Copy link', 'shelterkit-pets' ); ?>
 				</span>
 			</button>
 
@@ -313,7 +313,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					)
 				);
 				?>
-				<span><?php esc_html_e( 'Email', 'shelter-pets' ); ?></span>
+				<span><?php esc_html_e( 'Email', 'shelterkit-pets' ); ?></span>
 			</a>
 		</div>
 	</div>

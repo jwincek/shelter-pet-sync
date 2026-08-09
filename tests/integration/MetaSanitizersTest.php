@@ -6,7 +6,7 @@
  * the wrong one: it takes the ABSOLUTE value, so -5 silently resolved to
  * attachment 5 — a real, unrelated image rather than a rejected input.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );

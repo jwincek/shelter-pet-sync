@@ -13,7 +13,7 @@
  * why there is also a wp_after_insert_post backstop, and why this file tests
  * each path separately.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );

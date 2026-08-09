@@ -1,4 +1,4 @@
-=== Shelter Pets ===
+=== ShelterKit Pets ===
 Contributors: jeromewincek
 Tags: pets, adoption, animal shelter, rescue, animals
 Requires at least: 6.9
@@ -12,7 +12,7 @@ Adoptable pet listings and printable kennel cards for animal shelters — add pe
 
 == Description ==
 
-Shelter Pets puts your shelter's adoptable animals on your own website as a custom post type, then gives you a full set of blocks to display and filter them on the front end — so the listings live on your domain, get indexed by search engines, and match your theme, rather than sitting inside a third-party embed.
+ShelterKit Pets puts your shelter's adoptable animals on your own website as a custom post type, then gives you a full set of blocks to display and filter them on the front end — so the listings live on your domain, get indexed by search engines, and match your theme, rather than sitting inside a third-party embed.
 
 Add animals by hand from the WordPress editor, or connect a Petstablished account and have them imported and kept up to date automatically. Both work the same on the front end, and the two can be mixed — a sync only ever touches the pets it imported itself.
 

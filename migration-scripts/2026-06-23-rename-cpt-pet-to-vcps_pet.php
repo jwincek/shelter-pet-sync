@@ -20,14 +20,14 @@
  * plugin/site CLAUDE.md and the local-wpcli-db-socket memory):
  *
  *   wp eval-file \
- *     wp-content/plugins/shelter-pets/migration-scripts/2026-06-23-rename-cpt-pet-to-vcps_pet.php \
+ *     wp-content/plugins/shelterkit-pets/migration-scripts/2026-06-23-rename-cpt-pet-to-vcps_pet.php \
  *     --require=/tmp/dbhost.php --skip-themes
  *
  * Idempotent: re-running after a successful migration is a no-op
  * (no rows left with post_type = 'pet'). Pass `--dry-run` style by
  * leaving DRY_RUN=true below to preview the count without writing.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 // declare( strict_types = 1 );

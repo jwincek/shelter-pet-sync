@@ -63,11 +63,11 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Display Settings', 'shelter-pets' ),
+							title: __( 'Display Settings', 'shelterkit-pets' ),
 							initialOpen: true,
 						},
 						el( RangeControl, {
-							label: __( 'Columns', 'shelter-pets' ),
+							label: __( 'Columns', 'shelterkit-pets' ),
 							value: columns,
 							onChange: function( value ) {
 								setAttributes( { columns: value } );
@@ -77,20 +77,20 @@
 							step: 1,
 						} ),
 						el( SelectControl, {
-							label: __( 'Badge Type', 'shelter-pets' ),
+							label: __( 'Badge Type', 'shelterkit-pets' ),
 							value: badgeType,
 							options: [
-								{ label: __( 'Animal Type', 'shelter-pets' ), value: 'animal' },
-								{ label: __( 'Age', 'shelter-pets' ), value: 'age' },
-								{ label: __( 'New (7 days)', 'shelter-pets' ), value: 'new' },
-								{ label: __( 'None', 'shelter-pets' ), value: 'none' },
+								{ label: __( 'Animal Type', 'shelterkit-pets' ), value: 'animal' },
+								{ label: __( 'Age', 'shelterkit-pets' ), value: 'age' },
+								{ label: __( 'New (7 days)', 'shelterkit-pets' ), value: 'new' },
+								{ label: __( 'None', 'shelterkit-pets' ), value: 'none' },
 							],
 							onChange: function( value ) {
 								setAttributes( { badgeType: value } );
 							},
 						} ),
 						el( ToggleControl, {
-							label: __( 'Show Results Count', 'shelter-pets' ),
+							label: __( 'Show Results Count', 'shelterkit-pets' ),
 							checked: showResultsCount,
 							onChange: function( value ) {
 								setAttributes( { showResultsCount: value } );
@@ -101,19 +101,19 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Filter Settings', 'shelter-pets' ),
+							title: __( 'Filter Settings', 'shelterkit-pets' ),
 							initialOpen: false,
 						},
 						el( ToggleControl, {
-							label: __( 'Show Search', 'shelter-pets' ),
-							help: __( 'Search pets by name or breed', 'shelter-pets' ),
+							label: __( 'Show Search', 'shelterkit-pets' ),
+							help: __( 'Search pets by name or breed', 'shelterkit-pets' ),
 							checked: showSearch,
 							onChange: function( value ) {
 								setAttributes( { showSearch: value } );
 							},
 						} ),
 						el( ToggleControl, {
-							label: __( 'Show Filters', 'shelter-pets' ),
+							label: __( 'Show Filters', 'shelterkit-pets' ),
 							checked: showFilters,
 							onChange: function( value ) {
 								setAttributes( { showFilters: value } );
@@ -125,37 +125,37 @@
 							el( 'p', {
 								className: 'components-base-control__label',
 								style: { marginTop: '16px', marginBottom: '8px', fontWeight: '600' }
-							}, __( 'Basic Filters', 'shelter-pets' ) ),
+							}, __( 'Basic Filters', 'shelterkit-pets' ) ),
 							el( ToggleControl, {
-								label: __( 'Animal Type', 'shelter-pets' ),
+								label: __( 'Animal Type', 'shelterkit-pets' ),
 								checked: filterAnimal,
 								onChange: function( value ) {
 									setAttributes( { filterAnimal: value } );
 								},
 							} ),
 							el( ToggleControl, {
-								label: __( 'Breed', 'shelter-pets' ),
+								label: __( 'Breed', 'shelterkit-pets' ),
 								checked: filterBreed,
 								onChange: function( value ) {
 									setAttributes( { filterBreed: value } );
 								},
 							} ),
 							el( ToggleControl, {
-								label: __( 'Age', 'shelter-pets' ),
+								label: __( 'Age', 'shelterkit-pets' ),
 								checked: filterAge,
 								onChange: function( value ) {
 									setAttributes( { filterAge: value } );
 								},
 							} ),
 							el( ToggleControl, {
-								label: __( 'Sex', 'shelter-pets' ),
+								label: __( 'Sex', 'shelterkit-pets' ),
 								checked: filterSex,
 								onChange: function( value ) {
 									setAttributes( { filterSex: value } );
 								},
 							} ),
 							el( ToggleControl, {
-								label: __( 'Size', 'shelter-pets' ),
+								label: __( 'Size', 'shelterkit-pets' ),
 								checked: filterSize,
 								onChange: function( value ) {
 									setAttributes( { filterSize: value } );
@@ -167,12 +167,12 @@
 					showFilters && el(
 						PanelBody,
 						{
-							title: __( 'Compatibility Filters', 'shelter-pets' ),
+							title: __( 'Compatibility Filters', 'shelterkit-pets' ),
 							initialOpen: false,
 						},
 						el( ToggleControl, {
-							label: __( 'Show Compatibility Filters', 'shelter-pets' ),
-							help: __( 'Filters for "good with" and health status', 'shelter-pets' ),
+							label: __( 'Show Compatibility Filters', 'shelterkit-pets' ),
+							help: __( 'Filters for "good with" and health status', 'shelterkit-pets' ),
 							checked: showCompatibilityFilters,
 							onChange: function( value ) {
 								setAttributes( { showCompatibilityFilters: value } );
@@ -182,11 +182,11 @@
 							Fragment,
 							null,
 							el( SelectControl, {
-								label: __( 'Filter Style', 'shelter-pets' ),
+								label: __( 'Filter Style', 'shelterkit-pets' ),
 								value: compatibilityStyle,
 								options: [
-									{ label: __( 'Chips (pill buttons)', 'shelter-pets' ), value: 'chips' },
-									{ label: __( 'Checkboxes (grouped)', 'shelter-pets' ), value: 'checkboxes' },
+									{ label: __( 'Chips (pill buttons)', 'shelterkit-pets' ), value: 'chips' },
+									{ label: __( 'Checkboxes (grouped)', 'shelterkit-pets' ), value: 'checkboxes' },
 								],
 								onChange: function( value ) {
 									setAttributes( { compatibilityStyle: value } );
@@ -195,23 +195,23 @@
 							el( 'p', {
 								className: 'components-base-control__label',
 								style: { marginTop: '16px', marginBottom: '8px', fontWeight: '600' }
-							}, __( 'Good With', 'shelter-pets' ) ),
+							}, __( 'Good With', 'shelterkit-pets' ) ),
 							el( ToggleControl, {
-								label: __( 'Dogs', 'shelter-pets' ),
+								label: __( 'Dogs', 'shelterkit-pets' ),
 								checked: filterGoodWithDogs,
 								onChange: function( value ) {
 									setAttributes( { filterGoodWithDogs: value } );
 								},
 							} ),
 							el( ToggleControl, {
-								label: __( 'Cats', 'shelter-pets' ),
+								label: __( 'Cats', 'shelterkit-pets' ),
 								checked: filterGoodWithCats,
 								onChange: function( value ) {
 									setAttributes( { filterGoodWithCats: value } );
 								},
 							} ),
 							el( ToggleControl, {
-								label: __( 'Kids', 'shelter-pets' ),
+								label: __( 'Kids', 'shelterkit-pets' ),
 								checked: filterGoodWithKids,
 								onChange: function( value ) {
 									setAttributes( { filterGoodWithKids: value } );
@@ -220,31 +220,31 @@
 							el( 'p', {
 								className: 'components-base-control__label',
 								style: { marginTop: '16px', marginBottom: '8px', fontWeight: '600' }
-							}, __( 'Health & Training', 'shelter-pets' ) ),
+							}, __( 'Health & Training', 'shelterkit-pets' ) ),
 							el( ToggleControl, {
-								label: __( 'Shots Current', 'shelter-pets' ),
+								label: __( 'Shots Current', 'shelterkit-pets' ),
 								checked: filterShotsCurrent,
 								onChange: function( value ) {
 									setAttributes( { filterShotsCurrent: value } );
 								},
 							} ),
 							el( ToggleControl, {
-								label: __( 'Spayed/Neutered', 'shelter-pets' ),
+								label: __( 'Spayed/Neutered', 'shelterkit-pets' ),
 								checked: filterSpayedNeutered,
 								onChange: function( value ) {
 									setAttributes( { filterSpayedNeutered: value } );
 								},
 							} ),
 							el( ToggleControl, {
-								label: __( 'Housebroken', 'shelter-pets' ),
+								label: __( 'Housebroken', 'shelterkit-pets' ),
 								checked: filterHousebroken,
 								onChange: function( value ) {
 									setAttributes( { filterHousebroken: value } );
 								},
 							} ),
 							el( ToggleControl, {
-								label: __( 'Special Needs', 'shelter-pets' ),
-								help: __( 'Show pets with special needs', 'shelter-pets' ),
+								label: __( 'Special Needs', 'shelterkit-pets' ),
+								help: __( 'Show pets with special needs', 'shelterkit-pets' ),
 								checked: filterSpecialNeeds,
 								onChange: function( value ) {
 									setAttributes( { filterSpecialNeeds: value } );

@@ -1,8 +1,8 @@
 <?php
 /**
- * Shelter Pets Admin - Settings & Sync UI
+ * ShelterKit Pets Admin - Settings & Sync UI
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Petsync_Admin {
 
 	public const OPTION_NAME   = 'petsync_settings';
-	public const PAGE_SLUG     = 'shelter-pets';
-	public const LOG_PAGE_SLUG = 'shelter-pets-log';
+	public const PAGE_SLUG     = 'shelterkit-pets';
+	public const LOG_PAGE_SLUG = 'shelterkit-pets-log';
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
@@ -29,8 +29,8 @@ class Petsync_Admin {
 	public function add_menu(): void {
 		add_submenu_page(
 			'edit.php?post_type=vcps_pet',
-			__( 'Petstablished Sync', 'shelter-pets' ),
-			__( 'Sync Settings', 'shelter-pets' ),
+			__( 'Petstablished Sync', 'shelterkit-pets' ),
+			__( 'Sync Settings', 'shelterkit-pets' ),
 			'manage_options',
 			self::PAGE_SLUG,
 			array( $this, 'render_settings_page' )
@@ -38,8 +38,8 @@ class Petsync_Admin {
 
 		add_submenu_page(
 			'edit.php?post_type=vcps_pet',
-			__( 'Petstablished Sync Log', 'shelter-pets' ),
-			__( 'Sync Log', 'shelter-pets' ),
+			__( 'Petstablished Sync Log', 'shelterkit-pets' ),
+			__( 'Sync Log', 'shelterkit-pets' ),
 			'manage_options',
 			self::LOG_PAGE_SLUG,
 			array( $this, 'render_sync_log_page' )
@@ -60,34 +60,34 @@ class Petsync_Admin {
 		// API Settings Section.
 		add_settings_section(
 			'api_settings',
-			__( 'API Configuration', 'shelter-pets' ),
-			fn() => printf( '<p>%s</p>', esc_html__( 'Connect to your Petstablished account.', 'shelter-pets' ) ),
+			__( 'API Configuration', 'shelterkit-pets' ),
+			fn() => printf( '<p>%s</p>', esc_html__( 'Connect to your Petstablished account.', 'shelterkit-pets' ) ),
 			self::PAGE_SLUG
 		);
 
-		add_settings_field( 'public_key', __( 'Public Key', 'shelter-pets' ), array( $this, 'render_public_key_field' ), self::PAGE_SLUG, 'api_settings' );
+		add_settings_field( 'public_key', __( 'Public Key', 'shelterkit-pets' ), array( $this, 'render_public_key_field' ), self::PAGE_SLUG, 'api_settings' );
 
 		// Sync Settings Section.
 		add_settings_section(
 			'sync_settings',
-			__( 'Sync Options', 'shelter-pets' ),
-			fn() => printf( '<p>%s</p>', esc_html__( 'Configure automatic synchronization.', 'shelter-pets' ) ),
+			__( 'Sync Options', 'shelterkit-pets' ),
+			fn() => printf( '<p>%s</p>', esc_html__( 'Configure automatic synchronization.', 'shelterkit-pets' ) ),
 			self::PAGE_SLUG
 		);
 
-		add_settings_field( 'auto_sync', __( 'Auto Sync', 'shelter-pets' ), array( $this, 'render_auto_sync_field' ), self::PAGE_SLUG, 'sync_settings' );
-		add_settings_field( 'sync_interval', __( 'Sync Interval', 'shelter-pets' ), array( $this, 'render_sync_interval_field' ), self::PAGE_SLUG, 'sync_settings' );
-		add_settings_field( 'batch_size', __( 'Batch Size', 'shelter-pets' ), array( $this, 'render_batch_size_field' ), self::PAGE_SLUG, 'sync_settings' );
+		add_settings_field( 'auto_sync', __( 'Auto Sync', 'shelterkit-pets' ), array( $this, 'render_auto_sync_field' ), self::PAGE_SLUG, 'sync_settings' );
+		add_settings_field( 'sync_interval', __( 'Sync Interval', 'shelterkit-pets' ), array( $this, 'render_sync_interval_field' ), self::PAGE_SLUG, 'sync_settings' );
+		add_settings_field( 'batch_size', __( 'Batch Size', 'shelterkit-pets' ), array( $this, 'render_batch_size_field' ), self::PAGE_SLUG, 'sync_settings' );
 
 		// Uninstall Section.
 		add_settings_section(
 			'uninstall_settings',
-			__( 'Uninstall', 'shelter-pets' ),
-			fn() => printf( '<p>%s</p>', esc_html__( 'What happens when the plugin is deleted from the Plugins screen.', 'shelter-pets' ) ),
+			__( 'Uninstall', 'shelterkit-pets' ),
+			fn() => printf( '<p>%s</p>', esc_html__( 'What happens when the plugin is deleted from the Plugins screen.', 'shelterkit-pets' ) ),
 			self::PAGE_SLUG
 		);
 
-		add_settings_field( 'delete_data_on_uninstall', __( 'Data Removal', 'shelter-pets' ), array( $this, 'render_delete_data_field' ), self::PAGE_SLUG, 'uninstall_settings' );
+		add_settings_field( 'delete_data_on_uninstall', __( 'Data Removal', 'shelterkit-pets' ), array( $this, 'render_delete_data_field' ), self::PAGE_SLUG, 'uninstall_settings' );
 	}
 
 	public const SCHEDULE_6PM_SKIP_SUNDAY = 'daily_6pm_skip_sunday';
@@ -182,7 +182,7 @@ class Petsync_Admin {
 			<p class="description">%s</p>',
 			esc_attr( self::OPTION_NAME ),
 			esc_attr( $settings['public_key'] ),
-			esc_html__( 'Your Petstablished public key (found in account settings).', 'shelter-pets' )
+			esc_html__( 'Your Petstablished public key (found in account settings).', 'shelterkit-pets' )
 		);
 	}
 
@@ -192,7 +192,7 @@ class Petsync_Admin {
 			'<label><input type="checkbox" name="%s[auto_sync]" value="1" %s> %s</label>',
 			esc_attr( self::OPTION_NAME ),
 			checked( $settings['auto_sync'], true, false ),
-			esc_html__( 'Automatically sync pets on a schedule', 'shelter-pets' )
+			esc_html__( 'Automatically sync pets on a schedule', 'shelterkit-pets' )
 		);
 	}
 
@@ -202,18 +202,18 @@ class Petsync_Admin {
 			'<label><input type="checkbox" name="%s[delete_data_on_uninstall]" value="1" %s> %s</label><p class="description">%s</p>',
 			esc_attr( self::OPTION_NAME ),
 			checked( $settings['delete_data_on_uninstall'], true, false ),
-			esc_html__( 'Delete all data when this plugin is deleted', 'shelter-pets' ),
-			esc_html__( 'Removes imported pets, pet taxonomies, template customizations, settings, and visitors’ saved favorites and comparison lists. Leave off to keep everything in place for a reinstall. Pets can be re-imported from Petstablished at any time.', 'shelter-pets' )
+			esc_html__( 'Delete all data when this plugin is deleted', 'shelterkit-pets' ),
+			esc_html__( 'Removes imported pets, pet taxonomies, template customizations, settings, and visitors’ saved favorites and comparison lists. Leave off to keep everything in place for a reinstall. Pets can be re-imported from Petstablished at any time.', 'shelterkit-pets' )
 		);
 	}
 
 	public function render_sync_interval_field(): void {
 		$settings  = self::get_settings();
 		$intervals = array(
-			self::SCHEDULE_6PM_SKIP_SUNDAY => __( 'Daily at 6pm (skip Sundays)', 'shelter-pets' ),
-			'hourly'                       => __( 'Hourly', 'shelter-pets' ),
-			'twicedaily'                   => __( 'Twice Daily', 'shelter-pets' ),
-			'daily'                        => __( 'Daily', 'shelter-pets' ),
+			self::SCHEDULE_6PM_SKIP_SUNDAY => __( 'Daily at 6pm (skip Sundays)', 'shelterkit-pets' ),
+			'hourly'                       => __( 'Hourly', 'shelterkit-pets' ),
+			'twicedaily'                   => __( 'Twice Daily', 'shelterkit-pets' ),
+			'daily'                        => __( 'Daily', 'shelterkit-pets' ),
 		);
 		echo '<select name="' . esc_attr( self::OPTION_NAME ) . '[sync_interval]">';
 		foreach ( $intervals as $value => $label ) {
@@ -229,7 +229,7 @@ class Petsync_Admin {
 			<p class="description">%s</p>',
 			esc_attr( self::OPTION_NAME ),
 			(int) $settings['batch_size'],
-			esc_html__( 'Number of pets to process per batch (1-50). Lower values for shared hosting.', 'shelter-pets' )
+			esc_html__( 'Number of pets to process per batch (1-50). Lower values for shared hosting.', 'shelterkit-pets' )
 		);
 	}
 
@@ -245,30 +245,30 @@ class Petsync_Admin {
 		$next_cron  = $settings['auto_sync'] ? wp_next_scheduled( 'petsync_scheduled_sync' ) : false;
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Petstablished Sync', 'shelter-pets' ); ?></h1>
+			<h1><?php esc_html_e( 'Petstablished Sync', 'shelterkit-pets' ); ?></h1>
 
 			<!-- Sync Status Card -->
 			<div class="card" style="max-width: 600px; margin-bottom: 20px;">
-				<h2><?php esc_html_e( 'Sync Status', 'shelter-pets' ); ?></h2>
+				<h2><?php esc_html_e( 'Sync Status', 'shelterkit-pets' ); ?></h2>
 				
 				<div id="sync-status">
 					<?php if ( $last_sync ) : ?>
 						<p>
-							<strong><?php esc_html_e( 'Last sync:', 'shelter-pets' ); ?></strong>
-							<?php echo esc_html( human_time_diff( $last_sync ) . ' ' . __( 'ago', 'shelter-pets' ) ); ?>
+							<strong><?php esc_html_e( 'Last sync:', 'shelterkit-pets' ); ?></strong>
+							<?php echo esc_html( human_time_diff( $last_sync ) . ' ' . __( 'ago', 'shelterkit-pets' ) ); ?>
 							<br>
 							<small><?php echo esc_html( wp_date( 'F j, Y g:i a', $last_sync ) ); ?></small>
 						</p>
 					<?php else : ?>
-						<p><?php esc_html_e( 'No sync has been performed yet.', 'shelter-pets' ); ?></p>
+						<p><?php esc_html_e( 'No sync has been performed yet.', 'shelterkit-pets' ); ?></p>
 					<?php endif; ?>
 
 					<?php if ( $next_cron ) : ?>
 						<p>
-							<strong><?php esc_html_e( 'Next scheduled run:', 'shelter-pets' ); ?></strong>
+							<strong><?php esc_html_e( 'Next scheduled run:', 'shelterkit-pets' ); ?></strong>
 							<?php echo esc_html( wp_date( 'F j, Y g:i a', $next_cron ) ); ?>
 							<?php if ( $settings['sync_interval'] === self::SCHEDULE_6PM_SKIP_SUNDAY ) : ?>
-								<br><small><?php esc_html_e( 'Sundays are skipped.', 'shelter-pets' ); ?></small>
+								<br><small><?php esc_html_e( 'Sundays are skipped.', 'shelterkit-pets' ); ?></small>
 							<?php endif; ?>
 						</p>
 					<?php endif; ?>
@@ -288,7 +288,7 @@ class Petsync_Admin {
 
 				<p>
 					<button type="button" id="sync-button" class="button button-primary" <?php echo empty( $settings['public_key'] ) ? 'disabled' : ''; ?>>
-						<?php esc_html_e( 'Sync Now', 'shelter-pets' ); ?>
+						<?php esc_html_e( 'Sync Now', 'shelterkit-pets' ); ?>
 					</button>
 					
 					<?php
@@ -296,13 +296,13 @@ class Petsync_Admin {
 					$total     = ( $pet_count->publish ?? 0 ) + ( $pet_count->draft ?? 0 );
 					?>
 					<span id="pet-count" style="margin-left: 10px;">
-						<?php printf( /* translators: %d: number of pets */ esc_html__( '%d pets in database', 'shelter-pets' ), (int) $total ); ?>
+						<?php printf( /* translators: %d: number of pets */ esc_html__( '%d pets in database', 'shelterkit-pets' ), (int) $total ); ?>
 					</span>
 				</p>
 
 				<?php if ( empty( $settings['public_key'] ) ) : ?>
 					<p class="description" style="color: #d63638;">
-						<?php esc_html_e( 'Please enter your Public Key below to enable syncing.', 'shelter-pets' ); ?>
+						<?php esc_html_e( 'Please enter your Public Key below to enable syncing.', 'shelterkit-pets' ); ?>
 					</p>
 				<?php endif; ?>
 			</div>
@@ -335,11 +335,11 @@ class Petsync_Admin {
 
 			async function startSync() {
 				syncButton.disabled = true;
-				syncButton.textContent = '<?php esc_html_e( 'Starting...', 'shelter-pets' ); ?>';
+				syncButton.textContent = '<?php esc_html_e( 'Starting...', 'shelterkit-pets' ); ?>';
 				progressDiv.style.display = 'block';
 				resultsDiv.style.display = 'none';
 				progressBar.style.width = '0%';
-				progressText.textContent = '<?php esc_html_e( 'Fetching pets from Petstablished...', 'shelter-pets' ); ?>';
+				progressText.textContent = '<?php esc_html_e( 'Fetching pets from Petstablished...', 'shelterkit-pets' ); ?>';
 
 				try {
 					const startRes = await fetch(ajaxurl, {
@@ -361,7 +361,7 @@ class Petsync_Admin {
 					processed = 0;
 					stats = { created: 0, updated: 0, unchanged: 0 };
 
-					progressText.textContent = `<?php esc_html_e( 'Found', 'shelter-pets' ); ?> ${totalPets} <?php esc_html_e( 'pets. Processing...', 'shelter-pets' ); ?>`;
+					progressText.textContent = `<?php esc_html_e( 'Found', 'shelterkit-pets' ); ?> ${totalPets} <?php esc_html_e( 'pets. Processing...', 'shelterkit-pets' ); ?>`;
 
 					// Process in batches
 					while (processed < totalPets) {
@@ -372,12 +372,12 @@ class Petsync_Admin {
 					await finishSync();
 
 				} catch (error) {
-					progressText.textContent = '<?php esc_html_e( 'Error:', 'shelter-pets' ); ?> ' + error.message;
+					progressText.textContent = '<?php esc_html_e( 'Error:', 'shelterkit-pets' ); ?> ' + error.message;
 					progressText.style.color = '#d63638';
 				}
 
 				syncButton.disabled = false;
-				syncButton.textContent = '<?php esc_html_e( 'Sync Now', 'shelter-pets' ); ?>';
+				syncButton.textContent = '<?php esc_html_e( 'Sync Now', 'shelterkit-pets' ); ?>';
 			}
 
 			async function processBatch() {
@@ -404,11 +404,11 @@ class Petsync_Admin {
 
 				const percent = Math.round((processed / totalPets) * 100);
 				progressBar.style.width = percent + '%';
-				progressText.textContent = `<?php esc_html_e( 'Processing:', 'shelter-pets' ); ?> ${processed} / ${totalPets} (${percent}%)`;
+				progressText.textContent = `<?php esc_html_e( 'Processing:', 'shelterkit-pets' ); ?> ${processed} / ${totalPets} (${percent}%)`;
 			}
 
 			async function finishSync() {
-				progressText.textContent = '<?php esc_html_e( 'Finishing up...', 'shelter-pets' ); ?>';
+				progressText.textContent = '<?php esc_html_e( 'Finishing up...', 'shelterkit-pets' ); ?>';
 
 				const res = await fetch(ajaxurl, {
 					method: 'POST',
@@ -424,16 +424,16 @@ class Petsync_Admin {
 				progressDiv.style.display = 'none';
 
 				resultsDiv.innerHTML = `
-					<strong><?php esc_html_e( 'Sync Complete!', 'shelter-pets' ); ?></strong><br>
-					<?php esc_html_e( 'Created:', 'shelter-pets' ); ?> ${stats.created} |
-					<?php esc_html_e( 'Updated:', 'shelter-pets' ); ?> ${stats.updated} |
-					<?php esc_html_e( 'Unchanged:', 'shelter-pets' ); ?> ${stats.unchanged}
-					${data.data?.removed ? ` | <?php esc_html_e( 'Removed:', 'shelter-pets' ); ?> ${data.data.removed}` : ''}
+					<strong><?php esc_html_e( 'Sync Complete!', 'shelterkit-pets' ); ?></strong><br>
+					<?php esc_html_e( 'Created:', 'shelterkit-pets' ); ?> ${stats.created} |
+					<?php esc_html_e( 'Updated:', 'shelterkit-pets' ); ?> ${stats.updated} |
+					<?php esc_html_e( 'Unchanged:', 'shelterkit-pets' ); ?> ${stats.unchanged}
+					${data.data?.removed ? ` | <?php esc_html_e( 'Removed:', 'shelterkit-pets' ); ?> ${data.data.removed}` : ''}
 				`;
 				resultsDiv.style.display = 'block';
 
 				// Update status text
-				statusDiv.innerHTML = '<p><strong><?php esc_html_e( 'Last sync:', 'shelter-pets' ); ?></strong> <?php esc_html_e( 'Just now', 'shelter-pets' ); ?></p>';
+				statusDiv.innerHTML = '<p><strong><?php esc_html_e( 'Last sync:', 'shelterkit-pets' ); ?></strong> <?php esc_html_e( 'Just now', 'shelterkit-pets' ); ?></p>';
 			}
 		})();
 		</script>
@@ -448,12 +448,12 @@ class Petsync_Admin {
 		$entries = Petsync_Sync_Log::all();
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Sync Log', 'shelter-pets' ); ?></h1>
+			<h1><?php esc_html_e( 'Sync Log', 'shelterkit-pets' ); ?></h1>
 			<p class="description">
 				<?php
 				printf(
 					/* translators: %d: maximum number of log entries kept. */
-					esc_html__( 'Records of the most recent %d sync attempts. Newest first.', 'shelter-pets' ),
+					esc_html__( 'Records of the most recent %d sync attempts. Newest first.', 'shelterkit-pets' ),
 					(int) Petsync_Sync_Log::MAX_ENTRIES
 				);
 				?>
@@ -461,10 +461,10 @@ class Petsync_Admin {
 
 			<?php if ( empty( $entries ) ) : ?>
 				<div class="card" style="max-width: 600px;">
-					<p><?php esc_html_e( 'No syncs have been recorded yet.', 'shelter-pets' ); ?></p>
+					<p><?php esc_html_e( 'No syncs have been recorded yet.', 'shelterkit-pets' ); ?></p>
 					<p>
 						<a class="button" href="<?php echo esc_url( admin_url( 'edit.php?post_type=vcps_pet&page=' . self::PAGE_SLUG ) ); ?>">
-							<?php esc_html_e( 'Go to Sync Settings', 'shelter-pets' ); ?>
+							<?php esc_html_e( 'Go to Sync Settings', 'shelterkit-pets' ); ?>
 						</a>
 					</p>
 				</div>
@@ -526,11 +526,11 @@ class Petsync_Admin {
 				<table class="wp-list-table widefat striped ps-sync-log">
 					<thead>
 						<tr>
-							<th class="col-when"><?php esc_html_e( 'When', 'shelter-pets' ); ?></th>
-							<th class="col-trigger"><?php esc_html_e( 'Trigger', 'shelter-pets' ); ?></th>
-							<th class="col-outcome"><?php esc_html_e( 'Outcome', 'shelter-pets' ); ?></th>
-							<th class="col-counts"><?php esc_html_e( 'Counts', 'shelter-pets' ); ?></th>
-							<th class="col-details"><?php esc_html_e( 'Details', 'shelter-pets' ); ?></th>
+							<th class="col-when"><?php esc_html_e( 'When', 'shelterkit-pets' ); ?></th>
+							<th class="col-trigger"><?php esc_html_e( 'Trigger', 'shelterkit-pets' ); ?></th>
+							<th class="col-outcome"><?php esc_html_e( 'Outcome', 'shelterkit-pets' ); ?></th>
+							<th class="col-counts"><?php esc_html_e( 'Counts', 'shelterkit-pets' ); ?></th>
+							<th class="col-details"><?php esc_html_e( 'Details', 'shelterkit-pets' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -553,7 +553,7 @@ class Petsync_Admin {
 									<br><small>
 									<?php
 										/* translators: %d: duration in seconds. */
-										printf( esc_html__( '%ds', 'shelter-pets' ), (int) $duration );
+										printf( esc_html__( '%ds', 'shelterkit-pets' ), (int) $duration );
 									?>
 									</small>
 								</td>
@@ -581,33 +581,33 @@ class Petsync_Admin {
 								</td>
 								<td class="col-details">
 									<button type="button" class="button-link ps-detail-toggle" data-target="<?php echo esc_attr( $detail_id ); ?>">
-										<?php esc_html_e( 'Show details', 'shelter-pets' ); ?>
+										<?php esc_html_e( 'Show details', 'shelterkit-pets' ); ?>
 									</button>
 								</td>
 							</tr>
 							<tr id="<?php echo esc_attr( $detail_id ); ?>" class="detail-row" style="display:none;">
 								<td colspan="5">
 									<dl>
-										<dt><?php esc_html_e( 'Started', 'shelter-pets' ); ?></dt>
+										<dt><?php esc_html_e( 'Started', 'shelterkit-pets' ); ?></dt>
 										<dd><?php echo esc_html( wp_date( 'F j, Y g:i:s a', $started ) ); ?></dd>
-										<dt><?php esc_html_e( 'Ended', 'shelter-pets' ); ?></dt>
+										<dt><?php esc_html_e( 'Ended', 'shelterkit-pets' ); ?></dt>
 										<dd><?php echo esc_html( wp_date( 'F j, Y g:i:s a', $ended ) ); ?></dd>
-										<dt><?php esc_html_e( 'Duration', 'shelter-pets' ); ?></dt>
+										<dt><?php esc_html_e( 'Duration', 'shelterkit-pets' ); ?></dt>
 										<dd>
 										<?php
 											/* translators: %d: duration in seconds. */
-											printf( esc_html__( '%d seconds', 'shelter-pets' ), (int) $duration );
+											printf( esc_html__( '%d seconds', 'shelterkit-pets' ), (int) $duration );
 										?>
 										</dd>
-										<dt><?php esc_html_e( 'Created', 'shelter-pets' ); ?></dt>
+										<dt><?php esc_html_e( 'Created', 'shelterkit-pets' ); ?></dt>
 										<dd><?php echo (int) ( $stats['created'] ?? 0 ); ?></dd>
-										<dt><?php esc_html_e( 'Updated', 'shelter-pets' ); ?></dt>
+										<dt><?php esc_html_e( 'Updated', 'shelterkit-pets' ); ?></dt>
 										<dd><?php echo (int) ( $stats['updated'] ?? 0 ); ?></dd>
-										<dt><?php esc_html_e( 'Unchanged', 'shelter-pets' ); ?></dt>
+										<dt><?php esc_html_e( 'Unchanged', 'shelterkit-pets' ); ?></dt>
 										<dd><?php echo (int) ( $stats['unchanged'] ?? 0 ); ?></dd>
-										<dt><?php esc_html_e( 'Removed', 'shelter-pets' ); ?></dt>
+										<dt><?php esc_html_e( 'Removed', 'shelterkit-pets' ); ?></dt>
 										<dd><?php echo (int) ( $stats['removed'] ?? 0 ); ?></dd>
-										<dt><?php esc_html_e( 'Errors', 'shelter-pets' ); ?></dt>
+										<dt><?php esc_html_e( 'Errors', 'shelterkit-pets' ); ?></dt>
 										<dd>
 											<?php echo (int) ( $stats['errors'] ?? 0 ); ?>
 											<?php if ( ! empty( $errors ) ) : ?>
@@ -615,7 +615,7 @@ class Petsync_Admin {
 											<?php endif; ?>
 										</dd>
 										<?php if ( $note ) : ?>
-											<dt><?php esc_html_e( 'Note', 'shelter-pets' ); ?></dt>
+											<dt><?php esc_html_e( 'Note', 'shelterkit-pets' ); ?></dt>
 											<dd><?php echo esc_html( $note ); ?></dd>
 										<?php endif; ?>
 									</dl>
@@ -633,8 +633,8 @@ class Petsync_Admin {
 							const isHidden = row.style.display === 'none';
 							row.style.display = isHidden ? '' : 'none';
 							btn.textContent = isHidden
-								? <?php echo wp_json_encode( __( 'Hide details', 'shelter-pets' ) ); ?>
-								: <?php echo wp_json_encode( __( 'Show details', 'shelter-pets' ) ); ?>;
+								? <?php echo wp_json_encode( __( 'Hide details', 'shelterkit-pets' ) ); ?>
+								: <?php echo wp_json_encode( __( 'Show details', 'shelterkit-pets' ) ); ?>;
 						});
 					});
 				})();
@@ -668,14 +668,14 @@ class Petsync_Admin {
 
 		switch ( $status ) {
 			case 'started':
-				$message = __( 'Sync started. This may take a few minutes.', 'shelter-pets' );
+				$message = __( 'Sync started. This may take a few minutes.', 'shelterkit-pets' );
 				$type    = 'info';
 				break;
 			case 'complete':
-				$message = __( 'Sync completed successfully.', 'shelter-pets' );
+				$message = __( 'Sync completed successfully.', 'shelterkit-pets' );
 				break;
 			case 'error':
-				$message = __( 'Sync failed. Please check your API credentials.', 'shelter-pets' );
+				$message = __( 'Sync failed. Please check your API credentials.', 'shelterkit-pets' );
 				$type    = 'error';
 				break;
 		}
@@ -687,7 +687,7 @@ class Petsync_Admin {
 
 	public function add_settings_link( $links ): array {
 		$url  = admin_url( 'edit.php?post_type=vcps_pet&page=' . self::PAGE_SLUG );
-		$link = sprintf( '<a href="%s">%s</a>', esc_url( $url ), esc_html__( 'Settings', 'shelter-pets' ) );
+		$link = sprintf( '<a href="%s">%s</a>', esc_url( $url ), esc_html__( 'Settings', 'shelterkit-pets' ) );
 		array_unshift( $links, $link );
 		return $links;
 	}

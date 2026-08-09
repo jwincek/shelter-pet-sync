@@ -7,7 +7,7 @@
 	"category": "widgets",
 	"description": "A carousel slider showcasing available pets. Perfect for home pages, 404 pages, or anywhere you want to highlight adoptable pets.",
 	"keywords": ["pet", "slider", "carousel", "adoptable", "featured", "hero", "404", "similar"],
-	"textdomain": "shelter-pets",
+	"textdomain": "shelterkit-pets",
 	"usesContext": ["postId", "postType"],
 	"attributes": {
 		"title": {

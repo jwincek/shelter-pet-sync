@@ -8,7 +8,7 @@
 	"description": "Quick-facts tagline with taxonomy filter links (e.g. Dog · Labrador · Young · Male · Medium).",
 	"keywords": ["pet", "tagline", "quick", "facts", "summary"],
 	"ancestor": ["petsync/pet-details"],
-	"textdomain": "shelter-pets",
+	"textdomain": "shelterkit-pets",
 	"usesContext": ["postId", "postType"],
 	"attributes": {
 		"separator": {

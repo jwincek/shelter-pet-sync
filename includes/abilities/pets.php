@@ -6,7 +6,7 @@
  * Each function receives validated input and returns data or WP_Error.
  * Built on the Query Builder and exposes do_action hooks for extensibility.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -47,7 +47,7 @@ function get( array $input ): array|WP_Error {
 	$post = get_post( $input['id'] );
 
 	if ( ! $post || 'vcps_pet' !== $post->post_type || 'publish' !== $post->post_status ) {
-		return new WP_Error( 'not_found', __( 'Pet not found.', 'shelter-pets' ), [ 'status' => 404 ] );
+		return new WP_Error( 'not_found', __( 'Pet not found.', 'shelterkit-pets' ), [ 'status' => 404 ] );
 	}
 
 	$pet = Pet_Hydrator::hydrate( $post );

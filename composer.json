@@ -1,5 +1,5 @@
 {
-    "name": "jwincek/shelter-pets",
+    "name": "jwincek/shelterkit-pets",
     "description": "Adoptable pet listings and printable kennel cards for animal shelters, with optional sync from Petstablished.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",

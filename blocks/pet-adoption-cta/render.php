@@ -6,7 +6,7 @@
  * is composed from InnerBlocks — primarily native core blocks with Block Bindings
  * and the petsync/adoption-action child block.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -27,8 +27,8 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 		?>
 		<div <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?>>
 			<div class="pet-adoption-cta__placeholder-inner">
-				<p><?php esc_html_e( 'Pet Adoption CTA', 'shelter-pets' ); ?></p>
-				<small><?php esc_html_e( 'Adoption fee and application action. Requires pet context.', 'shelter-pets' ); ?></small>
+				<p><?php esc_html_e( 'Pet Adoption CTA', 'shelterkit-pets' ); ?></p>
+				<small><?php esc_html_e( 'Adoption fee and application action. Requires pet context.', 'shelterkit-pets' ); ?></small>
 			</div>
 		</div>
 		<?php

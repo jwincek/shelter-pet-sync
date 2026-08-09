@@ -14,7 +14,7 @@
  * fixed slots with data-wp-bind directives that reference indexed state.
  * The global store's comparison array + pets cache drive the reactivity.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -104,7 +104,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		'data-wp-init'               => 'callbacks.init',
 		'data-wp-watch'              => 'callbacks.watchAutoExpand',
 		'role'                       => 'region',
-		'aria-label'                 => __( 'Pet comparison', 'shelter-pets' ),
+		'aria-label'                 => __( 'Pet comparison', 'shelterkit-pets' ),
 	)
 );
 ?>
@@ -115,7 +115,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		type="button"
 		class="pet-compare-bar__pill"
 		data-wp-on--click="actions.expandBar"
-		aria-label="<?php esc_attr_e( 'Show comparison bar', 'shelter-pets' ); ?>"
+		aria-label="<?php esc_attr_e( 'Show comparison bar', 'shelterkit-pets' ); ?>"
 	>
 		<?php
 		Petsync_Icons::render(
@@ -126,7 +126,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 			)
 		);
 		?>
-		<span><?php esc_html_e( 'Compare', 'shelter-pets' ); ?></span>
+		<span><?php esc_html_e( 'Compare', 'shelterkit-pets' ); ?></span>
 		<span
 			class="pet-compare-bar__pill-count"
 			data-wp-text="petsync::state.comparisonCount"
@@ -137,14 +137,14 @@ $wrapper_attributes = get_block_wrapper_attributes(
 	<div class="pet-compare-bar__inner">
 		<div class="pet-compare-bar__header">
 			<span class="pet-compare-bar__label">
-				<?php esc_html_e( 'Compare', 'shelter-pets' ); ?>
+				<?php esc_html_e( 'Compare', 'shelterkit-pets' ); ?>
 				(<span data-wp-text="petsync::state.comparisonCount"><?php echo (int) count( $comparison ); ?></span>/<?php echo (int) $max_compare; ?>)
 			</span>
 			<button
 				type="button"
 				class="pet-compare-bar__minimize"
 				data-wp-on--click="actions.toggleBar"
-				aria-label="<?php esc_attr_e( 'Minimize comparison bar', 'shelter-pets' ); ?>"
+				aria-label="<?php esc_attr_e( 'Minimize comparison bar', 'shelterkit-pets' ); ?>"
 			>
 				<?php
 				Petsync_Icons::render(
@@ -220,7 +220,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 							data-wp-on--click="actions.removeFromSlot"
 							data-wp-bind--aria-label="state.slotRemoveLabel"
 							data-wp-bind--hidden="!state.slotHasPet"
-							aria-label="<?php echo $pet ? esc_attr( sprintf( /* translators: %s: pet name */ __( 'Remove %s from comparison', 'shelter-pets' ), $pet['name'] ) ) : ''; ?>"
+							aria-label="<?php echo $pet ? esc_attr( sprintf( /* translators: %s: pet name */ __( 'Remove %s from comparison', 'shelterkit-pets' ), $pet['name'] ) ) : ''; ?>"
 							<?php echo $pet ? '' : 'hidden'; ?>
 						>
 						<?php
@@ -238,7 +238,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 							class="screen-reader-text"
 							data-wp-bind--hidden="state.slotHasPet"
 							<?php echo $pet ? 'hidden' : ''; ?>
-						><?php esc_html_e( 'Empty slot', 'shelter-pets' ); ?></span>
+						><?php esc_html_e( 'Empty slot', 'shelterkit-pets' ); ?></span>
 					</div>
 					<span
 						class="pet-compare-bar__pet-name"
@@ -257,7 +257,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				data-wp-on--click="actions.viewComparison"
 				data-wp-bind--disabled="!state.canCompare"
 			>
-				<?php esc_html_e( 'Compare', 'shelter-pets' ); ?>
+				<?php esc_html_e( 'Compare', 'shelterkit-pets' ); ?>
 			</button>
 
 			<button
@@ -265,7 +265,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				class="pet-compare-bar__btn pet-compare-bar__btn--secondary"
 				data-wp-on--click="petsync::actions.shareComparison"
 				data-wp-bind--disabled="!state.canCompare"
-				title="<?php esc_attr_e( 'Copy share link', 'shelter-pets' ); ?>"
+				title="<?php esc_attr_e( 'Copy share link', 'shelterkit-pets' ); ?>"
 			>
 				<?php
 				Petsync_Icons::render(
@@ -276,7 +276,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					)
 				);
 				?>
-				<span class="pet-compare-bar__btn-text"><?php esc_html_e( 'Share', 'shelter-pets' ); ?></span>
+				<span class="pet-compare-bar__btn-text"><?php esc_html_e( 'Share', 'shelterkit-pets' ); ?></span>
 			</button>
 
 			<button
@@ -284,7 +284,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				class="pet-compare-bar__btn pet-compare-bar__btn--text"
 				data-wp-on--click="actions.clearComparison"
 			>
-				<?php esc_html_e( 'Clear', 'shelter-pets' ); ?>
+				<?php esc_html_e( 'Clear', 'shelterkit-pets' ); ?>
 			</button>
 		</div>
 	</div>

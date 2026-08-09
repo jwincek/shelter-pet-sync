@@ -2,7 +2,7 @@
 /**
  * Pet Card Block - Server-side render
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  *
  * @var array    $attributes Block attributes.
@@ -93,7 +93,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 					data-wp-bind--aria-label="state.favoriteLabel"
 				>
 					<?php echo Petsync_Icons::get_heart_interactive(); /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static, plugin-controlled SVG. */ ?>
-					<span class="screen-reader-text"><?php esc_html_e( 'Favorite', 'shelter-pets' ); ?></span>
+					<span class="screen-reader-text"><?php esc_html_e( 'Favorite', 'shelterkit-pets' ); ?></span>
 				</button>
 			<?php endif; ?>
 
@@ -114,7 +114,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 						)
 					);
 					?>
-					<span><?php esc_html_e( 'Compare', 'shelter-pets' ); ?></span>
+					<span><?php esc_html_e( 'Compare', 'shelterkit-pets' ); ?></span>
 				</button>
 			<?php endif; ?>
 		</div>

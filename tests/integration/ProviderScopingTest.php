@@ -7,7 +7,7 @@
  * side, quietly draft one. Both failures are silent: the pet simply stops
  * being what the shelter typed.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );

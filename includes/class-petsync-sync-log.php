@@ -1,10 +1,10 @@
 <?php
 /**
- * Shelter Pets Sync Log
+ * ShelterKit Pets Sync Log
  *
  * Rolling per-run audit trail for manual and cron-triggered syncs.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
