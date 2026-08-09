@@ -216,7 +216,7 @@ class Petsync_Variations {
 				'description' => 'Displays whether the pet has special needs.',
 				'icon'        => 'heart',
 				'keywords'    => array( 'pet', 'special', 'needs', 'medical', 'disability' ),
-				'binding_key' => 'special_needs',
+				'binding_key' => 'has_special_needs',
 			),
 			// Additional computed
 			array(
@@ -498,7 +498,7 @@ class Petsync_Variations {
 			'innerBlocks' => array(
 				array( 'core/paragraph', array( 'className' => 'pet-medical-item' ), 'shots_current' ),
 				array( 'core/paragraph', array( 'className' => 'pet-medical-item' ), 'spayed_neutered' ),
-				array( 'core/paragraph', array( 'className' => 'pet-medical-item' ), 'special_needs' ),
+				array( 'core/paragraph', array( 'className' => 'pet-medical-item' ), 'has_special_needs' ),
 			),
 			'attributes'  => array(
 				'className' => 'pet-medical-summary',

@@ -251,7 +251,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 									<?php if ( ! empty( $pet['is_new'] ) ) : ?>
 										<span class="pet-favorites-modal__badge pet-favorites-modal__badge--new"><?php esc_html_e( 'New', 'shelterkit-pets' ); ?></span>
 									<?php endif; ?>
-									<?php if ( isset( $pet['special_needs'] ) && 'yes' === strtolower( (string) $pet['special_needs'] ) ) : ?>
+									<?php if ( isset( $pet['has_special_needs'] ) && 'yes' === strtolower( (string) $pet['has_special_needs'] ) ) : ?>
 										<span class="pet-favorites-modal__badge pet-favorites-modal__badge--special"><?php esc_html_e( 'Special Needs', 'shelterkit-pets' ); ?></span>
 									<?php endif; ?>
 									<?php if ( ! empty( $pet['is_bonded_pair'] ) && ! empty( $partners ) ) : ?>

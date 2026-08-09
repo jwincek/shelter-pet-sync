@@ -80,6 +80,43 @@ class Petsync_Blocks {
 		);
 	}
 
+	/**
+	 * Map a binding key that a previous version of the plugin wrote into post
+	 * content onto its current canonical field name.
+	 *
+	 * A block binding serialises its field name INTO the post:
+	 *
+	 *   <!-- wp:paragraph {"metadata":{"bindings":{"content":{
+	 *        "source":"petsync/pet-data","args":{"key":"special_needs"}}}}} -->
+	 *
+	 * So a binding key is stored data in the same way a block name or an enum
+	 * value is, and renaming a canonical field silently empties every block
+	 * already bound to it. A meta migration does not help — the stale name is
+	 * in the user's content, not in a meta row.
+	 *
+	 * Aliasing rather than rewriting content: rewriting posts to repair our own
+	 * rename is a far worse trade than carrying a few lines forever.
+	 *
+	 * Cumulative. Never remove an entry. The keys here are, by definition,
+	 * names that no longer exist anywhere else in the codebase — so a
+	 * search-and-replace during a future rename will not match them, and must
+	 * not be allowed to.
+	 *
+	 * @param string $key Key as written in post content.
+	 * @return string Current canonical field name.
+	 */
+	private static function resolve_legacy_binding_key( string $key ): string {
+		$aliases = array(
+			// Renamed 2026-08-09 (#42). Ours collided in spelling with the
+			// provider's `special_needs`, which maps to our
+			// `special_needs_detail` — the same word meaning different things
+			// on either side of the boundary.
+			'special_needs' => 'has_special_needs',
+		);
+
+		return $aliases[ $key ] ?? $key;
+	}
+
 	public function get_binding_value( array $args, WP_Block $block ): ?string {
 		$post_id = $block->context['postId'] ?? get_the_ID();
 
@@ -87,7 +124,7 @@ class Petsync_Blocks {
 			return $this->get_placeholder( $args['key'] ?? '' );
 		}
 
-		$key = $args['key'] ?? '';
+		$key = self::resolve_legacy_binding_key( $args['key'] ?? '' );
 
 		// Route through the get-pet ability so bindings and REST share
 		// the same code path, respecting permission callbacks and hooks.
@@ -377,7 +414,7 @@ class Petsync_Blocks {
 			'shots_current'        => 'Shots Current (tristate)',
 			'spayed_neutered'      => 'Spayed/Neutered (tristate)',
 			'housebroken'          => 'Housebroken (tristate)',
-			'special_needs'        => 'Has Special Needs (tristate)',
+			'has_special_needs'        => 'Has Special Needs (tristate)',
 			'hypoallergenic'       => 'Hypoallergenic (tristate)',
 			'declawed'             => 'Declawed (tristate)',
 		);

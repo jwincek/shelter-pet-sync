@@ -389,4 +389,57 @@ final class MigrationsTest extends PetTestCase {
 			'a clean run must record the full schema version'
 		);
 	}
+	// ── Migration 6: canonical field renames ─────────────────────────────────
+
+	public function test_migration_6_carries_hand_entered_meta_to_the_new_key(): void {
+		$id = $this->make_manual_pet();
+		update_post_meta( $id, $this->prefix . 'siblings_names', 'Pepper, Sage' );
+		update_post_meta( $id, $this->prefix . 'special_needs', 'yes' );
+
+		$this->assertTrue( petsync_migrate_6_field_renames() );
+
+		$this->assertSame( 'Pepper, Sage', get_post_meta( $id, $this->prefix . 'bonded_names', true ) );
+		$this->assertSame( 'yes', get_post_meta( $id, $this->prefix . 'has_special_needs', true ) );
+		$this->assertSame( '', get_post_meta( $id, $this->prefix . 'siblings_names', true ) );
+		$this->assertSame( '', get_post_meta( $id, $this->prefix . 'special_needs', true ) );
+	}
+
+	/**
+	 * special_needs_detail shares a prefix with special_needs and must not be
+	 * swept up — it is a different field with a different meaning.
+	 */
+	public function test_migration_6_leaves_special_needs_detail_alone(): void {
+		$id = $this->make_manual_pet();
+		update_post_meta( $id, $this->prefix . 'special_needs_detail', 'FeLV+' );
+
+		petsync_migrate_6_field_renames();
+
+		$this->assertSame( 'FeLV+', get_post_meta( $id, $this->prefix . 'special_needs_detail', true ) );
+	}
+
+	/**
+	 * Never clobber newer data with older. If someone has already entered a
+	 * value under the new key, the stale row is dropped rather than applied.
+	 */
+	public function test_migration_6_does_not_overwrite_an_existing_value(): void {
+		$id = $this->make_manual_pet();
+		update_post_meta( $id, $this->prefix . 'special_needs', 'no' );
+		update_post_meta( $id, $this->prefix . 'has_special_needs', 'yes' );
+
+		petsync_migrate_6_field_renames();
+
+		$this->assertSame( 'yes', get_post_meta( $id, $this->prefix . 'has_special_needs', true ) );
+		$this->assertSame( '', get_post_meta( $id, $this->prefix . 'special_needs', true ) );
+	}
+
+	public function test_migration_6_is_idempotent(): void {
+		$id = $this->make_manual_pet();
+		update_post_meta( $id, $this->prefix . 'siblings_names', 'Pepper' );
+
+		petsync_migrate_6_field_renames();
+		petsync_migrate_6_field_renames();
+
+		$this->assertSame( 'Pepper', get_post_meta( $id, $this->prefix . 'bonded_names', true ) );
+		$this->assertCount( 1, get_post_meta( $id, $this->prefix . 'bonded_names' ) );
+	}
 }

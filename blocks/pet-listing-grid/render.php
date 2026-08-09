@@ -182,7 +182,7 @@ foreach ( $pets as $pet ) {
 		'age'               => $pet['age'] ?? '',
 		'sex'               => $pet['sex'] ?? '',
 		'size'              => $pet['size'] ?? '',
-		'special_needs'     => $pet['special_needs'] ?? '',
+		'has_special_needs'     => $pet['has_special_needs'] ?? '',
 		'is_new'            => $pet['is_new'] ?? false,
 		'is_bonded_pair'    => $pet['is_bonded_pair'] ?? false,
 		'bonded_pair_names' => $pet['bonded_pair_names'] ?? array(),
@@ -361,7 +361,7 @@ $compat_field_map = array(
 	'shotsCurrent'   => 'shots_current',
 	'spayedNeutered' => 'spayed_neutered',
 	'housebroken'    => 'housebroken',
-	'specialNeeds'   => 'special_needs',
+	'specialNeeds'   => 'has_special_needs',
 );
 $truthy_lc        = array( 'yes', '1', 'true' );
 
@@ -881,7 +881,7 @@ $filter_config = array(
 
 						<?php
 						$has_badges = ( $pet['is_new'] ?? false )
-							|| ( isset( $pet['special_needs'] ) && strtolower( (string) $pet['special_needs'] ) === 'yes' )
+							|| ( isset( $pet['has_special_needs'] ) && strtolower( (string) $pet['has_special_needs'] ) === 'yes' )
 							|| ( $pet['is_bonded_pair'] ?? false );
 						if ( $has_badges ) :
 							?>
@@ -890,7 +890,7 @@ $filter_config = array(
 									<span class="pet-listing-grid__badge pet-listing-grid__badge--new"><?php esc_html_e( 'New', 'shelterkit-pets' ); ?></span>
 								<?php endif; ?>
 
-								<?php if ( isset( $pet['special_needs'] ) && strtolower( (string) $pet['special_needs'] ) === 'yes' ) : ?>
+								<?php if ( isset( $pet['has_special_needs'] ) && strtolower( (string) $pet['has_special_needs'] ) === 'yes' ) : ?>
 									<span class="pet-listing-grid__badge pet-listing-grid__badge--special"><?php esc_html_e( 'Special Needs', 'shelterkit-pets' ); ?></span>
 								<?php endif; ?>
 

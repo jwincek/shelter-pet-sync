@@ -230,7 +230,7 @@ add_action( 'plugins_loaded', 'petsync_init' );
  * plugin's DATA version and is deliberately independent of the release version
  * in the plugin header — most releases change no stored data at all.
  */
-define( 'PETSYNC_DB_VERSION', 5 );
+define( 'PETSYNC_DB_VERSION', 6 );
 
 /**
  * The ordered migration list.
@@ -255,6 +255,7 @@ function petsync_get_migrations(): array {
 		//
 		// Point any future rename at this same callable in the same way.
 		5 => 'petsync_migrate_4_template_namespace',
+		6 => 'petsync_migrate_6_field_renames',
 	);
 }
 
@@ -532,6 +533,82 @@ function petsync_migrate_4_template_namespace(): bool {
 		}
 
 		wp_delete_term( $legacy_term->term_id, 'wp_theme' );
+	}
+
+	return true;
+}
+
+/**
+ * Migration 6 — carry hand-entered meta across two canonical field renames.
+ *
+ * A canonical field name IS its meta key (`_pet_<field>`), so renaming one
+ * orphans whatever a shelter typed by hand. For synced pets the value comes
+ * back from the API snapshot on the next sync; for manual pets that meta is the
+ * only copy there is.
+ *
+ *   _pet_siblings_names -> _pet_bonded_names
+ *       `siblings_names` was Petstablished's word. Neither other surveyed
+ *       provider has the concept, and no shelter would say "sibling names".
+ *
+ *   _pet_special_needs  -> _pet_has_special_needs
+ *       Ours collided in spelling with the provider's `special_needs`, which
+ *       maps to our `special_needs_detail`. The same word meant different
+ *       things on either side of the boundary.
+ *
+ * Note `special_needs_detail` is deliberately NOT touched.
+ *
+ * Never overwrites: if the new key already holds a value the old row is left
+ * alone rather than clobbering newer data with older. Idempotent, because the
+ * old key is deleted once carried.
+ *
+ * @return bool True when every rename completed.
+ */
+function petsync_migrate_6_field_renames(): bool {
+	$config = \Petsync\Core\Config::get_path( 'entities', 'entities.vcps_pet', array() );
+	$prefix = $config['meta_prefix'] ?? '_pet_';
+
+	$renames = array(
+		'siblings_names' => 'bonded_names',
+		'special_needs'  => 'has_special_needs',
+	);
+
+	foreach ( $renames as $old => $new ) {
+		$old_key = $prefix . $old;
+		$new_key = $prefix . $new;
+
+		$pet_ids = get_posts(
+			array(
+				'post_type'        => 'vcps_pet',
+				'post_status'      => 'any',
+				'numberposts'      => -1,
+				'fields'           => 'ids',
+				'suppress_filters' => false,
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- one-time migration, not a request-path query.
+				'meta_query'       => array(
+					array(
+						'key'     => $old_key,
+						'compare' => 'EXISTS',
+					),
+				),
+			)
+		);
+
+		foreach ( $pet_ids as $pet_id ) {
+			$value = get_post_meta( $pet_id, $old_key, true );
+
+			if ( '' === $value || null === $value || false === $value ) {
+				delete_post_meta( $pet_id, $old_key );
+				continue;
+			}
+
+			$existing = get_post_meta( $pet_id, $new_key, true );
+
+			if ( '' === $existing || null === $existing || false === $existing ) {
+				update_post_meta( $pet_id, $new_key, $value );
+			}
+
+			delete_post_meta( $pet_id, $old_key );
+		}
 	}
 
 	return true;

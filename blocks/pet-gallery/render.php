@@ -168,7 +168,7 @@ if ( ( $attributes['showBadgeBondedPair'] ?? true ) && ! empty( $pet['is_bonded_
 	);
 }
 
-if ( ( $attributes['showBadgeSpecialNeeds'] ?? true ) && isset( $pet['special_needs'] ) && 'yes' === strtolower( (string) $pet['special_needs'] ) ) {
+if ( ( $attributes['showBadgeSpecialNeeds'] ?? true ) && isset( $pet['has_special_needs'] ) && 'yes' === strtolower( (string) $pet['has_special_needs'] ) ) {
 	$below_badges[] = array(
 		'label' => __( 'Special Needs', 'shelterkit-pets' ),
 		'class' => 'pet-gallery__badge--special-needs',

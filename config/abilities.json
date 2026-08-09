@@ -126,7 +126,7 @@
           "housebroken": {
             "type": "string"
           },
-          "special_needs": {
+          "has_special_needs": {
             "type": "string"
           },
           "special_needs_detail": {
@@ -162,7 +162,7 @@
           "bonded_group_id": {
             "type": "string"
           },
-          "siblings_names": {
+          "bonded_names": {
             "type": "string"
           },
           "tagline": {
