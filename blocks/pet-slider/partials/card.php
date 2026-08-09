@@ -34,7 +34,7 @@ $pet_context = array(
 // Compute badges for this pet.
 $badges = array();
 if ( ! empty( $show_badges ) ) {
-	if ( ! empty( $pet['special_needs'] ) && strtolower( $pet['special_needs'] ) === 'yes' ) {
+	if ( ! empty( $pet['has_special_needs'] ) && strtolower( $pet['has_special_needs'] ) === 'yes' ) {
 		$badges[] = array(
 			'label' => __( 'Special Needs', 'shelterkit-pets' ),
 			'class' => 'pet-slider__badge--special-needs',

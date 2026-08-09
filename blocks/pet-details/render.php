@@ -89,7 +89,7 @@ wp_interactivity_state(
 				'age'               => $pet['age'] ?? '',
 				'sex'               => $pet['sex'] ?? '',
 				'size'              => $pet['size'] ?? '',
-				'special_needs'     => $pet['special_needs'] ?? '',
+				'has_special_needs'     => $pet['has_special_needs'] ?? '',
 				'is_new'            => $pet['is_new'] ?? false,
 				'is_bonded_pair'    => $pet['is_bonded_pair'] ?? false,
 				'bonded_pair_names' => $pet['bonded_pair_names'] ?? array(),

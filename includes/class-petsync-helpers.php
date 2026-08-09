@@ -138,8 +138,8 @@ class Petsync_Helpers {
 			'ok_with_dogs'         => 'is_ok_with_other_dogs',
 			'ok_with_cats'         => 'is_ok_with_other_cats',
 			'ok_with_kids'         => 'is_ok_with_other_kids',
-			'special_needs'        => 'has_special_need',
-			'special_needs_detail' => 'special_needs',
+			'has_special_needs'        => 'has_special_need',
+			'special_needs_detail' => 'has_special_needs',
 			'hypoallergenic'       => 'is_hypoallergenic',
 			'declawed'             => 'declawed',
 			'adoption_form_url'    => 'public_url',
@@ -160,7 +160,7 @@ class Petsync_Helpers {
 	 * Reads from the stored API JSON response rather than individual meta.
 	 *
 	 * @param int    $id    Post ID.
-	 * @param string $field Internal field name (e.g. 'special_needs').
+	 * @param string $field Internal field name (e.g. 'has_special_needs').
 	 * @return bool
 	 */
 	public static function get_meta_bool( int $id, string $field ): bool {
@@ -172,7 +172,7 @@ class Petsync_Helpers {
 			'shots_current'   => 'shots_up_to_date',
 			'spayed_neutered' => 'is_spayed',
 			'housebroken'     => 'is_housebroken',
-			'special_needs'   => 'has_special_need',
+			'has_special_needs'   => 'has_special_need',
 			'hypoallergenic'  => 'is_hypoallergenic',
 			'declawed'        => 'declawed',
 		);

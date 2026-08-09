@@ -129,7 +129,7 @@ function buildCardElement( pet ) {
 	const partners = pet.bonded_pair_names || pet.bondedPartners || [];
 	const isNew = pet.is_new || pet.isNew || false;
 	const specialNeeds =
-		pet.special_needs === 'yes' || pet.specialNeeds === true;
+		pet.has_special_needs === 'yes' || pet.specialNeeds === true;
 	const isBondedPair = pet.is_bonded_pair || pet.isBondedPair || false;
 	const name = pet.name || '';
 	const url = safeUrl( pet.url );
@@ -728,7 +728,7 @@ const { state, actions, callbacks } = store( 'petsync/favorites-modal', {
 						age: p.age,
 						sex: p.sex,
 						size: p.size,
-						special_needs: p.special_needs,
+						has_special_needs: p.has_special_needs,
 						is_new: p.is_new,
 						is_bonded_pair: p.is_bonded_pair,
 						bonded_pair_names: p.bonded_pair_names,

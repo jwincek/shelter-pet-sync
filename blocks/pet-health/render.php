@@ -73,7 +73,7 @@ $health_defs = array(
 	array(
 		'toggle' => 'showSpecialNeeds',
 		'label'  => __( 'Special Needs', 'shelterkit-pets' ),
-		'key'    => 'special_needs',
+		'key'    => 'has_special_needs',
 	),
 	array(
 		'toggle' => 'showHypoallergenic',
@@ -119,7 +119,7 @@ foreach ( $health_defs as $def ) {
 
 	// For special needs, append detail text when positive.
 	$label = $def['label'];
-	if ( $def['key'] === 'special_needs' && $status === 'yes' ) {
+	if ( $def['key'] === 'has_special_needs' && $status === 'yes' ) {
 		$detail = trim( $pet['special_needs_detail'] ?? '' );
 		if ( $detail ) {
 			$label = sprintf(

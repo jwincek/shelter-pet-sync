@@ -222,7 +222,7 @@
 			ok_with_dogs: 'Yes',
 			ok_with_cats: 'Yes',
 			ok_with_kids: 'Yes',
-			special_needs: 'No',
+			has_special_needs: 'No',
 			// Additional computed
 			gallery_count: '5 photos',
 			is_new: 'true',
