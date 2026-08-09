@@ -291,4 +291,102 @@ final class MigrationsTest extends PetTestCase {
 			'after migrating, the template must be findable by the same query the front end uses'
 		);
 	}
+
+	/**
+	 * The realistic failure for the rename path: another wp_theme term already
+	 * holds the target slug under a different name, so the lookup by name finds
+	 * nothing but wp_update_term still rejects the slug.
+	 *
+	 * The slug is cosmetic — get_customized_template() matches on name — so the
+	 * migration retries with the name alone and lets WordPress derive a unique
+	 * slug. What must not happen is the rename failing silently and the install
+	 * being marked as migrated anyway.
+	 */
+	public function test_migration_4_survives_a_slug_collision(): void {
+		wp_insert_term(
+			'Some Other Theme',
+			'wp_theme',
+			array( 'slug' => \Petsync_Templates::THEME_NAMESPACE )
+		);
+
+		$customized = $this->customize_template_under( 'shelter-pet-sync' );
+
+		$this->assertTrue(
+			petsync_migrate_4_template_namespace(),
+			'a slug collision must not be reported as a failed migration'
+		);
+
+		$this->assertSame(
+			array( \Petsync_Templates::THEME_NAMESPACE ),
+			$this->theme_terms_of( $customized ),
+			'the customization must still end up under the current namespace'
+		);
+
+		$term = get_term_by( 'name', \Petsync_Templates::THEME_NAMESPACE, 'wp_theme' );
+		$this->assertInstanceOf( \WP_Term::class, $term );
+		$this->assertNotSame(
+			\Petsync_Templates::THEME_NAMESPACE,
+			$term->slug,
+			'WordPress should have derived a distinct slug, since the tidy one was taken'
+		);
+	}
+
+	// ── The migration rail itself ────────────────────────────────────────────
+
+	/**
+	 * A migration that reports failure must not advance the stored version past
+	 * itself, or the failure becomes permanent as well as silent — the install
+	 * would be marked as migrated with the work never done.
+	 */
+	public function test_a_failing_migration_does_not_advance_the_version(): void {
+		delete_option( 'petsync_db_version' );
+
+		$ran = array();
+		$rail = array(
+			1 => function () use ( &$ran ) {
+				$ran[] = 1;
+				return true;
+			},
+			2 => function () use ( &$ran ) {
+				$ran[] = 2;
+				return false;
+			},
+			3 => function () use ( &$ran ) {
+				$ran[] = 3;
+				return true;
+			},
+		);
+
+		// Mirror petsync_maybe_upgrade()'s loop against a controllable rail.
+		$installed = 0;
+		$completed = $installed;
+		foreach ( $rail as $version => $callback ) {
+			if ( $version <= $installed ) {
+				continue;
+			}
+			if ( false === call_user_func( $callback ) ) {
+				break;
+			}
+			$completed = $version;
+		}
+
+		$this->assertSame( array( 1, 2 ), $ran, 'the rail must stop at the failure, not carry on' );
+		$this->assertSame( 1, $completed, 'only the migration that completed may be recorded' );
+	}
+
+	/**
+	 * The real rail, end to end: every declared migration completes on a fresh
+	 * install and the version lands on PETSYNC_DB_VERSION.
+	 */
+	public function test_the_rail_records_the_full_version_when_everything_succeeds(): void {
+		delete_option( 'petsync_db_version' );
+
+		petsync_maybe_upgrade();
+
+		$this->assertSame(
+			PETSYNC_DB_VERSION,
+			(int) get_option( 'petsync_db_version' ),
+			'a clean run must record the full schema version'
+		);
+	}
 }

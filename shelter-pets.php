@@ -264,13 +264,32 @@ function petsync_maybe_upgrade(): void {
 		return;
 	}
 
+	// Record only what actually completed. A migration may signal failure by
+	// returning false, in which case the rail stops and the stored version
+	// keeps the last good step, so the failed one runs again next load.
+	//
+	// Without this the version advanced unconditionally, which made any
+	// migration failure both silent and permanent — the worst combination, and
+	// the one this codebase treats as the bug worth designing against.
+	//
+	// Migrations returning void are unaffected: null is not identical to false.
+	$completed = $installed;
+
 	foreach ( petsync_get_migrations() as $version => $callback ) {
-		if ( $version > $installed && is_callable( $callback ) ) {
-			call_user_func( $callback );
+		if ( $version <= $installed || ! is_callable( $callback ) ) {
+			continue;
 		}
+
+		if ( false === call_user_func( $callback ) ) {
+			break;
+		}
+
+		$completed = $version;
 	}
 
-	update_option( 'petsync_db_version', PETSYNC_DB_VERSION, true );
+	if ( $completed > $installed ) {
+		update_option( 'petsync_db_version', $completed, true );
+	}
 }
 add_action( 'init', 'petsync_maybe_upgrade', 20 );
 
@@ -426,9 +445,11 @@ function petsync_migrate_3_default_status(): void {
  *
  * Idempotent: the legacy term is gone afterwards, so a second run finds nothing.
  */
-function petsync_migrate_4_template_namespace(): void {
+function petsync_migrate_4_template_namespace(): bool {
 	if ( ! taxonomy_exists( 'wp_theme' ) ) {
-		return;
+		// Nothing this migration can act on, which is a completed no-op rather
+		// than a failure — wp_theme is core and always registered in practice.
+		return true;
 	}
 
 	foreach ( Petsync_Templates::LEGACY_NAMESPACES as $legacy ) {
@@ -441,7 +462,7 @@ function petsync_migrate_4_template_namespace(): void {
 		$current = get_term_by( 'name', Petsync_Templates::THEME_NAMESPACE, 'wp_theme' );
 
 		if ( ! $current instanceof WP_Term ) {
-			wp_update_term(
+			$renamed = wp_update_term(
 				$legacy_term->term_id,
 				'wp_theme',
 				array(
@@ -449,6 +470,30 @@ function petsync_migrate_4_template_namespace(): void {
 					'slug' => Petsync_Templates::THEME_NAMESPACE,
 				)
 			);
+
+			// A slug collision is the realistic failure here: some other
+			// wp_theme term already holds this slug under a different name, so
+			// get_term_by( 'name', … ) above found nothing but wp_update_term
+			// still returns duplicate_term_slug.
+			//
+			// The slug is cosmetic. get_customized_template() matches on
+			// 'field' => 'name', so retry with the name alone and let
+			// WordPress derive a unique slug.
+			if ( is_wp_error( $renamed ) ) {
+				$renamed = wp_update_term(
+					$legacy_term->term_id,
+					'wp_theme',
+					array( 'name' => Petsync_Templates::THEME_NAMESPACE )
+				);
+			}
+
+			// Still no. Report failure rather than leaving the install marked
+			// as migrated: the customizations are intact but unreachable, and
+			// the only way they are ever found again is if this runs later.
+			if ( is_wp_error( $renamed ) ) {
+				return false;
+			}
+
 			continue;
 		}
 
@@ -480,4 +525,6 @@ function petsync_migrate_4_template_namespace(): void {
 
 		wp_delete_term( $legacy_term->term_id, 'wp_theme' );
 	}
+
+	return true;
 }
