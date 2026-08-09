@@ -170,7 +170,16 @@ const { state, actions } = store( 'petsync/gallery', {
 		syncLightbox() {
 			const { ref } = getElement();
 
-			if ( ! ( ref instanceof HTMLDialogElement ) ) {
+			// The typeof guard is not redundant. Where <dialog> is unsupported
+			// HTMLDialogElement is undefined, and `instanceof undefined` throws
+			// a TypeError rather than returning false — which would take the
+			// whole store down instead of degrading to a lightbox that does not
+			// open. Theoretical on any browser this plugin supports, but the
+			// failure mode is bad enough to be worth two words.
+			if (
+				typeof HTMLDialogElement === 'undefined' ||
+				! ( ref instanceof HTMLDialogElement )
+			) {
 				return;
 			}
 
