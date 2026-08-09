@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: ShelterKit Pets
- * Plugin URI: https://github.com/jwincek/shelter-pets
+ * Plugin URI: https://github.com/jwincek/shelterkit-pets
  * Description: Adoptable pet listings for animal shelters — blocks for cards, grids, filters, galleries, favorites and comparison, with sync from Petstablished.
  * Version: 1.0.0
  * Requires at least: 6.9
