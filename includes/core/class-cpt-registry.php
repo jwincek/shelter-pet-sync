@@ -26,6 +26,9 @@ class CPT_Registry {
 		add_action( 'init', [ self::class, 'register_taxonomies' ] );
 		add_action( 'init', [ self::class, 'register_meta' ], 11 );
 		add_action( 'wp_after_insert_post', [ self::class, 'apply_default_terms' ], 10, 3 );
+		// Same hook, later priority: default terms must be settled before the
+		// attribute terms are derived from the hydrated entity.
+		add_action( 'wp_after_insert_post', [ self::class, 'apply_attribute_terms' ], 20, 3 );
 	}
 
 	/**
@@ -323,5 +326,77 @@ class CPT_Registry {
 			},
 			default      => 'sanitize_text_field',
 		};
+	}
+
+	/**
+	 * Derive the pet_attribute terms from the hydrated entity.
+	 *
+	 * These terms are what the archive's compatibility filter queries — the
+	 * front end uses a tax_query, not a meta_query — so a pet whose field says
+	 * "good with dogs" but which carries no `good-with-dogs` term is invisible
+	 * to that filter while its own detail page advertises the opposite.
+	 *
+	 * That was previously possible in two ways, because the term and the field
+	 * were derived independently: the sync read RAW provider data behind an
+	 * is_string() guard (so any provider sending real JSON booleans silently
+	 * applied no terms), and nothing derived terms for hand-entered pets at all
+	 * — the sync was the only caller.
+	 *
+	 * Deriving from the hydrated entity instead means one derivation, one
+	 * source of truth, and it works for manual and synced pets alike.
+	 *
+	 * @param int     $post_id Post ID.
+	 * @param mixed   $post    Post object.
+	 * @param bool    $update  Whether this is an update.
+	 */
+	public static function apply_attribute_terms( int $post_id, $post = null, bool $update = false ): void {
+		if ( ! $post instanceof \WP_Post || 'vcps_pet' !== $post->post_type ) {
+			return;
+		}
+
+		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+
+		self::sync_attribute_terms( $post_id );
+	}
+
+	/**
+	 * Apply the pet_attribute terms for one pet, replacing whatever is there.
+	 *
+	 * Callable directly by the sync, which writes meta and then needs the terms
+	 * recomputed without waiting for a save hook.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public static function sync_attribute_terms( int $post_id ): void {
+		$config = Config::get_path( 'entities', 'entities.vcps_pet', [] );
+		$map    = $config['attribute_terms'] ?? [];
+		$tax    = $config['attribute_taxonomy'] ?? 'pet_attribute';
+
+		if ( ! $map || ! taxonomy_exists( $tax ) ) {
+			return;
+		}
+
+		// The entity may have been hydrated earlier in this request, before the
+		// meta that is about to be read was written.
+		Pet_Hydrator::flush_cache();
+		$pet = Pet_Hydrator::get( $post_id, 'full' );
+
+		if ( ! $pet ) {
+			return;
+		}
+
+		$terms = [];
+		foreach ( $map as $field => $term_slug ) {
+			// Must be exactly 'yes'. These resolve to 'yes' | 'no' | 'unknown' |
+			// '', all of which are truthy strings, so an emptiness test would
+			// label a pet compatible with everything it is known NOT to suit.
+			if ( 'yes' === strtolower( (string) ( $pet[ $field ] ?? '' ) ) ) {
+				$terms[] = $term_slug;
+			}
+		}
+
+		wp_set_object_terms( $post_id, $terms, $tax, false );
 	}
 }

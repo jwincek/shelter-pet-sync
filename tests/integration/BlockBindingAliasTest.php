@@ -29,7 +29,6 @@ final class BlockBindingAliasTest extends PetTestCase {
 	 */
 	private function resolve( string $key ): string {
 		$m = new ReflectionMethod( Petsync_Blocks::class, 'resolve_legacy_binding_key' );
-		$m->setAccessible( true );
 
 		return $m->invoke( null, $key );
 	}
@@ -61,7 +60,6 @@ final class BlockBindingAliasTest extends PetTestCase {
 	 */
 	public function test_no_alias_maps_a_key_to_itself(): void {
 		$m = new ReflectionMethod( Petsync_Blocks::class, 'resolve_legacy_binding_key' );
-		$m->setAccessible( true );
 
 		foreach ( array( 'special_needs' ) as $legacy ) {
 			$this->assertNotSame(

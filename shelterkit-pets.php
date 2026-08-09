@@ -230,7 +230,7 @@ add_action( 'plugins_loaded', 'petsync_init' );
  * plugin's DATA version and is deliberately independent of the release version
  * in the plugin header — most releases change no stored data at all.
  */
-define( 'PETSYNC_DB_VERSION', 6 );
+define( 'PETSYNC_DB_VERSION', 7 );
 
 /**
  * The ordered migration list.
@@ -256,6 +256,7 @@ function petsync_get_migrations(): array {
 		// Point any future rename at this same callable in the same way.
 		5 => 'petsync_migrate_4_template_namespace',
 		6 => 'petsync_migrate_6_field_renames',
+		7 => 'petsync_migrate_7_backfill_attribute_terms',
 	);
 }
 
@@ -609,6 +610,38 @@ function petsync_migrate_6_field_renames(): bool {
 
 			delete_post_meta( $pet_id, $old_key );
 		}
+	}
+
+	return true;
+}
+
+/**
+ * Migration 7 — backfill pet_attribute terms for pets that already exist.
+ *
+ * The terms are now derived from the hydrated entity on every save, but that
+ * only helps pets saved after the change. A hand-entered pet whose
+ * compatibility was filled in earlier carries the field and not the term, so it
+ * stays invisible to the archive's compatibility filter — which queries the
+ * taxonomy, not the meta — while its own page advertises the opposite.
+ *
+ * Synced pets would be repaired by the next sync anyway; manual pets would
+ * never be, because nothing re-saves them.
+ *
+ * @return bool True when the backfill completed.
+ */
+function petsync_migrate_7_backfill_attribute_terms(): bool {
+	$pet_ids = get_posts(
+		array(
+			'post_type'        => 'vcps_pet',
+			'post_status'      => 'any',
+			'numberposts'      => -1,
+			'fields'           => 'ids',
+			'suppress_filters' => false,
+		)
+	);
+
+	foreach ( $pet_ids as $pet_id ) {
+		\Petsync\Core\CPT_Registry::sync_attribute_terms( $pet_id );
 	}
 
 	return true;

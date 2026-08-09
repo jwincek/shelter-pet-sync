@@ -16,8 +16,8 @@
  *                     to a real base/taxonomy/field/api_field/computed field.
  *   4. abilities    — every abilities.json ability has a resolvable callback
  *                     and a known permission; no dead callback mappings.
- *   5. taxonomies   — entity taxonomies + attribute_map reference real
- *                     taxonomies / api_field keys.
+ *   5. taxonomies   — entity taxonomies reference real taxonomies, and every
+ *                     attribute_terms key is a declared entity field.
  *   6. interactivity (heuristic) — actions.X / callbacks.X referenced in
  *                     block render.php are defined in a view.js / store.
  *   7. hash-coverage — every literal $data['key'] the sync reads is in
@@ -247,7 +247,7 @@ foreach ( array_keys( $explicit_map ) as $mapped ) {
 	}
 }
 
-// ── Check 5: taxonomy + attribute_map consistency ────────────────────────────
+// ── Check 5: taxonomy + attribute_terms consistency ──────────────────────────
 $registered_tax = array_keys( $taxonomies_json['taxonomies'] ?? [] );
 foreach ( (array) ( $entity['taxonomies'] ?? [] ) as $key => $cfg ) {
 	$tax = $cfg['taxonomy'] ?? null;
@@ -277,9 +277,12 @@ foreach ( (array) ( $entity['api_fields'] ?? [] ) as $cfg ) {
 		$api_keys[] = $cfg['api_key'];
 	}
 }
-foreach ( array_keys( (array) ( $entity['attribute_map'] ?? [] ) ) as $src_key ) {
-	if ( ! in_array( $src_key, $api_keys, true ) ) {
-		$add( 'warning', 'taxonomies', "attribute_map source key '$src_key' is not an api_field api_key — it can only match raw API data." );
+// attribute_terms is keyed on OUR field names, not the provider's, because the
+// terms are derived from the hydrated entity. Checking it against $api_keys
+// would compare the two sides of the very indirection this replaced.
+foreach ( array_keys( (array) ( $entity['attribute_terms'] ?? [] ) ) as $field ) {
+	if ( ! in_array( $field, $valid_fields, true ) ) {
+		$add( 'error', 'taxonomies', "attribute_terms key '$field' is not a declared entity field — the term would never be applied." );
 	}
 }
 
@@ -525,9 +528,8 @@ foreach ( (array) ( $entity['api_fields'] ?? [] ) as $cfg ) {
 		$consumed[ $cfg['api_key'] ] = true;
 	}
 }
-foreach ( array_keys( (array) ( $entity['attribute_map'] ?? [] ) ) as $k ) {
-	$consumed[ $k ] = true;
-}
+// attribute_terms needs no entry here: it is keyed on canonical field names,
+// and the api_key behind each one is already recorded by the loop above.
 // computed_sources[] literal in get_retained_api_keys().
 if ( preg_match( '/\$computed_sources\s*=\s*array\((.*?)\);/s', $sync_src, $m ) ) {
 	preg_match_all( "/'([a-z_]+)'/", $m[1], $cm );
