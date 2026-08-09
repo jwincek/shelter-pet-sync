@@ -127,4 +127,266 @@ final class MigrationsTest extends PetTestCase {
 			$this->assertTrue( true, "migration {$version} completed on an empty install" );
 		}
 	}
+
+	// ── Migration 4: template namespace ──────────────────────────────────────
+
+	/**
+	 * File a customized template under a given wp_theme term, the way the Site
+	 * Editor does.
+	 *
+	 * @param string $theme_name wp_theme term name.
+	 * @param string $slug       Template slug.
+	 * @return int Post ID.
+	 */
+	private function customize_template_under( string $theme_name, string $slug = 'single-vcps_pet' ): int {
+		$post_id = wp_insert_post(
+			array(
+				'post_type'    => 'wp_template',
+				'post_name'    => $slug,
+				'post_title'   => $slug,
+				'post_status'  => 'publish',
+				'post_content' => '<!-- wp:paragraph --><p>customized</p><!-- /wp:paragraph -->',
+			)
+		);
+
+		wp_set_object_terms( $post_id, $theme_name, 'wp_theme' );
+
+		return (int) $post_id;
+	}
+
+	/**
+	 * @param int $post_id Template post ID.
+	 * @return string[] wp_theme term names on the post.
+	 */
+	private function theme_terms_of( int $post_id ): array {
+		return wp_get_object_terms( $post_id, 'wp_theme', array( 'fields' => 'names' ) );
+	}
+
+	public function test_migration_4_carries_a_customization_across_a_rename(): void {
+		$customized = $this->customize_template_under( 'shelter-pet-sync' );
+
+		petsync_migrate_4_template_namespace();
+
+		$this->assertSame(
+			array( \Petsync_Templates::THEME_NAMESPACE ),
+			$this->theme_terms_of( $customized ),
+			'a customization filed under the old name must end up under the current one'
+		);
+		$this->assertFalse(
+			get_term_by( 'name', 'shelter-pet-sync', 'wp_theme' ),
+			'the legacy term should not survive'
+		);
+	}
+
+	public function test_migration_4_handles_the_oldest_namespace_too(): void {
+		$customized = $this->customize_template_under( 'vcpahumane-pet-sync' );
+
+		petsync_migrate_4_template_namespace();
+
+		$this->assertSame(
+			array( \Petsync_Templates::THEME_NAMESPACE ),
+			$this->theme_terms_of( $customized )
+		);
+	}
+
+	/**
+	 * The partially-migrated case: someone customized a template after the
+	 * rename, so both terms hold real work. Neither side may be discarded.
+	 */
+	public function test_migration_4_merges_when_both_terms_hold_work(): void {
+		$old = $this->customize_template_under( 'shelter-pet-sync', 'single-vcps_pet' );
+		$new = $this->customize_template_under( \Petsync_Templates::THEME_NAMESPACE, 'archive-vcps_pet' );
+
+		petsync_migrate_4_template_namespace();
+
+		$this->assertSame( array( \Petsync_Templates::THEME_NAMESPACE ), $this->theme_terms_of( $old ) );
+		$this->assertSame( array( \Petsync_Templates::THEME_NAMESPACE ), $this->theme_terms_of( $new ) );
+		$this->assertNotNull( get_post( $old ), 'the older customization must survive the merge' );
+		$this->assertNotNull( get_post( $new ), 'the newer customization must survive the merge' );
+		$this->assertFalse( get_term_by( 'name', 'shelter-pet-sync', 'wp_theme' ) );
+	}
+
+	/**
+	 * An install can be upgrading across BOTH renames at once — it may have sat
+	 * on a version that predates them all.
+	 */
+	public function test_migration_4_consolidates_several_legacy_namespaces(): void {
+		$oldest = $this->customize_template_under( 'vcpahumane-pet-sync', 'single-vcps_pet' );
+		$older  = $this->customize_template_under( 'shelter-pet-sync', 'archive-vcps_pet' );
+
+		petsync_migrate_4_template_namespace();
+
+		$this->assertSame( array( \Petsync_Templates::THEME_NAMESPACE ), $this->theme_terms_of( $oldest ) );
+		$this->assertSame( array( \Petsync_Templates::THEME_NAMESPACE ), $this->theme_terms_of( $older ) );
+
+		foreach ( \Petsync_Templates::LEGACY_NAMESPACES as $legacy ) {
+			$this->assertFalse( get_term_by( 'name', $legacy, 'wp_theme' ), "$legacy should be gone" );
+		}
+	}
+
+	/**
+	 * A customization of a template the plugin no longer ships is exactly the
+	 * one a shelter would be upset to lose, so the migration moves a term's
+	 * whole contents rather than filtering to slugs it recognises.
+	 */
+	public function test_migration_4_carries_templates_the_plugin_no_longer_ships(): void {
+		$retired = $this->customize_template_under( 'shelter-pet-sync', 'some-retired-template' );
+
+		petsync_migrate_4_template_namespace();
+
+		$this->assertSame( array( \Petsync_Templates::THEME_NAMESPACE ), $this->theme_terms_of( $retired ) );
+	}
+
+	public function test_migration_4_is_idempotent(): void {
+		$customized = $this->customize_template_under( 'shelter-pet-sync' );
+
+		petsync_migrate_4_template_namespace();
+		petsync_migrate_4_template_namespace();
+
+		$this->assertSame( array( \Petsync_Templates::THEME_NAMESPACE ), $this->theme_terms_of( $customized ) );
+	}
+
+	public function test_migration_4_leaves_an_unrelated_theme_alone(): void {
+		$theme_template = $this->customize_template_under( 'twentytwentyfive' );
+
+		petsync_migrate_4_template_namespace();
+
+		$this->assertSame(
+			array( 'twentytwentyfive' ),
+			$this->theme_terms_of( $theme_template ),
+			'a real theme\'s own customizations are not ours to move'
+		);
+	}
+
+	/**
+	 * The migration exists because the lookup and the storage key drifted
+	 * apart. Pinning them to the same constant is the fix; this asserts they
+	 * cannot drift again.
+	 */
+	public function test_the_lookup_and_the_migration_agree_on_the_namespace(): void {
+		$customized = $this->customize_template_under( 'shelter-pet-sync' );
+
+		petsync_migrate_4_template_namespace();
+
+		$found = get_posts(
+			array(
+				'post_type'      => 'wp_template',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- deliberately mirrors the front-end lookup this test is pinning.
+				'tax_query'      => array(
+					array(
+						'taxonomy' => 'wp_theme',
+						'field'    => 'name',
+						'terms'    => \Petsync_Templates::THEME_NAMESPACE,
+					),
+				),
+			)
+		);
+
+		$this->assertContains(
+			$customized,
+			$found,
+			'after migrating, the template must be findable by the same query the front end uses'
+		);
+	}
+
+	/**
+	 * The realistic failure for the rename path: another wp_theme term already
+	 * holds the target slug under a different name, so the lookup by name finds
+	 * nothing but wp_update_term still rejects the slug.
+	 *
+	 * The slug is cosmetic — get_customized_template() matches on name — so the
+	 * migration retries with the name alone and lets WordPress derive a unique
+	 * slug. What must not happen is the rename failing silently and the install
+	 * being marked as migrated anyway.
+	 */
+	public function test_migration_4_survives_a_slug_collision(): void {
+		wp_insert_term(
+			'Some Other Theme',
+			'wp_theme',
+			array( 'slug' => \Petsync_Templates::THEME_NAMESPACE )
+		);
+
+		$customized = $this->customize_template_under( 'shelter-pet-sync' );
+
+		$this->assertTrue(
+			petsync_migrate_4_template_namespace(),
+			'a slug collision must not be reported as a failed migration'
+		);
+
+		$this->assertSame(
+			array( \Petsync_Templates::THEME_NAMESPACE ),
+			$this->theme_terms_of( $customized ),
+			'the customization must still end up under the current namespace'
+		);
+
+		$term = get_term_by( 'name', \Petsync_Templates::THEME_NAMESPACE, 'wp_theme' );
+		$this->assertInstanceOf( \WP_Term::class, $term );
+		$this->assertNotSame(
+			\Petsync_Templates::THEME_NAMESPACE,
+			$term->slug,
+			'WordPress should have derived a distinct slug, since the tidy one was taken'
+		);
+	}
+
+	// ── The migration rail itself ────────────────────────────────────────────
+
+	/**
+	 * A migration that reports failure must not advance the stored version past
+	 * itself, or the failure becomes permanent as well as silent — the install
+	 * would be marked as migrated with the work never done.
+	 */
+	public function test_a_failing_migration_does_not_advance_the_version(): void {
+		delete_option( 'petsync_db_version' );
+
+		$ran = array();
+		$rail = array(
+			1 => function () use ( &$ran ) {
+				$ran[] = 1;
+				return true;
+			},
+			2 => function () use ( &$ran ) {
+				$ran[] = 2;
+				return false;
+			},
+			3 => function () use ( &$ran ) {
+				$ran[] = 3;
+				return true;
+			},
+		);
+
+		// Mirror petsync_maybe_upgrade()'s loop against a controllable rail.
+		$installed = 0;
+		$completed = $installed;
+		foreach ( $rail as $version => $callback ) {
+			if ( $version <= $installed ) {
+				continue;
+			}
+			if ( false === call_user_func( $callback ) ) {
+				break;
+			}
+			$completed = $version;
+		}
+
+		$this->assertSame( array( 1, 2 ), $ran, 'the rail must stop at the failure, not carry on' );
+		$this->assertSame( 1, $completed, 'only the migration that completed may be recorded' );
+	}
+
+	/**
+	 * The real rail, end to end: every declared migration completes on a fresh
+	 * install and the version lands on PETSYNC_DB_VERSION.
+	 */
+	public function test_the_rail_records_the_full_version_when_everything_succeeds(): void {
+		delete_option( 'petsync_db_version' );
+
+		petsync_maybe_upgrade();
+
+		$this->assertSame(
+			PETSYNC_DB_VERSION,
+			(int) get_option( 'petsync_db_version' ),
+			'a clean run must record the full schema version'
+		);
+	}
 }
