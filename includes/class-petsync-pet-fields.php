@@ -11,7 +11,7 @@
  * (`editable_fields`), so adding a field is a config change rather than a code
  * change here or in the JavaScript.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since   1.0.0
  */
 

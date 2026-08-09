@@ -23,13 +23,13 @@
  * plugin/site CLAUDE.md and the local-wpcli-db-socket memory):
  *
  *   wp eval-file \
- *     wp-content/plugins/shelter-pets/migration-scripts/2026-06-23-purge-pii-from-api-snapshots.php \
+ *     wp-content/plugins/shelterkit-pets/migration-scripts/2026-06-23-purge-pii-from-api-snapshots.php \
  *     --require=/tmp/dbhost.php --skip-themes
  *
  * Idempotent: re-running on already-slimmed snapshots is a no-op. Set
  * DRY_RUN to true to report what would change without writing.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 // declare( strict_types = 1 );

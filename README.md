@@ -1,4 +1,4 @@
-# Shelter Pets
+# ShelterKit Pets
 
 Adoptable pet listings and printable kennel cards for animal shelters. Built on the modern WordPress stack: Abilities API, Block Bindings, and Interactivity API.
 
@@ -13,7 +13,7 @@ A Petstablished account is optional. Without one, pets are entered in the editor
 
 ## Installation
 
-1. Download or clone this repository into `wp-content/plugins/shelter-pets/`.
+1. Download or clone this repository into `wp-content/plugins/shelterkit-pets/`.
 2. Activate the plugin in **Plugins → Installed Plugins**.
 3. Go to **Pets → Add New** and enter an animal.
 4. Add the pet blocks to your pages and templates from the block inserter.

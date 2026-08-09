@@ -6,7 +6,7 @@
  * repeated across every block's render.php. They are intentionally
  * global-namespaced for ergonomic use in templates.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 

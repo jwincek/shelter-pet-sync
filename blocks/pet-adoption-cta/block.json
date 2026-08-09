@@ -8,7 +8,7 @@
 	"description": "Display adoption fee and application link or downloadable PDF form.",
 	"keywords": ["pet", "adoption", "cta", "fee", "apply", "pdf", "form"],
 	"parent": ["petsync/pet-details"],
-	"textdomain": "shelter-pets",
+	"textdomain": "shelterkit-pets",
 	"usesContext": ["postId", "postType"],
 	"attributes": {},
 	"supports": {

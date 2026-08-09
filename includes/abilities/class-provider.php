@@ -9,7 +9,7 @@
  *   'petsync/list-pets'       → Petsync\Abilities\Pets\list_pets()
  *   'petsync/get-comparison'  → Petsync\Abilities\Comparison\get()
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 

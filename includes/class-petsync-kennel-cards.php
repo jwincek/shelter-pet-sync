@@ -11,7 +11,7 @@
  * already has. This screen only chooses pets and lays the rendered cards out
  * for a printer.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since   1.0.0
  */
 
@@ -51,15 +51,15 @@ class Petsync_Kennel_Cards {
 	private function get_sizes(): array {
 		return array(
 			'index' => array(
-				'label'     => __( 'Index card (4×6) — 4 per sheet', 'shelter-pets' ),
+				'label'     => __( 'Index card (4×6) — 4 per sheet', 'shelterkit-pets' ),
 				'per_sheet' => 4,
 			),
 			'half'  => array(
-				'label'     => __( 'Half page — 2 per sheet', 'shelter-pets' ),
+				'label'     => __( 'Half page — 2 per sheet', 'shelterkit-pets' ),
 				'per_sheet' => 2,
 			),
 			'full'  => array(
-				'label'     => __( 'Full page — 1 per sheet', 'shelter-pets' ),
+				'label'     => __( 'Full page — 1 per sheet', 'shelterkit-pets' ),
 				'per_sheet' => 1,
 			),
 		);
@@ -73,8 +73,8 @@ class Petsync_Kennel_Cards {
 	public function register_page(): void {
 		add_submenu_page(
 			'edit.php?post_type=vcps_pet',
-			__( 'Kennel Cards', 'shelter-pets' ),
-			__( 'Kennel Cards', 'shelter-pets' ),
+			__( 'Kennel Cards', 'shelterkit-pets' ),
+			__( 'Kennel Cards', 'shelterkit-pets' ),
 			self::CAPABILITY,
 			self::PAGE_SLUG,
 			array( $this, 'render_page' )
@@ -111,7 +111,7 @@ class Petsync_Kennel_Cards {
 
 	public function render_page(): void {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
-			wp_die( esc_html__( 'You are not allowed to print kennel cards.', 'shelter-pets' ) );
+			wp_die( esc_html__( 'You are not allowed to print kennel cards.', 'shelterkit-pets' ) );
 		}
 
 		// Read-only screen driven by a GET form: nothing is written, so there is
@@ -144,25 +144,25 @@ class Petsync_Kennel_Cards {
 		$sizes = $this->get_sizes();
 		?>
 		<div class="wrap petsync-kennel">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Kennel Cards', 'shelter-pets' ); ?></h1>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Kennel Cards', 'shelterkit-pets' ); ?></h1>
 			<a href="<?php echo esc_url( $this->get_design_edit_url() ); ?>" class="page-title-action">
-				<?php esc_html_e( 'Edit card design', 'shelter-pets' ); ?>
+				<?php esc_html_e( 'Edit card design', 'shelterkit-pets' ); ?>
 			</a>
 
 			<p class="description">
-				<?php esc_html_e( 'Choose the pets to print. Every card uses the Kennel Card design — edit that once and all cards follow it.', 'shelter-pets' ); ?>
+				<?php esc_html_e( 'Choose the pets to print. Every card uses the Kennel Card design — edit that once and all cards follow it.', 'shelterkit-pets' ); ?>
 			</p>
 
 			<?php if ( ! $this->get_card_template() ) : ?>
 				<div class="notice notice-error">
-					<p><?php esc_html_e( 'The Kennel Card design could not be loaded, so cards cannot be printed.', 'shelter-pets' ); ?></p>
+					<p><?php esc_html_e( 'The Kennel Card design could not be loaded, so cards cannot be printed.', 'shelterkit-pets' ); ?></p>
 				</div>
 			<?php endif; ?>
 
 			<form method="get" action="" class="petsync-kennel__filter">
 				<input type="hidden" name="post_type" value="vcps_pet" />
 				<input type="hidden" name="page" value="<?php echo esc_attr( self::PAGE_SLUG ); ?>" />
-				<label for="petsync-status"><?php esc_html_e( 'Show', 'shelter-pets' ); ?></label>
+				<label for="petsync-status"><?php esc_html_e( 'Show', 'shelterkit-pets' ); ?></label>
 				<select name="pet_status" id="petsync-status">
 					<?php foreach ( $statuses as $slug => $label ) : ?>
 						<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $slug, $status ); ?>>
@@ -170,12 +170,12 @@ class Petsync_Kennel_Cards {
 						</option>
 					<?php endforeach; ?>
 				</select>
-				<button type="submit" class="button"><?php esc_html_e( 'Apply', 'shelter-pets' ); ?></button>
+				<button type="submit" class="button"><?php esc_html_e( 'Apply', 'shelterkit-pets' ); ?></button>
 			</form>
 
 			<?php if ( ! $pets ) : ?>
 				<div class="notice notice-warning">
-					<p><?php esc_html_e( 'No pets match that status.', 'shelter-pets' ); ?></p>
+					<p><?php esc_html_e( 'No pets match that status.', 'shelterkit-pets' ); ?></p>
 				</div>
 				<?php return; ?>
 			<?php endif; ?>
@@ -184,7 +184,7 @@ class Petsync_Kennel_Cards {
 				<?php
 				printf(
 					/* translators: %d: number of pets available to print. */
-					esc_html( _n( '%d pet', '%d pets', count( $pets ), 'shelter-pets' ) ),
+					esc_html( _n( '%d pet', '%d pets', count( $pets ), 'shelterkit-pets' ) ),
 					count( $pets )
 				);
 				?>
@@ -196,7 +196,7 @@ class Petsync_Kennel_Cards {
 				<input type="hidden" name="view" value="print" />
 
 				<p>
-					<label for="petsync-card-size"><strong><?php esc_html_e( 'Card size', 'shelter-pets' ); ?></strong></label><br />
+					<label for="petsync-card-size"><strong><?php esc_html_e( 'Card size', 'shelterkit-pets' ); ?></strong></label><br />
 					<select name="size" id="petsync-card-size">
 						<?php foreach ( $sizes as $key => $size ) : ?>
 							<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $size['label'] ); ?></option>
@@ -206,7 +206,7 @@ class Petsync_Kennel_Cards {
 
 				<p>
 					<button type="button" class="button" data-petsync-toggle-all>
-						<?php esc_html_e( 'Select all / none', 'shelter-pets' ); ?>
+						<?php esc_html_e( 'Select all / none', 'shelterkit-pets' ); ?>
 					</button>
 				</p>
 
@@ -228,7 +228,7 @@ class Petsync_Kennel_Cards {
 
 				<p class="submit">
 					<button type="submit" class="button button-primary">
-						<?php esc_html_e( 'Print selected', 'shelter-pets' ); ?>
+						<?php esc_html_e( 'Print selected', 'shelterkit-pets' ); ?>
 					</button>
 				</p>
 			</form>
@@ -270,12 +270,12 @@ class Petsync_Kennel_Cards {
 		?>
 		<div class="wrap petsync-kennel petsync-kennel--print">
 			<p class="petsync-kennel__toolbar">
-				<a href="<?php echo esc_url( $back ); ?>" class="button"><?php esc_html_e( '← Choose different pets', 'shelter-pets' ); ?></a>
-				<button type="button" class="button button-primary" onclick="window.print()"><?php esc_html_e( 'Print', 'shelter-pets' ); ?></button>
+				<a href="<?php echo esc_url( $back ); ?>" class="button"><?php esc_html_e( '← Choose different pets', 'shelterkit-pets' ); ?></a>
+				<button type="button" class="button button-primary" onclick="window.print()"><?php esc_html_e( 'Print', 'shelterkit-pets' ); ?></button>
 			</p>
 
 			<?php if ( ! $ids ) : ?>
-				<div class="notice notice-warning"><p><?php esc_html_e( 'No pets were selected.', 'shelter-pets' ); ?></p></div>
+				<div class="notice notice-warning"><p><?php esc_html_e( 'No pets were selected.', 'shelterkit-pets' ); ?></p></div>
 				<?php return; ?>
 			<?php endif; ?>
 
@@ -424,7 +424,7 @@ class Petsync_Kennel_Cards {
 	 * @return array<string, string> Slug => label.
 	 */
 	private function get_status_options(): array {
-		$options = array( 'all' => __( 'All statuses', 'shelter-pets' ) );
+		$options = array( 'all' => __( 'All statuses', 'shelterkit-pets' ) );
 
 		$terms = get_terms(
 			array(

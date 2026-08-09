@@ -7,7 +7,7 @@
  * gallery is a content operation, so it sits behind `edit_posts` and gives
  * automation the same capability the editor sidebar has.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -42,7 +42,7 @@ function set_gallery( array $input ): array|WP_Error {
 	if ( ! $id || 'vcps_pet' !== get_post_type( $id ) ) {
 		return new WP_Error(
 			'invalid_pet',
-			__( 'No pet found with that ID.', 'shelter-pets' ),
+			__( 'No pet found with that ID.', 'shelterkit-pets' ),
 			[ 'status' => 404 ]
 		);
 	}
@@ -52,7 +52,7 @@ function set_gallery( array $input ): array|WP_Error {
 	if ( ! current_user_can( 'edit_post', $id ) ) {
 		return new WP_Error(
 			'cannot_edit_pet',
-			__( 'You are not allowed to edit this pet.', 'shelter-pets' ),
+			__( 'You are not allowed to edit this pet.', 'shelterkit-pets' ),
 			[ 'status' => 403 ]
 		);
 	}

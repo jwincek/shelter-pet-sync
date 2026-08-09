@@ -1,12 +1,12 @@
 <?php
 /**
- * Shelter Pets Block Variations
+ * ShelterKit Pets Block Variations
  *
  * Registers block variations for core blocks pre-configured with pet data bindings.
  * These "Pet Name", "Pet Breed", etc. variations can be inserted anywhere the
  * petsync/pet-data binding source is available.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -547,7 +547,7 @@ class Petsync_Variations {
 					$categories,
 					array(
 						'slug'  => 'petsync',
-						'title' => __( 'Pet Blocks', 'shelter-pets' ),
+						'title' => __( 'Pet Blocks', 'shelterkit-pets' ),
 						'icon'  => 'pets',
 					)
 				);

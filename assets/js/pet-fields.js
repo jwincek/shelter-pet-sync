@@ -47,7 +47,7 @@
 	// @wordpress/valid-sprintf nor picked up for translation. Matches how
 	// blocks-editor.js handles its strings.
 	const PROVIDER_NAMES = {
-		petstablished: __( 'Petstablished', 'shelter-pets' ),
+		petstablished: __( 'Petstablished', 'shelterkit-pets' ),
 	};
 
 	if ( ! PluginDocumentSettingPanel ) {
@@ -99,13 +99,13 @@
 				Object.assign( {}, shared, {
 					options: [
 						{
-							label: __( 'Not recorded', 'shelter-pets' ),
+							label: __( 'Not recorded', 'shelterkit-pets' ),
 							value: '',
 						},
-						{ label: __( 'Yes', 'shelter-pets' ), value: 'yes' },
-						{ label: __( 'No', 'shelter-pets' ), value: 'no' },
+						{ label: __( 'Yes', 'shelterkit-pets' ), value: 'yes' },
+						{ label: __( 'No', 'shelterkit-pets' ), value: 'no' },
 						{
-							label: __( 'Unknown', 'shelter-pets' ),
+							label: __( 'Unknown', 'shelterkit-pets' ),
 							value: 'unknown',
 						},
 					],
@@ -164,7 +164,7 @@
 								'%d image selected.',
 								'%d images selected.',
 								count,
-								'shelter-pets'
+								'shelterkit-pets'
 							),
 							count
 					  ),
@@ -199,8 +199,11 @@
 										__next40pxDefaultSize: true,
 									},
 									count
-										? __( 'Edit gallery', 'shelter-pets' )
-										: __( 'Add images', 'shelter-pets' )
+										? __(
+												'Edit gallery',
+												'shelterkit-pets'
+										  )
+										: __( 'Add images', 'shelterkit-pets' )
 								)
 							),
 							count && ! isLocked
@@ -215,7 +218,7 @@
 												onClick: () => write( [] ),
 												__next40pxDefaultSize: true,
 											},
-											__( 'Clear', 'shelter-pets' )
+											__( 'Clear', 'shelterkit-pets' )
 										)
 								  )
 								: null
@@ -281,7 +284,7 @@
 								/* translators: %s: name of the shelter platform, e.g. Petstablished. */
 								__(
 									'This pet was imported from %s. These fields are managed there — edit them in that platform and they will update on the next sync.',
-									'shelter-pets'
+									'shelterkit-pets'
 								),
 								providerName( config.provider )
 							)
@@ -293,9 +296,9 @@
 					PluginDocumentSettingPanel,
 					{
 						key: group.slug,
-						name: 'shelter-pets-' + group.slug,
+						name: 'shelterkit-pets-' + group.slug,
 						title: group.label,
-						className: 'shelter-pets-field-panel',
+						className: 'shelterkit-pets-field-panel',
 					},
 					children
 				);
@@ -305,5 +308,5 @@
 		return el( Fragment, null, panels );
 	}
 
-	registerPlugin( 'shelter-pets-fields', { render: PetFieldsPanels } );
+	registerPlugin( 'shelterkit-pets-fields', { render: PetFieldsPanels } );
 } )( window.wp );

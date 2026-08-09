@@ -1,10 +1,10 @@
 <?php
 /**
- * Shelter Pets Templates
+ * ShelterKit Pets Templates
  *
  * Registers block templates for pet archive and single views.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -31,22 +31,33 @@ class Petsync_Templates {
 	 * updated. It lives here now so a rename is one edit, and so the migration
 	 * that repairs the damage can agree with the lookup by construction.
 	 */
-	public const THEME_NAMESPACE = 'shelter-pets';
+	public const THEME_NAMESPACE = 'shelterkit-pets';
 
 	/**
 	 * Namespaces this plugin has previously filed templates under.
 	 *
-	 * Taken from git history rather than memory: `vcpahumane-pet-sync` up to
-	 * 2026-07-04, `shelter-pet-sync` from 2026-07-05, and the current name from
-	 * 2026-08-01. Migration 4 re-files anything found under these.
+	 * Oldest first, because that is the order migration 4 consolidates them in.
+	 *
+	 * `petstablished-sync` predates the others and was NOT recoverable from the
+	 * history of this file — the class never carried that literal. It was found
+	 * by listing the wp_theme terms on a real install, where it still held two
+	 * customizations (`single-pet`, `archive-pet`, slugs that predate the
+	 * pet -> vcps_pet CPT rename). Git history is not a sufficient source for
+	 * this list; the database is.
+	 *
+	 * The rest: `vcpahumane-pet-sync` up to 2026-07-04, `shelter-pet-sync` from
+	 * 2026-07-05, `shelter-pets` from 2026-08-01, and the current name from
+	 * 2026-08-09. Migrations 4 and 5 re-file anything found under these.
 	 *
 	 * Add the outgoing name here on any future rename — an install can upgrade
 	 * across several renames at once, so this list is cumulative and nothing
 	 * should ever be removed from it.
 	 */
 	public const LEGACY_NAMESPACES = array(
+		'petstablished-sync',
 		'vcpahumane-pet-sync',
 		'shelter-pet-sync',
+		'shelter-pets',
 	);
 
 	public function __construct() {
@@ -163,13 +174,13 @@ class Petsync_Templates {
 	private function get_plugin_templates(): array {
 		return array(
 			'archive-vcps_pet' => array(
-				'title'       => __( 'Pet Archive', 'shelter-pets' ),
-				'description' => __( 'Displays the pet adoption listings.', 'shelter-pets' ),
+				'title'       => __( 'Pet Archive', 'shelterkit-pets' ),
+				'description' => __( 'Displays the pet adoption listings.', 'shelterkit-pets' ),
 				'post_types'  => array( 'vcps_pet' ),
 			),
 			'single-vcps_pet'  => array(
-				'title'       => __( 'Single Pet', 'shelter-pets' ),
-				'description' => __( 'Displays a single adoptable pet.', 'shelter-pets' ),
+				'title'       => __( 'Single Pet', 'shelterkit-pets' ),
+				'description' => __( 'Displays a single adoptable pet.', 'shelterkit-pets' ),
 				'post_types'  => array( 'vcps_pet' ),
 			),
 		);
@@ -178,13 +189,13 @@ class Petsync_Templates {
 	private function get_plugin_template_parts(): array {
 		return array(
 			'pet-floating-ui' => array(
-				'title'       => __( 'Pet Floating UI', 'shelter-pets' ),
-				'description' => __( 'Favorites modal and compare bar — shared across pet templates.', 'shelter-pets' ),
+				'title'       => __( 'Pet Floating UI', 'shelterkit-pets' ),
+				'description' => __( 'Favorites modal and compare bar — shared across pet templates.', 'shelterkit-pets' ),
 				'area'        => 'uncategorized',
 			),
 			'kennel-card'     => array(
-				'title'       => __( 'Kennel Card', 'shelter-pets' ),
-				'description' => __( 'The printed card for a kennel or cage. Edit it here and every card printed from Pets → Kennel Cards follows this layout.', 'shelter-pets' ),
+				'title'       => __( 'Kennel Card', 'shelterkit-pets' ),
+				'description' => __( 'The printed card for a kennel or cage. Edit it here and every card printed from Pets → Kennel Cards follows this layout.', 'shelterkit-pets' ),
 				'area'        => 'uncategorized',
 			),
 		);

@@ -6,7 +6,7 @@
  * Works without JS as a plain anchor link; enhanced with smooth
  * scroll and show/hide via the Interactivity API.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -32,7 +32,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		href="#"
 		class="back-to-top__button"
 		data-wp-on--click="actions.scrollToTop"
-		aria-label="<?php esc_attr_e( 'Back to top', 'shelter-pets' ); ?>"
+		aria-label="<?php esc_attr_e( 'Back to top', 'shelterkit-pets' ); ?>"
 	>
 		<?php
 		Petsync_Icons::render(

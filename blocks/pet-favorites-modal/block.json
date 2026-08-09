@@ -7,7 +7,7 @@
 	"category": "theme",
 	"description": "Floating heart button that opens a modal showing all favorited pets. Visible on any page via the router's attachTo feature.",
 	"keywords": ["pet", "favorites", "heart", "modal"],
-	"textdomain": "shelter-pets",
+	"textdomain": "shelterkit-pets",
 	"attributes": {
 		"position": {
 			"type": "string",

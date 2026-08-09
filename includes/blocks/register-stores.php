@@ -7,7 +7,7 @@
  * v4.2.0: Adds favorites-modal and compare-bar script modules.
  * Adds loadOnClientNavigation for cross-page router support.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -58,14 +58,14 @@ function register_stores(): void {
 			'isCompareBarVisible'  => $has_comparison,
 			// Button text for pet-actions (used by derived state getters).
 			'_i18n'                => [
-				'favorite'       => __( 'Favorite', 'shelter-pets' ),
-				'unfavorite'     => __( 'Unfavorite', 'shelter-pets' ),
-				'compare'        => __( 'Compare', 'shelter-pets' ),
-				'comparing'      => __( 'Comparing', 'shelter-pets' ),
-				'share'          => __( 'Share', 'shelter-pets' ),
-				'copyLink'       => __( 'Copy link', 'shelter-pets' ),
-				'copied'         => __( 'Copied!', 'shelter-pets' ),
-				'copiedAnnounce' => __( 'Link copied to clipboard', 'shelter-pets' ),
+				'favorite'       => __( 'Favorite', 'shelterkit-pets' ),
+				'unfavorite'     => __( 'Unfavorite', 'shelterkit-pets' ),
+				'compare'        => __( 'Compare', 'shelterkit-pets' ),
+				'comparing'      => __( 'Comparing', 'shelterkit-pets' ),
+				'share'          => __( 'Share', 'shelterkit-pets' ),
+				'copyLink'       => __( 'Copy link', 'shelterkit-pets' ),
+				'copied'         => __( 'Copied!', 'shelterkit-pets' ),
+				'copiedAnnounce' => __( 'Link copied to clipboard', 'shelterkit-pets' ),
 			],
 		]
 	);
@@ -172,15 +172,15 @@ function register_script_modules(): void {
  */
 function get_i18n_strings(): array {
 	return [
-		'added'             => __( 'Added to favorites', 'shelter-pets' ),
-		'removed'           => __( 'Removed from favorites', 'shelter-pets' ),
-		'compareAdd'        => __( 'Added to comparison', 'shelter-pets' ),
-		'compareRemove'     => __( 'Removed from comparison', 'shelter-pets' ),
-		'compareFull'       => __( 'Comparison is full (max 4)', 'shelter-pets' ),
-		'copied'            => __( 'Link copied!', 'shelter-pets' ),
-		'loading'           => __( 'Loading...', 'shelter-pets' ),
-		'error'             => __( 'Something went wrong', 'shelter-pets' ),
-		'noResults'         => __( 'No pets match your filters.', 'shelter-pets' ),
-		'searchPlaceholder' => __( 'Search by name or breed…', 'shelter-pets' ),
+		'added'             => __( 'Added to favorites', 'shelterkit-pets' ),
+		'removed'           => __( 'Removed from favorites', 'shelterkit-pets' ),
+		'compareAdd'        => __( 'Added to comparison', 'shelterkit-pets' ),
+		'compareRemove'     => __( 'Removed from comparison', 'shelterkit-pets' ),
+		'compareFull'       => __( 'Comparison is full (max 4)', 'shelterkit-pets' ),
+		'copied'            => __( 'Link copied!', 'shelterkit-pets' ),
+		'loading'           => __( 'Loading...', 'shelterkit-pets' ),
+		'error'             => __( 'Something went wrong', 'shelterkit-pets' ),
+		'noResults'         => __( 'No pets match your filters.', 'shelterkit-pets' ),
+		'searchPlaceholder' => __( 'Search by name or breed…', 'shelterkit-pets' ),
 	];
 }

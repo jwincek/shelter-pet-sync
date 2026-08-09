@@ -7,7 +7,7 @@
  * that matters, because relabelling a pet nobody asked to relabel is worse
  * than leaving it alone.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );

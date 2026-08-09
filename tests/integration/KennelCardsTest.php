@@ -6,7 +6,7 @@
  * — it is in the seam: resolving the part, establishing post context so the
  * bindings resolve, and putting the global $post back afterwards.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );

@@ -17,6 +17,8 @@ phpcs.xml.dist
 tests
 phpunit.xml.dist
 phpunit-integration.xml.dist
+# Written by a PHPUnit run, so it appears whenever tests ran before a build.
+.phpunit.result.cache
 .eslintrc.json
 .stylelintrc.json
 node_modules

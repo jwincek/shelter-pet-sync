@@ -5,7 +5,7 @@
  * Renders a breadcrumb trail: Home › Adoptable Pets › Pet Name.
  * Plain HTML — no core/button wrapper, no specificity issues.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -27,8 +27,8 @@ if ( ! $pet ) {
 $pet_name      = $pet['name'] ?? get_the_title( $post_id );
 $archive_url   = get_post_type_archive_link( 'vcps_pet' );
 $home_url      = home_url( '/' );
-$home_label    = $attributes['homeLabel'] ?? __( 'Home', 'shelter-pets' );
-$archive_label = $attributes['archiveLabel'] ?? __( 'Adoptable Pets', 'shelter-pets' );
+$home_label    = $attributes['homeLabel'] ?? __( 'Home', 'shelterkit-pets' );
+$archive_label = $attributes['archiveLabel'] ?? __( 'Adoptable Pets', 'shelterkit-pets' );
 $separator     = $attributes['separator'] ?? '›';
 
 $wrapper_attributes = get_block_wrapper_attributes(
@@ -37,7 +37,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 	)
 );
 ?>
-<nav <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?> aria-label="<?php esc_attr_e( 'Breadcrumb', 'shelter-pets' ); ?>">
+<nav <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?> aria-label="<?php esc_attr_e( 'Breadcrumb', 'shelterkit-pets' ); ?>">
 	<a href="<?php echo esc_url( $home_url ); ?>" class="pet-details__breadcrumb-item">
 		<?php echo esc_html( $home_label ); ?>
 	</a>

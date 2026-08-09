@@ -1,5 +1,5 @@
 {
-	"name": "shelter-pets",
+	"name": "shelterkit-pets",
 	"version": "1.0.0",
 	"description": "Adoptable pet listings and printable kennel cards for animal shelters, with optional sync from Petstablished.",
 	"private": true,

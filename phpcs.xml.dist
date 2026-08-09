@@ -10,6 +10,11 @@
 	<!-- Exclude paths -->
 	<exclude-pattern>/vendor/*</exclude-pattern>
 	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<!-- Generated output. Gitignored, so CI never sees it, but a local bare
+	     `phpcs` run would lint a stale copy of the whole plugin and report
+	     hundreds of phantom violations — including text-domain mismatches from
+	     before a rename. -->
+	<exclude-pattern>/build/*</exclude-pattern>
 	<!-- Dev-only tooling, not shipped in the plugin zip (see .distignore). -->
 	<exclude-pattern>/migration-scripts/*</exclude-pattern>
 	<exclude-pattern>/bin/*</exclude-pattern>
@@ -51,7 +56,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="shelter-pets"/>
+				<element value="shelterkit-pets"/>
 			</property>
 		</properties>
 	</rule>

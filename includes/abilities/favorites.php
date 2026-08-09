@@ -2,7 +2,7 @@
 /**
  * Favorites ability callbacks.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 

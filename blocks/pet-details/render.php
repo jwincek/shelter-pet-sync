@@ -14,7 +14,7 @@
  * <h1 class="wp-block-heading">Pet Name</h1>
  * <!-- /wp:heading -->
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -51,10 +51,10 @@ if ( ! $has_valid_pet ) {
 				)
 			);
 			?>
-			<p class="pet-details__placeholder-title"><?php esc_html_e( 'Pet Details', 'shelter-pets' ); ?></p>
-			<p class="pet-details__placeholder-text"><?php esc_html_e( 'Add inner blocks and bind them to pet data using the block bindings panel.', 'shelter-pets' ); ?></p>
+			<p class="pet-details__placeholder-title"><?php esc_html_e( 'Pet Details', 'shelterkit-pets' ); ?></p>
+			<p class="pet-details__placeholder-text"><?php esc_html_e( 'Add inner blocks and bind them to pet data using the block bindings panel.', 'shelterkit-pets' ); ?></p>
 			<p class="pet-details__placeholder-hint">
-				<?php esc_html_e( 'Source:', 'shelter-pets' ); ?> <code>petsync/pet-data</code>
+				<?php esc_html_e( 'Source:', 'shelterkit-pets' ); ?> <code>petsync/pet-data</code>
 			</p>
 		</div>
 	</article>

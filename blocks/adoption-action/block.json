@@ -8,7 +8,7 @@
 	"description": "Adoption application button — links to Petstablished form, an internal page, or provides a PDF download.",
 	"keywords": ["pet", "adoption", "button", "apply", "pdf", "form", "page"],
 	"ancestor": ["petsync/pet-adoption-cta"],
-	"textdomain": "shelter-pets",
+	"textdomain": "shelterkit-pets",
 	"usesContext": ["postId", "postType"],
 	"attributes": {
 		"formMode": {

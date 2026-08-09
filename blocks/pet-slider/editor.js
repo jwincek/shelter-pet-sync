@@ -58,7 +58,7 @@
 			}, [] );
 
 			const fontFamilyOptions = [
-				{ label: __( 'Default', 'shelter-pets' ), value: '' }
+				{ label: __( 'Default', 'shelterkit-pets' ), value: '' }
 			].concat(
 				editorSettings.fontFamilies.map( function( font ) {
 					return {
@@ -127,14 +127,14 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Similar Pets', 'shelter-pets' ),
+							title: __( 'Similar Pets', 'shelterkit-pets' ),
 							initialOpen: similarPetsMode,
 						},
 						el( ToggleControl, {
-							label: __( 'Similar Pets Mode', 'shelter-pets' ),
+							label: __( 'Similar Pets Mode', 'shelterkit-pets' ),
 							help: similarPetsMode 
-								? __( 'Shows pets filtered by current pet\'s type and age. Adapts to card layout for 1-3 results.', 'shelter-pets' )
-								: __( 'Enable to filter by current pet\'s animal type and age group.', 'shelter-pets' ),
+								? __( 'Shows pets filtered by current pet\'s type and age. Adapts to card layout for 1-3 results.', 'shelterkit-pets' )
+								: __( 'Enable to filter by current pet\'s animal type and age group.', 'shelterkit-pets' ),
 							checked: similarPetsMode,
 							onChange: function( value ) {
 								setAttributes( { similarPetsMode: value } );
@@ -146,18 +146,18 @@
 							el( 'p', {
 								className: 'components-base-control__help',
 								style: { marginTop: '8px', marginBottom: '16px', fontStyle: 'italic' }
-							}, __( 'Leave fields empty to auto-detect from current pet. Override by entering a specific value.', 'shelter-pets' ) ),
+							}, __( 'Leave fields empty to auto-detect from current pet. Override by entering a specific value.', 'shelterkit-pets' ) ),
 							el( TextControl, {
-								label: __( 'Filter by Animal Type (slug)', 'shelter-pets' ),
-								help: __( 'e.g., "dog", "cat" - leave empty to use current pet\'s type', 'shelter-pets' ),
+								label: __( 'Filter by Animal Type (slug)', 'shelterkit-pets' ),
+								help: __( 'e.g., "dog", "cat" - leave empty to use current pet\'s type', 'shelterkit-pets' ),
 								value: filterAnimal,
 								onChange: function( value ) {
 									setAttributes( { filterAnimal: value } );
 								},
 							} ),
 							el( TextControl, {
-								label: __( 'Filter by Age Group (slug)', 'shelter-pets' ),
-								help: __( 'e.g., "puppy", "adult", "senior" - leave empty to use current pet\'s age', 'shelter-pets' ),
+								label: __( 'Filter by Age Group (slug)', 'shelterkit-pets' ),
+								help: __( 'e.g., "puppy", "adult", "senior" - leave empty to use current pet\'s age', 'shelterkit-pets' ),
 								value: filterAge,
 								onChange: function( value ) {
 									setAttributes( { filterAge: value } );
@@ -169,11 +169,11 @@
 					el(
 						PanelBody,
 						{
-							title: __( 'Card Styling', 'shelter-pets' ),
+							title: __( 'Card Styling', 'shelterkit-pets' ),
 							initialOpen: ! similarPetsMode,
 						},
 						el( RangeControl, {
-							label: __( 'Card Border Radius', 'shelter-pets' ),
+							label: __( 'Card Border Radius', 'shelterkit-pets' ),
 							value: cardBorderRadius,
 							onChange: function( value ) {
 								setAttributes( { cardBorderRadius: value } );
@@ -181,10 +181,10 @@
 							min: 0,
 							max: 32,
 							step: 1,
-							help: __( 'Rounded corners for pet cards (in pixels)', 'shelter-pets' ),
+							help: __( 'Rounded corners for pet cards (in pixels)', 'shelterkit-pets' ),
 						} ),
 						el( RangeControl, {
-							label: __( 'Card Gap / Spacing', 'shelter-pets' ),
+							label: __( 'Card Gap / Spacing', 'shelterkit-pets' ),
 							value: cardGap,
 							onChange: function( value ) {
 								setAttributes( { cardGap: value } );
@@ -192,21 +192,21 @@
 							min: 0,
 							max: 48,
 							step: 4,
-							help: __( 'Space between cards (in pixels)', 'shelter-pets' ),
+							help: __( 'Space between cards (in pixels)', 'shelterkit-pets' ),
 						} )
 					),
 					// Typography Panel
 					el(
 						PanelBody,
 						{
-							title: __( 'Typography', 'shelter-pets' ),
+							title: __( 'Typography', 'shelterkit-pets' ),
 							initialOpen: false,
 						},
 						// Pet Name Typography
 						el( 'p', { 
 							className: 'components-base-control__label',
 							style: { marginBottom: '8px', fontWeight: '500' }
-						}, __( 'Pet Name', 'shelter-pets' ) ),
+						}, __( 'Pet Name', 'shelterkit-pets' ) ),
 						el( FontSizePicker, {
 							fontSizes: editorSettings.fontSizes,
 							value: nameFontSize,
@@ -217,7 +217,7 @@
 							withReset: true,
 						} ),
 						fontFamilyOptions.length > 1 && el( SelectControl, {
-							label: __( 'Pet Name Font', 'shelter-pets' ),
+							label: __( 'Pet Name Font', 'shelterkit-pets' ),
 							value: nameFontFamily,
 							options: fontFamilyOptions,
 							onChange: function( value ) {
@@ -229,7 +229,7 @@
 							el( 'p', { 
 								className: 'components-base-control__label',
 								style: { marginBottom: '8px', fontWeight: '500' }
-							}, __( 'Pet Meta (breed, age, etc.)', 'shelter-pets' ) ),
+							}, __( 'Pet Meta (breed, age, etc.)', 'shelterkit-pets' ) ),
 							el( FontSizePicker, {
 								fontSizes: editorSettings.fontSizes,
 								value: metaFontSize,
@@ -240,7 +240,7 @@
 								withReset: true,
 							} ),
 							fontFamilyOptions.length > 1 && el( SelectControl, {
-								label: __( 'Pet Meta Font', 'shelter-pets' ),
+								label: __( 'Pet Meta Font', 'shelterkit-pets' ),
 								value: metaFontFamily,
 								options: fontFamilyOptions,
 								onChange: function( value ) {

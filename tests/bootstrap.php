@@ -10,7 +10,7 @@
  * Anything reaching the database, hooks, or the config loader belongs in the
  * integration suite instead.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );

@@ -7,7 +7,7 @@
  * Since 3.0.0: showGallery/showActions attributes removed — InnerBlocks
  * composition controls which sections appear. Breadcrumb added to templates.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 3.0.0
  */
 
@@ -34,7 +34,7 @@
 		}, [
 			[ 'core/paragraph', {
 				className: 'pet-details__back-link',
-				content: '<a href="#pet-archive">← ' + __( 'Back to All Pets', 'shelter-pets' ) + '</a>',
+				content: '<a href="#pet-archive">← ' + __( 'Back to All Pets', 'shelterkit-pets' ) + '</a>',
 			} ],
 		] ],
 
@@ -76,7 +76,7 @@
 					metadata: { name: 'About Section' },
 					className: 'pet-details__section pet-details__about',
 				}, [
-					[ 'core/heading', { level: 2, content: __( 'About', 'shelter-pets' ) } ],
+					[ 'core/heading', { level: 2, content: __( 'About', 'shelterkit-pets' ) } ],
 					[ 'petsync/pet-attributes', {} ],
 				] ],
 
@@ -85,7 +85,7 @@
 					metadata: { name: 'Compatibility Section' },
 					className: 'pet-details__section pet-details__compat',
 				}, [
-					[ 'core/heading', { level: 2, content: __( 'Good With', 'shelter-pets' ) } ],
+					[ 'core/heading', { level: 2, content: __( 'Good With', 'shelterkit-pets' ) } ],
 					[ 'petsync/pet-compatibility', {} ],
 				] ],
 
@@ -94,7 +94,7 @@
 					metadata: { name: 'Health Section' },
 					className: 'pet-details__section pet-details__health-section',
 				}, [
-					[ 'core/heading', { level: 2, content: __( 'Health', 'shelter-pets' ) } ],
+					[ 'core/heading', { level: 2, content: __( 'Health', 'shelterkit-pets' ) } ],
 					[ 'petsync/pet-health', {} ],
 				] ],
 			] ],
@@ -131,7 +131,7 @@
 		}, [
 			[ 'core/paragraph', {
 				className: 'pet-details__back-link',
-				content: '<a href="#pet-archive">← ' + __( 'Back to All Pets', 'shelter-pets' ) + '</a>',
+				content: '<a href="#pet-archive">← ' + __( 'Back to All Pets', 'shelterkit-pets' ) + '</a>',
 			} ],
 		] ],
 
@@ -168,18 +168,18 @@
 			metadata: { name: 'About Section' },
 			className: 'pet-details__section',
 		}, [
-			[ 'core/heading', { level: 2, content: __( 'About', 'shelter-pets' ) } ],
+			[ 'core/heading', { level: 2, content: __( 'About', 'shelterkit-pets' ) } ],
 			[ 'petsync/pet-attributes', {} ],
 		] ],
 
 		// Compatibility & Health side by side
 		[ 'core/columns', {}, [
 			[ 'core/column', {}, [
-				[ 'core/heading', { level: 2, content: __( 'Good With', 'shelter-pets' ) } ],
+				[ 'core/heading', { level: 2, content: __( 'Good With', 'shelterkit-pets' ) } ],
 				[ 'petsync/pet-compatibility', {} ],
 			] ],
 			[ 'core/column', {}, [
-				[ 'core/heading', { level: 2, content: __( 'Health', 'shelter-pets' ) } ],
+				[ 'core/heading', { level: 2, content: __( 'Health', 'shelterkit-pets' ) } ],
 				[ 'petsync/pet-health', {} ],
 			] ],
 		] ],
@@ -256,13 +256,13 @@
 						null,
 						el(
 							PanelBody,
-							{ title: __( 'Layout', 'shelter-pets' ) },
+							{ title: __( 'Layout', 'shelterkit-pets' ) },
 							el( SelectControl, {
-								label: __( 'Layout Style', 'shelter-pets' ),
+								label: __( 'Layout Style', 'shelterkit-pets' ),
 								value: layout,
 								options: [
-									{ label: __( 'Sidebar (Gallery Left)', 'shelter-pets' ), value: 'sidebar' },
-									{ label: __( 'Stacked (Gallery Top)', 'shelter-pets' ), value: 'stacked' },
+									{ label: __( 'Sidebar (Gallery Left)', 'shelterkit-pets' ), value: 'sidebar' },
+									{ label: __( 'Stacked (Gallery Top)', 'shelterkit-pets' ), value: 'stacked' },
 								],
 								onChange: function( value ) {
 									setAttributes( { layout: value } );

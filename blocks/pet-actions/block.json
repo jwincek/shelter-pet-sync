@@ -8,7 +8,7 @@
 	"description": "Quick action buttons for favorite, compare, and share.",
 	"keywords": ["pet", "actions", "favorite", "compare", "share"],
 	"ancestor": ["petsync/pet-details"],
-	"textdomain": "shelter-pets",
+	"textdomain": "shelterkit-pets",
 	"usesContext": ["postId", "postType"],
 	"attributes": {
 		"showFavorite": { "type": "boolean", "default": true },

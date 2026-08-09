@@ -11,7 +11,7 @@
  * migrations, meta sanitisation — only exists once WordPress has registered
  * things, so it cannot be covered by the unit suite.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );
@@ -45,7 +45,7 @@ require_once $_tests_dir . '/includes/functions.php';
 tests_add_filter(
 	'muplugins_loaded',
 	function (): void {
-		require dirname( __DIR__, 2 ) . '/shelter-pets.php';
+		require dirname( __DIR__, 2 ) . '/shelterkit-pets.php';
 	}
 );
 

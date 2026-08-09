@@ -16,7 +16,7 @@
  *   $pets = Pet_Hydrator::hydrate_many( $posts, 'grid' );
  *   $pet  = Pet_Hydrator::hydrate( $post, 'summary' );
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -510,8 +510,8 @@ class Pet_Hydrator {
 			'url' => get_permalink( $id ),
 			'tagline' => self::compute_tagline( $entity ),
 			'compatibility' => self::compute_compatibility( $entity ),
-			'story_title' => sprintf( /* translators: %s: pet name */ __( 'Meet %s', 'shelter-pets' ), $entity['name'] ?? '' ),
-			'adoption_title' => sprintf( /* translators: %s: pet name */ __( 'Adopt %s', 'shelter-pets' ), $entity['name'] ?? '' ),
+			'story_title' => sprintf( /* translators: %s: pet name */ __( 'Meet %s', 'shelterkit-pets' ), $entity['name'] ?? '' ),
+			'adoption_title' => sprintf( /* translators: %s: pet name */ __( 'Adopt %s', 'shelterkit-pets' ), $entity['name'] ?? '' ),
 			'adoption_fee_formatted' => self::compute_formatted_fee( $entity ),
 			'has_adoption_info' => ! empty( $entity['adoption_fee'] ) || ! empty( $entity['adoption_form_url'] ),
 			'gallery' => self::compute_gallery( $id ),
@@ -597,9 +597,9 @@ class Pet_Hydrator {
 	private static function compute_compatibility( array $entity ): string {
 		$items  = [];
 		$checks = [
-			'ok_with_dogs' => __( 'dogs', 'shelter-pets' ),
-			'ok_with_cats' => __( 'cats', 'shelter-pets' ),
-			'ok_with_kids' => __( 'kids', 'shelter-pets' ),
+			'ok_with_dogs' => __( 'dogs', 'shelterkit-pets' ),
+			'ok_with_cats' => __( 'cats', 'shelterkit-pets' ),
+			'ok_with_kids' => __( 'kids', 'shelterkit-pets' ),
 		];
 
 		foreach ( $checks as $key => $label ) {
@@ -614,7 +614,7 @@ class Pet_Hydrator {
 		}
 
 		return $items
-			? sprintf( /* translators: %s: comma-separated compatibility list */ __( 'Good with %s', 'shelter-pets' ), implode( ', ', $items ) )
+			? sprintf( /* translators: %s: comma-separated compatibility list */ __( 'Good with %s', 'shelterkit-pets' ), implode( ', ', $items ) )
 			: '';
 	}
 
@@ -776,10 +776,10 @@ class Pet_Hydrator {
 
 		$detail = trim( $entity['special_needs_detail'] ?? '' );
 		if ( $detail ) {
-			return sprintf( /* translators: %s: special needs detail */ __( 'Special Needs: %s', 'shelter-pets' ), $detail );
+			return sprintf( /* translators: %s: special needs detail */ __( 'Special Needs: %s', 'shelterkit-pets' ), $detail );
 		}
 
-		return __( 'Special Needs', 'shelter-pets' );
+		return __( 'Special Needs', 'shelterkit-pets' );
 	}
 
 	/**

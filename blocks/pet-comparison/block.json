@@ -12,7 +12,7 @@
 		"comparison",
 		"side by side"
 	],
-	"textdomain": "shelter-pets",
+	"textdomain": "shelterkit-pets",
 	"attributes": {
 		"showImage": {
 			"type": "boolean",

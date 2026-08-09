@@ -8,7 +8,7 @@
  * Values with corresponding taxonomies link to the pet archive filtered
  * by that term (e.g., clicking "Labrador" → /adopt/pets/?filter_breed=labrador).
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  * @since 1.0.0
  */
 
@@ -29,8 +29,8 @@ if ( ! $post_id || 'vcps_pet' !== get_post_type( $post_id ) ) {
 		?>
 		<div <?php echo $wrapper_attributes; /* phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- get_block_wrapper_attributes() returns escaped HTML. */ ?>>
 			<div class="pet-attributes__placeholder">
-				<p><?php esc_html_e( 'Pet Attributes', 'shelter-pets' ); ?></p>
-				<small><?php esc_html_e( 'Breed, age, size, and more. Requires pet context.', 'shelter-pets' ); ?></small>
+				<p><?php esc_html_e( 'Pet Attributes', 'shelterkit-pets' ); ?></p>
+				<small><?php esc_html_e( 'Breed, age, size, and more. Requires pet context.', 'shelterkit-pets' ); ?></small>
 			</div>
 		</div>
 		<?php
@@ -79,44 +79,44 @@ $filter_key_map = array(
 $attr_defs = array(
 	array(
 		'toggle' => 'showBreed',
-		'label'  => __( 'Breed', 'shelter-pets' ),
+		'label'  => __( 'Breed', 'shelterkit-pets' ),
 		'key'    => 'breed',
 	),
 	array(
 		'toggle'       => 'showAge',
-		'label'        => __( 'Age', 'shelter-pets' ),
+		'label'        => __( 'Age', 'shelterkit-pets' ),
 		'key'          => 'numerical_age',
 		'fallback'     => 'age',
 		'taxonomy_key' => 'age',
 	),
 	array(
 		'toggle' => 'showSex',
-		'label'  => __( 'Sex', 'shelter-pets' ),
+		'label'  => __( 'Sex', 'shelterkit-pets' ),
 		'key'    => 'sex',
 	),
 	array(
 		'toggle' => 'showSize',
-		'label'  => __( 'Size', 'shelter-pets' ),
+		'label'  => __( 'Size', 'shelterkit-pets' ),
 		'key'    => 'size',
 	),
 	array(
 		'toggle' => 'showColor',
-		'label'  => __( 'Color', 'shelter-pets' ),
+		'label'  => __( 'Color', 'shelterkit-pets' ),
 		'key'    => 'color',
 	),
 	array(
 		'toggle' => 'showCoat',
-		'label'  => __( 'Coat', 'shelter-pets' ),
+		'label'  => __( 'Coat', 'shelterkit-pets' ),
 		'key'    => 'coat',
 	),
 	array(
 		'toggle' => 'showCoatPattern',
-		'label'  => __( 'Coat Pattern', 'shelter-pets' ),
+		'label'  => __( 'Coat Pattern', 'shelterkit-pets' ),
 		'key'    => 'coat_pattern',
 	),
 	array(
 		'toggle' => 'showWeight',
-		'label'  => __( 'Weight', 'shelter-pets' ),
+		'label'  => __( 'Weight', 'shelterkit-pets' ),
 		'key'    => 'weight',
 	),
 );

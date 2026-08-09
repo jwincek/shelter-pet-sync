@@ -11,7 +11,7 @@
  * These assert an upper bound rather than an exact count, so ordinary changes
  * do not churn the test — but a per-pet query reappearing will blow through it.
  *
- * @package Shelter_Pets
+ * @package ShelterKit_Pets
  */
 
 declare( strict_types = 1 );
