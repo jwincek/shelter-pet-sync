@@ -1,0 +1,107 @@
+{
+  "_comment": "How Petstablished names things. The canonical vocabulary lives in entities.json; this file is the only place that knows a provider's spelling. Adding a provider means adding a file here, not editing the entity — which is the point: the entity is ours, the mapping is theirs. Fields absent here are ones Petstablished does not carry — yard_required, fence_required and apartment_ok were added for hand entry and come from RescueGroups' vocabulary. Unmapped means the field hydrates to '' and the renderers omit its row, which is the honest outcome; it must never be defaulted to 'unknown', which the compatibility and health blocks display as \"Ask us\".",
+  "slug": "petstablished",
+  "label": "Petstablished",
+  "fields": {
+    "weight": {
+      "from": "weight"
+    },
+    "adoption_fee": {
+      "from": "adoption_fee"
+    },
+    "numerical_age": {
+      "from": "numerical_age"
+    },
+    "youtube_url": {
+      "from": "youtube_url"
+    },
+    "youtube_urls": {
+      "from": "youtube_urls"
+    },
+    "adoption_form_url": {
+      "from": "public_url"
+    },
+    "microchip_id": {
+      "from": "microchip_id"
+    },
+    "special_needs_detail": {
+      "from": "special_needs"
+    },
+    "coat_pattern": {
+      "from": "coat_pattern"
+    },
+    "secondary_color": {
+      "from": "secondary_color"
+    },
+    "tertiary_color": {
+      "from": "tertiary_color"
+    },
+    "bonded_group_id": {
+      "from": "group_id"
+    },
+    "bonded_pet_ids": {
+      "from": "grouped_pet_ids"
+    },
+    "bonded_names": {
+      "from": "siblings_names"
+    },
+    "ok_with_dogs": {
+      "from": "is_ok_with_other_dogs"
+    },
+    "ok_with_cats": {
+      "from": "is_ok_with_other_cats"
+    },
+    "ok_with_kids": {
+      "from": "is_ok_with_other_kids"
+    },
+    "shots_current": {
+      "from": "shots_up_to_date"
+    },
+    "spayed_neutered": {
+      "from": "is_spayed"
+    },
+    "housebroken": {
+      "from": "is_housebroken"
+    },
+    "has_special_needs": {
+      "from": "has_special_need"
+    },
+    "hypoallergenic": {
+      "from": "is_hypoallergenic"
+    },
+    "declawed": {
+      "from": "declawed"
+    }
+  },
+  "taxonomies": {
+    "status": "pet_status",
+    "animal": "pet_animal",
+    "primary_breed": "pet_breed",
+    "age": "pet_age",
+    "sex": "pet_sex",
+    "size": "pet_size",
+    "primary_color": "pet_color",
+    "coat_length": "pet_coat"
+  },
+  "shapes": {
+    "images": {
+      "list": [
+        "images"
+      ],
+      "url": [
+        "image",
+        "url"
+      ]
+    },
+    "intake_date": {
+      "paths": [
+        [
+          "date_aquired"
+        ],
+        [
+          "created_at"
+        ]
+      ]
+    }
+  }
+}

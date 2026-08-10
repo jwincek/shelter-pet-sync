@@ -637,12 +637,9 @@ class Petsync_Sync {
 	public static function get_retained_api_keys(): array {
 		$config = \Petsync\Core\Config::get_path( 'entities', 'entities.vcps_pet', [] );
 
-		$keys = array();
-		foreach ( $config['api_fields'] ?? array() as $field ) {
-			if ( ! empty( $field['api_key'] ) ) {
-				$keys[] = $field['api_key'];
-			}
-		}
+		// This provider's spellings, from its map. The sync only ever talks to
+		// its own provider, so the slug is a constant here.
+		$keys = array_values( \Petsync\Core\Provider_Map::field_keys( self::PROVIDER ) );
 		// Read straight from the snapshot by Pet_Hydrator compute_* methods:
 		// images          → compute_image() / compute_gallery()
 		// name            → compute_gallery() (image alt text)
@@ -748,18 +745,15 @@ class Petsync_Sync {
 	 * Single-value taxonomy mappings: raw API key → taxonomy.
 	 *
 	 * Lives in entities.json alongside attribute_terms, its direct sibling, so a
-	 * future provider can remap which of its fields feed the standard taxonomies
-	 * without touching PHP. Also consumed by get_consumed_api_keys() so the
+	 * future provider remaps which of its fields feed the standard taxonomies
+	 * in its own provider map, without touching PHP. Also consumed by
+	 * get_consumed_api_keys() so the
 	 * change-detection hash covers every key listed here.
 	 *
 	 * @return array<string, string> API key => taxonomy slug.
 	 */
 	private static function get_taxonomy_source_map(): array {
-		return (array) \Petsync\Core\Config::get_path(
-			'entities',
-			'entities.vcps_pet.taxonomy_source_map',
-			array()
-		);
+		return \Petsync\Core\Provider_Map::taxonomies( self::PROVIDER );
 	}
 
 	private function update_pet_taxonomies( int $post_id, array $data ): void {

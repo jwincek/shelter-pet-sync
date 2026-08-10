@@ -9,6 +9,9 @@
  * editing PHP, and the ?? fallbacks meant it failed to a blank image rather
  * than an error.
  *
+ * They now live in config/providers/<slug>.json rather than on the entity: a
+ * response shape is one platform's business, not part of what a pet is.
+ *
  * @package ShelterKit_Pets
  */
 
@@ -55,8 +58,7 @@ final class ApiShapesTest extends PetTestCase {
 	 * pet silently loses its photos. This pins the two against each other.
 	 */
 	public function test_the_declared_image_shape_matches_a_real_response(): void {
-		$entity = \Petsync\Core\Config::get_path( 'entities', 'entities.vcps_pet', array() );
-		$shape  = $entity['api_shapes']['images'] ?? array();
+		$shape = \Petsync\Core\Provider_Map::shapes( \Petsync_Sync::PROVIDER )['images'] ?? array();
 
 		$this->assertNotEmpty( $shape['list'] ?? array() );
 		$this->assertNotEmpty( $shape['url'] ?? array() );
@@ -84,13 +86,29 @@ final class ApiShapesTest extends PetTestCase {
 	 * fallback is actually declared.
 	 */
 	public function test_the_intake_date_declares_a_fallback(): void {
-		$entity = \Petsync\Core\Config::get_path( 'entities', 'entities.vcps_pet', array() );
-		$paths  = $entity['api_shapes']['intake_date']['paths'] ?? array();
+		$paths = \Petsync\Core\Provider_Map::shapes( \Petsync_Sync::PROVIDER )['intake_date']['paths'] ?? array();
 
 		$this->assertGreaterThanOrEqual( 2, count( $paths ), 'a single path leaves no fallback' );
 		$flat = array_map( static fn( $p ) => implode( '.', (array) $p ), $paths );
 		$this->assertContains( 'date_aquired', $flat );
 		$this->assertContains( 'created_at', $flat );
+	}
+
+	/**
+	 * Both shapes are read for every synced pet, so every provider owes both.
+	 * Adding a provider file without them yields blank images and pets that are
+	 * never "new" — silently, and only on a site with that provider's data.
+	 */
+	public function test_every_provider_declares_both_shapes(): void {
+		$providers = \Petsync\Core\Provider_Map::available();
+		$this->assertNotEmpty( $providers, 'no provider maps on disk — nothing could hydrate' );
+
+		foreach ( $providers as $slug ) {
+			$shapes = \Petsync\Core\Provider_Map::shapes( $slug );
+			$this->assertNotEmpty( $shapes['images']['list'] ?? array(), "$slug declares no images.list" );
+			$this->assertNotEmpty( $shapes['images']['url'] ?? array(), "$slug declares no images.url" );
+			$this->assertNotEmpty( $shapes['intake_date']['paths'] ?? array(), "$slug declares no intake_date.paths" );
+		}
 	}
 
 	/**

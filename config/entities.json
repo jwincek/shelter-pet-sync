@@ -1,6 +1,7 @@
 {
   "entities": {
     "vcps_pet": {
+      "_provider_note": "What a pet HAS is declared here. What a given platform CALLS it lives in config/providers/<slug>.json — field renames, taxonomy sources and nested response paths. A field a provider does not carry stays unmapped and hydrates to '', which the renderers omit; it must never default to 'unknown', which they display as \"Ask us\".",
       "post_type": "vcps_pet",
       "meta_prefix": "_pet_",
       "taxonomies": {
@@ -76,132 +77,106 @@
       },
       "api_fields": {
         "weight": {
-          "api_key": "weight",
           "type": "string",
           "default": ""
         },
         "adoption_fee": {
-          "api_key": "adoption_fee",
           "type": "string",
           "default": ""
         },
         "numerical_age": {
-          "api_key": "numerical_age",
           "type": "string",
           "default": ""
         },
         "youtube_url": {
-          "api_key": "youtube_url",
           "type": "string",
           "default": ""
         },
         "youtube_urls": {
-          "api_key": "youtube_urls",
           "type": "array",
           "default": []
         },
         "adoption_form_url": {
-          "api_key": "public_url",
           "type": "string",
           "default": ""
         },
         "microchip_id": {
-          "api_key": "microchip_id",
           "type": "string",
           "default": ""
         },
         "special_needs_detail": {
-          "api_key": "special_needs",
           "type": "string",
           "default": ""
         },
         "coat_pattern": {
-          "api_key": "coat_pattern",
           "type": "string",
           "default": ""
         },
         "secondary_color": {
-          "api_key": "secondary_color",
           "type": "string",
           "default": ""
         },
         "tertiary_color": {
-          "api_key": "tertiary_color",
           "type": "string",
           "default": ""
         },
         "bonded_group_id": {
-          "api_key": "group_id",
           "type": "string",
           "default": ""
         },
         "bonded_pet_ids": {
-          "api_key": "grouped_pet_ids",
           "type": "array",
           "default": []
         },
         "bonded_names": {
-          "api_key": "siblings_names",
           "type": "string",
           "default": ""
         },
         "ok_with_dogs": {
-          "api_key": "is_ok_with_other_dogs",
           "type": "tristate",
           "default": ""
         },
         "ok_with_cats": {
-          "api_key": "is_ok_with_other_cats",
           "type": "tristate",
           "default": ""
         },
         "ok_with_kids": {
-          "api_key": "is_ok_with_other_kids",
           "type": "tristate",
           "default": ""
         },
         "shots_current": {
-          "api_key": "shots_up_to_date",
           "type": "tristate",
           "default": ""
         },
         "spayed_neutered": {
-          "api_key": "is_spayed",
           "type": "tristate",
           "default": ""
         },
         "housebroken": {
-          "api_key": "is_housebroken",
           "type": "tristate",
           "default": ""
         },
         "has_special_needs": {
-          "api_key": "has_special_need",
           "type": "tristate",
           "default": ""
         },
         "hypoallergenic": {
-          "api_key": "is_hypoallergenic",
           "type": "tristate",
           "default": ""
         },
         "declawed": {
-          "api_key": "declawed",
           "type": "tristate",
           "default": ""
         },
         "yard_required": {
-          "api_key": "yard_required",
           "type": "tristate",
           "default": ""
         },
         "fence_required": {
-          "api_key": "fence_required",
           "type": "tristate",
           "default": ""
         },
         "apartment_ok": {
-          "api_key": "apartment_ok",
           "type": "tristate",
           "default": ""
         }
@@ -337,16 +312,6 @@
         }
       },
       "_comment_taxonomy_source_map": "Single-value taxonomy mappings: provider API key -> taxonomy. Sibling of attribute_map below (which maps boolean API keys -> pet_attribute term slugs). Both are consumed by the sync when writing terms, and both feed the change-detection hash via get_consumed_api_keys().",
-      "taxonomy_source_map": {
-        "status": "pet_status",
-        "animal": "pet_animal",
-        "primary_breed": "pet_breed",
-        "age": "pet_age",
-        "sex": "pet_sex",
-        "size": "pet_size",
-        "primary_color": "pet_color",
-        "coat_length": "pet_coat"
-      },
       "attribute_taxonomy": "pet_attribute",
       "computed": {
         "image": {
@@ -542,28 +507,7 @@
         "declawed": "declawed"
       },
       "_comment_computed": "Computed fields are dispatched by NAME in Pet_Hydrator::compute_field()'s match. A 'function' key used to sit here naming an implementation, but nothing ever read it and 16 of 18 named a function that does not exist — including one deleted in #33. Removed rather than corrected: unread metadata has no mechanism keeping it true. Validator check 2 pins the real contract, name against match arm.",
-      "_comment_api_shapes": "Provider response SHAPES that api_fields cannot express. An api_key names one flat key; these name a path. Petstablished nests photo URLs three levels deep (images[].image.url), and Petfinder v2 — the API this plugin was originally built against — nests almost everything, so paths are load-bearing rather than a convenience. Each path is an array of segments walked by Pet_Hydrator::dig().",
-      "api_shapes": {
-        "images": {
-          "list": [
-            "images"
-          ],
-          "url": [
-            "image",
-            "url"
-          ]
-        },
-        "intake_date": {
-          "paths": [
-            [
-              "date_aquired"
-            ],
-            [
-              "created_at"
-            ]
-          ]
-        }
-      }
+      "_comment_api_shapes": "Provider response SHAPES that api_fields cannot express. An api_key names one flat key; these name a path. Petstablished nests photo URLs three levels deep (images[].image.url), and Petfinder v2 — the API this plugin was originally built against — nests almost everything, so paths are load-bearing rather than a convenience. Each path is an array of segments walked by Pet_Hydrator::dig()."
     }
   }
 }
