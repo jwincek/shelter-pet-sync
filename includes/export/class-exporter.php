@@ -169,7 +169,14 @@ class Exporter {
 	 */
 	public static function to_csv( array $ids, string $mode = Schema::PORTABLE ): string {
 		$columns = Schema::columns( $mode );
-		$handle  = fopen( 'php://temp', 'r+' );
+
+		// php://temp is an in-memory buffer, not a file: nothing touches the
+		// filesystem and WP_Filesystem has no equivalent for building a string.
+		// fputcsv is used rather than hand-rolled joining because CSV quoting —
+		// embedded commas, quotes and newlines in a pet's description — is
+		// exactly the thing that looks simple and is not.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		$handle = fopen( 'php://temp', 'r+' );
 
 		// Escape passed explicitly: PHP 8.4 deprecates relying on the default,
 		// and CI runs the 8.1 floor so it would not surface there.
@@ -181,6 +188,7 @@ class Exporter {
 
 		rewind( $handle );
 		$csv = (string) stream_get_contents( $handle );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		fclose( $handle );
 
 		return $csv;
