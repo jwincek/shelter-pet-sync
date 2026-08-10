@@ -121,19 +121,6 @@ class Config {
 	}
 
 	/**
-	 * Clear the config cache.
-	 *
-	 * @param string|null $name Optional specific config to clear.
-	 */
-	public static function clear_cache( ?string $name = null ): void {
-		if ( null === $name ) {
-			self::$cache = [];
-		} else {
-			unset( self::$cache[ $name ] );
-		}
-	}
-
-	/**
 	 * Recursively resolve $ref references in a config array.
 	 *
 	 * Supports two patterns:

@@ -92,4 +92,56 @@ final class MetaSanitizersTest extends PetTestCase {
 
 		$this->assertSame( '40 lbs', get_post_meta( $id, $this->prefix . 'weight', true ) );
 	}
+	/**
+	 * A negative id must not be flipped into a real attachment.
+	 *
+	 * absint() takes the ABSOLUTE value, so -5 would resolve to attachment 5 —
+	 * a real, unrelated image. The sanitiser uses intval() with a > 0 filter.
+	 */
+	public function test_a_negative_attachment_id_is_rejected(): void {
+		$pet = $this->make_manual_pet();
+
+		update_post_meta( $pet, $this->prefix . 'gallery_ids', array( 31, -31 ) );
+
+		$this->assertSame( array( 31 ), get_post_meta( $pet, $this->prefix . 'gallery_ids', true ) );
+	}
+
+	/**
+	 * Non-images are handled at READ time, not by the sanitiser.
+	 *
+	 * #34 proposed moving the ability's wp_attachment_is_image() check into
+	 * this sanitiser so both write paths matched. Testing it showed the premise
+	 * was wrong: a non-image never renders as a broken image, because
+	 * compute_manual_gallery() skips anything wp_get_attachment_image_url()
+	 * cannot resolve. Putting the check on the write side would have coupled
+	 * meta-writing to attachment-creation order and silently discarded ids an
+	 * importer had not sideloaded yet — a real failure traded for one that does
+	 * not happen.
+	 *
+	 * This pins the protection that actually exists, so it stops being
+	 * incidental.
+	 */
+	public function test_non_images_are_dropped_when_the_gallery_is_read(): void {
+		$image = self::factory()->attachment->create_upload_object( DIR_TESTDATA . '/images/canola.jpg' );
+		$pdf   = self::factory()->post->create(
+			array(
+				'post_type'      => 'attachment',
+				'post_mime_type' => 'application/pdf',
+			)
+		);
+
+		$pet = $this->make_manual_pet();
+		update_post_meta( $pet, $this->prefix . 'gallery_ids', array( $image, $pdf, 999999 ) );
+
+		$this->assertCount(
+			3,
+			get_post_meta( $pet, $this->prefix . 'gallery_ids', true ),
+			'the sanitiser stores what it is given — existence is not its business'
+		);
+
+		\Petsync\Core\Pet_Hydrator::flush_cache();
+		$gallery = \Petsync\Core\Pet_Hydrator::get( $pet, 'full' )['gallery'] ?? array();
+
+		$this->assertCount( 1, $gallery, 'only the real image may reach the front end' );
+	}
 }

@@ -54,7 +54,14 @@ class Pet_Hydrator {
 	 * own writes.
 	 *
 	 * Leaves the entity config alone — that comes from a JSON file that cannot
-	 * change mid-request.
+	 * change mid-request. Everything else this class memoises MUST be cleared
+	 * here; CacheFlushTest fails if a new cache property is added and missed.
+	 *
+	 * This is the only flush. A clear_cache() used to sit alongside it, clearing
+	 * two of the four caches while presenting itself as a full flush — it
+	 * predated the ps_id map added for the N+1 fix and was never updated.
+	 * Nothing called it, which is why the divergence went unnoticed, and it was
+	 * a trap for exactly the long-running processes this method exists for.
 	 */
 	public static function flush_cache(): void {
 		self::$cache          = [];
@@ -928,24 +935,5 @@ class Pet_Hydrator {
 			self::$entity_config = Config::get_path( 'entities', 'entities.vcps_pet', [] );
 		}
 		return self::$entity_config;
-	}
-
-	/**
-	 * Clear per-request cache.
-	 *
-	 * @param int|null $post_id Specific post ID to clear, or null for all.
-	 */
-	public static function clear_cache( ?int $post_id = null ): void {
-		if ( null === $post_id ) {
-			self::$cache          = [];
-			self::$api_data_cache = [];
-		} else {
-			foreach ( array_keys( self::$cache ) as $key ) {
-				if ( str_starts_with( $key, $post_id . ':' ) ) {
-					unset( self::$cache[ $key ] );
-				}
-			}
-			unset( self::$api_data_cache[ $post_id ] );
-		}
 	}
 }
