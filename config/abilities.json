@@ -11,7 +11,10 @@
           "destructive": false,
           "idempotent": true
         },
-        "show_in_rest": true
+        "show_in_rest": true,
+        "mcp": {
+          "public": true
+        }
       },
       "input_schema": {
         "type": "object",
@@ -191,7 +194,10 @@
           "destructive": false,
           "idempotent": true
         },
-        "show_in_rest": true
+        "show_in_rest": true,
+        "mcp": {
+          "public": true
+        }
       },
       "input_schema": {
         "$ref": "schemas/taxonomy-filters.json",
@@ -292,7 +298,10 @@
           "destructive": false,
           "idempotent": true
         },
-        "show_in_rest": true
+        "show_in_rest": true,
+        "mcp": {
+          "public": true
+        }
       },
       "input_schema": {
         "$ref": "schemas/taxonomy-filters.json",
@@ -436,7 +445,10 @@
           "destructive": false,
           "idempotent": true
         },
-        "show_in_rest": true
+        "show_in_rest": true,
+        "mcp": {
+          "public": true
+        }
       },
       "input_schema": {
         "type": "object",
@@ -483,7 +495,10 @@
           "destructive": false,
           "idempotent": true
         },
-        "show_in_rest": true
+        "show_in_rest": true,
+        "mcp": {
+          "public": true
+        }
       },
       "input_schema": {
         "type": "object",
@@ -756,7 +771,10 @@
           "destructive": false,
           "idempotent": true
         },
-        "show_in_rest": true
+        "show_in_rest": true,
+        "mcp": {
+          "public": true
+        }
       },
       "input_schema": {
         "type": "object",
