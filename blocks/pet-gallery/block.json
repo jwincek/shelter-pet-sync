@@ -6,17 +6,20 @@
 	"title": "Pet Gallery",
 	"category": "petsync",
 	"description": "Display pet photos with lightbox functionality.",
-	"keywords": ["pet", "gallery", "photos", "images"],
+	"keywords": [
+		"pet",
+		"gallery",
+		"photos",
+		"images"
+	],
 	"textdomain": "shelterkit-pets",
-	"ancestor": ["petsync/pet-details"],
+	"ancestor": [
+		"petsync/pet-details"
+	],
 	"attributes": {
 		"columns": {
 			"type": "integer",
 			"default": 3
-		},
-		"thumbnailSize": {
-			"type": "string",
-			"default": "medium"
 		},
 		"showThumbnails": {
 			"type": "boolean",
@@ -51,10 +54,16 @@
 			"default": true
 		}
 	},
-	"usesContext": ["postId", "postType"],
+	"usesContext": [
+		"postId",
+		"postType"
+	],
 	"supports": {
 		"html": false,
-		"align": ["wide", "full"],
+		"align": [
+			"wide",
+			"full"
+		],
 		"spacing": {
 			"margin": true,
 			"padding": true

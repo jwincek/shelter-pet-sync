@@ -238,7 +238,16 @@ function filter_pets( array $input = [] ): array {
  * @return array
  */
 function batch_get( array $input ): array {
-	$ids = array_map( 'absint', $input['ids'] );
+	// intval rather than absint: absint takes the ABSOLUTE value, so an id of
+	// -17 would silently resolve to pet 17 — a real, unrelated animal — instead
+	// of being rejected. Same reasoning as the gallery ability and the
+	// kennel-card print sheet, both of which had this fixed already.
+	$ids = array_values(
+		array_filter(
+			array_map( 'intval', $input['ids'] ?? array() ),
+			static fn( int $id ): bool => $id > 0
+		)
+	);
 
 	$query = Query::for( 'vcps_pet' )
 		->whereIn( $ids )
