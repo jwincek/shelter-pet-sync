@@ -183,6 +183,16 @@ class Petsync_Sync {
 			$removed = $this->remove_stale_pets( $pets );
 		}
 
+		// Time-based, so it runs whether or not THIS fetch completed. That is
+		// deliberate: the case it exists for is a provider that has gone away,
+		// where every fetch is incomplete and the completeness guard above
+		// would mean it never fires. The evidence here is weeks of absence, not
+		// one bad response.
+		$draft_days = (int) ( Petsync_Admin::get_settings()['stale_draft_days'] ?? 0 );
+		if ( $draft_days > 0 ) {
+			self::draft_stale_pets( $draft_days );
+		}
+
 		// Build the log entry from the server-side session aggregator.
 		$session = get_transient( self::SESSION_TRANSIENT );
 		if ( is_array( $session ) ) {
@@ -317,6 +327,16 @@ class Petsync_Sync {
 			// on the unfetched pages would be wrongly drafted.
 			if ( $result['complete'] ) {
 				$this->stats['removed'] = $this->remove_stale_pets( $pets );
+			}
+
+			// Time-based, so it runs whether or not THIS fetch completed. That is
+			// deliberate: the case it exists for is a provider that has gone away,
+			// where every fetch is incomplete and the completeness guard above
+			// would mean it never fires. The evidence here is weeks of absence, not
+			// one bad response.
+			$draft_days = (int) ( Petsync_Admin::get_settings()['stale_draft_days'] ?? 0 );
+			if ( $draft_days > 0 ) {
+				self::draft_stale_pets( $draft_days );
 			}
 
 			// Surface page-level fetch errors in the log.
@@ -708,6 +728,11 @@ class Petsync_Sync {
 			update_post_meta( $post_id, '_pet_ps_id', sanitize_text_field( (string) $ps_id ) );
 			update_post_meta( $post_id, '_pet_provider', self::PROVIDER );
 		}
+
+		// Written whether or not the wider fetch completed: this records that
+		// the provider still knows about THIS pet, which is a different fact
+		// from whether the whole feed came back.
+		update_post_meta( $post_id, '_pet_last_seen', (string) time() );
 	}
 
 	/**
@@ -849,5 +874,88 @@ class Petsync_Sync {
 		}
 
 		return $removed;
+	}
+
+	/**
+	 * Provider pets that have not appeared in a sync for a while.
+	 *
+	 * The gap this closes: remove_stale_pets() only prunes when a fetch came
+	 * back COMPLETE, which is right — pruning on a partial feed would draft
+	 * live pets sitting on an unfetched page. But it means a provider that goes
+	 * away entirely, or an account that lapses, leaves every pet published
+	 * against a frozen snapshot with nothing raising a hand. The site-wide
+	 * petsync_last_sync option does not help: cron keeps running and keeps
+	 * failing, so "last sync" stays recent while the data rots.
+	 *
+	 * Pets with no _pet_last_seen at all are ignored rather than counted stale.
+	 * They predate this field, and migration 8 backfills them — treating an
+	 * absent timestamp as infinitely old would flag an entire catalogue on the
+	 * first page load after an upgrade.
+	 *
+	 * @param int $days Age in days beyond which a pet counts as stale.
+	 * @return int[] Post IDs.
+	 */
+	public static function get_stale_pets( int $days ): array {
+		if ( $days < 1 ) {
+			return array();
+		}
+
+		$cutoff = time() - ( $days * DAY_IN_SECONDS );
+
+		return get_posts(
+			array(
+				'post_type'        => 'vcps_pet',
+				'post_status'      => 'publish',
+				'numberposts'      => -1,
+				'fields'           => 'ids',
+				'suppress_filters' => false,
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- admin-only staleness check, not a request-path query.
+				'meta_query'       => array(
+					'relation' => 'AND',
+					array(
+						'key'     => '_pet_provider',
+						'value'   => self::PROVIDER,
+						'compare' => '=',
+					),
+					array(
+						'key'     => '_pet_last_seen',
+						'value'   => (string) $cutoff,
+						'compare' => '<',
+						'type'    => 'NUMERIC',
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Draft pets the provider has stopped listing.
+	 *
+	 * Opt-in and off by default. It partially reverses the incomplete-fetch
+	 * protection above — deliberately, but only when an admin has said so,
+	 * because the failure mode of getting it wrong is a live animal
+	 * disappearing from the site.
+	 *
+	 * @param int $days Threshold in days.
+	 * @return int Number drafted.
+	 */
+	public static function draft_stale_pets( int $days ): int {
+		$drafted = 0;
+
+		foreach ( self::get_stale_pets( $days ) as $post_id ) {
+			$result = wp_update_post(
+				array(
+					'ID'          => $post_id,
+					'post_status' => 'draft',
+				),
+				true
+			);
+
+			if ( ! is_wp_error( $result ) ) {
+				++$drafted;
+			}
+		}
+
+		return $drafted;
 	}
 }

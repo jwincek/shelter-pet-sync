@@ -23,6 +23,7 @@ class Petsync_Admin {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'admin_notices', array( $this, 'display_notices' ) );
+		add_action( 'admin_notices', array( $this, 'display_staleness_notice' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( PETSYNC_FILE ), array( $this, 'add_settings_link' ) );
 	}
 
@@ -99,6 +100,13 @@ class Petsync_Admin {
 			'sync_interval'            => self::SCHEDULE_6PM_SKIP_SUNDAY,
 			'batch_size'               => 10,
 			'delete_data_on_uninstall' => false,
+			// Warn when provider pets stop appearing in syncs. 0 disables.
+			'stale_notice_days'        => 7,
+			// Draft them automatically. 0 disables, and it stays disabled:
+			// this partially reverses the incomplete-fetch protection in
+			// remove_stale_pets(), and getting it wrong takes a live animal
+			// off the site.
+			'stale_draft_days'         => 0,
 		);
 	}
 
@@ -690,5 +698,53 @@ class Petsync_Admin {
 		$link = sprintf( '<a href="%s">%s</a>', esc_url( $url ), esc_html__( 'Settings', 'shelterkit-pets' ) );
 		array_unshift( $links, $link );
 		return $links;
+	}
+
+	/**
+	 * Warn when the provider has stopped listing pets that are still published.
+	 *
+	 * Not the same as "the sync failed". Cron keeps running and keeps
+	 * succeeding-with-nothing, so petsync_last_sync stays recent while the
+	 * catalogue quietly goes out of date. This counts pets the provider has not
+	 * mentioned for a while, which is the fact that actually matters: a shelter
+	 * advertising animals that were adopted weeks ago.
+	 */
+	public function display_staleness_notice(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || ! str_contains( (string) $screen->id, 'vcps_pet' ) ) {
+			return;
+		}
+
+		$days = (int) ( self::get_settings()['stale_notice_days'] ?? 0 );
+		if ( $days < 1 ) {
+			return;
+		}
+
+		$stale = \Petsync_Sync::get_stale_pets( $days );
+		if ( ! $stale ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-warning"><p><strong>%s</strong> %s</p></div>',
+			esc_html__( 'Some pets may no longer be available.', 'shelterkit-pets' ),
+			esc_html(
+				sprintf(
+					/* translators: 1: number of pets, 2: number of days */
+					_n(
+						'%1$d published pet has not appeared in a sync for over %2$d days. It may have been adopted or withdrawn.',
+						'%1$d published pets have not appeared in a sync for over %2$d days. They may have been adopted or withdrawn.',
+						count( $stale ),
+						'shelterkit-pets'
+					),
+					count( $stale ),
+					$days
+				)
+			)
+		);
 	}
 }

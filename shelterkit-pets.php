@@ -230,7 +230,7 @@ add_action( 'plugins_loaded', 'petsync_init' );
  * plugin's DATA version and is deliberately independent of the release version
  * in the plugin header — most releases change no stored data at all.
  */
-define( 'PETSYNC_DB_VERSION', 7 );
+define( 'PETSYNC_DB_VERSION', 8 );
 
 /**
  * The ordered migration list.
@@ -257,6 +257,7 @@ function petsync_get_migrations(): array {
 		5 => 'petsync_migrate_4_template_namespace',
 		6 => 'petsync_migrate_6_field_renames',
 		7 => 'petsync_migrate_7_backfill_attribute_terms',
+		8 => 'petsync_migrate_8_seed_last_seen',
 	);
 }
 
@@ -642,6 +643,54 @@ function petsync_migrate_7_backfill_attribute_terms(): bool {
 
 	foreach ( $pet_ids as $pet_id ) {
 		\Petsync\Core\CPT_Registry::sync_attribute_terms( $pet_id );
+	}
+
+	return true;
+}
+
+/**
+ * Migration 8 — seed _pet_last_seen for pets that predate the field.
+ *
+ * Without this the staleness notice fires on the first admin page load after an
+ * upgrade and claims the entire catalogue is out of date, because every synced
+ * pet has no timestamp. Seeded from the last recorded sync, falling back to now
+ * — either way the clock starts from a defensible point rather than from 1970.
+ *
+ * Only provider pets: a hand-entered pet is never "seen" by a provider and must
+ * never be counted stale.
+ *
+ * @return bool True when the backfill completed.
+ */
+function petsync_migrate_8_seed_last_seen(): bool {
+	$seed = (int) get_option( 'petsync_last_sync', 0 );
+	if ( $seed < 1 ) {
+		$seed = time();
+	}
+
+	$pet_ids = get_posts(
+		array(
+			'post_type'        => 'vcps_pet',
+			'post_status'      => 'any',
+			'numberposts'      => -1,
+			'fields'           => 'ids',
+			'suppress_filters' => false,
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- one-time migration, not a request-path query.
+			'meta_query'       => array(
+				'relation' => 'AND',
+				array(
+					'key'     => '_pet_provider',
+					'compare' => 'EXISTS',
+				),
+				array(
+					'key'     => '_pet_last_seen',
+					'compare' => 'NOT EXISTS',
+				),
+			),
+		)
+	);
+
+	foreach ( $pet_ids as $pet_id ) {
+		update_post_meta( $pet_id, '_pet_last_seen', (string) $seed );
 	}
 
 	return true;
