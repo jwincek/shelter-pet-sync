@@ -1,0 +1,57 @@
+{
+  "_comment": "How RescueGroups.org names things, against API v2. Field names are interface facts confirmed two ways: the public v5 Developers Guide, and the v2 field list PetMatchPro (GPLv3, read locally) must enumerate because v2 requires a caller to name every field it wants. No code was copied and the licence would not permit it — see #12. Unconfirmed: the sub-key inside animalPictures. PetMatchPro requests the field but never addresses its interior in a way grep could recover, so images.url below is taken from RescueGroups' own documentation rather than from observed use, and is the least certain line in this file.",
+  "slug": "rescuegroups",
+  "label": "RescueGroups.org",
+  "_status": "unverified — fixture-backed only, no account; see the gates on issue #41",
+  "_api_version": "v2",
+  "_version_note": "v2 is the production API and the one PetMatchPro actually calls (api.rescuegroups.org/http/json). v5 is JSON:API-conformant and better in every respect — an Authorization header rather than a key in the request body — but is still a Developer's Preview, and its attribute names are NOT the animal* names below, so a v5 map is a new file rather than an edit to this one. RescueGroups expects multiple versions to run concurrently for a year or more after v5 ships.",
+  "identity": "animalID",
+  "fields": {
+    "ok_with_dogs": { "from": "animalOKWithDogs" },
+    "ok_with_cats": { "from": "animalOKWithCats" },
+    "ok_with_kids": { "from": "animalOKWithKids" },
+    "housebroken": { "from": "animalHousetrained" },
+    "spayed_neutered": { "from": "animalAltered" },
+    "declawed": { "from": "animalDeclawed" },
+    "hypoallergenic": { "from": "animalHypoallergenic" },
+    "has_special_needs": { "from": "animalSpecialneeds" },
+    "special_needs_detail": { "from": "animalSpecialneedsDescription" },
+    "shots_current": { "from": "animalUptodate" },
+    "microchip_id": { "from": "animalMicrochipNumber" },
+    "weight": { "from": "animalWeight" },
+    "adoption_fee": { "from": "animalAdoptionFee" },
+    "yard_required": { "from": "animalYardRequired" },
+    "fence_required": { "from": "animalFence" },
+    "apartment_ok": { "from": "animalApartment" }
+  },
+  "_unmapped_negations": "animalNoLargeDogs, animalNoSmallDogs, animalNoFemaleDogs, animalNoMaleDogs, animalNoCold, animalNoHeat and animalOlderKidsOnly are deliberately NOT mapped. They are real fields and they are finer-grained than anything the entity models — 'not good with LARGE dogs' is not the same claim as 'not good with dogs', and collapsing one into the other would state something the shelter did not. Mapping animalNoLargeDogs onto ok_with_dogs is the specific trap issue #41 was filed about, and a test asserts no field here does it. If the vocabulary is ever extended to carry them, `invert: true` is what makes the polarity safe to declare; see the note on that key in Provider_Map.",
+  "taxonomies": {
+    "animalSpecies": { "to": "pet_animal" },
+    "animalSex": {
+      "to": "pet_sex",
+      "values": { "f": "Female", "m": "Male", "female": "Female", "male": "Male" }
+    },
+    "animalPrimaryBreed": { "to": "pet_breed" },
+    "animalGeneralAge": { "to": "pet_age" },
+    "animalSize": { "to": "pet_size" },
+    "animalColorPrimary": { "to": "pet_color" },
+    "animalCoatLength": { "to": "pet_coat" },
+    "animalStatus": { "to": "pet_status" }
+  },
+  "appends": {
+    "animalSecondaryBreed": "pet_breed"
+  },
+  "post": {
+    "title": "animalName",
+    "content": "animalDescriptionPlain"
+  },
+  "shapes": {
+    "images": {
+      "list": [ "animalPictures" ],
+      "url": [ "urlSecureFullsize" ]
+    },
+    "intake_date": {
+      "paths": [ [ "animalAvailableDate" ], [ "animalUpdatedDate" ] ]
+    }
+  }
+}

@@ -337,6 +337,8 @@ class Pet_Hydrator {
 				}
 			}
 
+			$came_from_api = false;
+
 			if ( null === $raw ) {
 				$from_api = ( null !== $api_key ) ? $api_data[ $api_key ] ?? null : null;
 
@@ -351,10 +353,29 @@ class Pet_Hydrator {
 					);
 				}
 
-				$raw = $from_api ?? $field_config['default'] ?? '';
+				$came_from_api = null !== $from_api;
+				$raw           = $from_api ?? $field_config['default'] ?? '';
 			}
 
-			$entity[ $field_name ] = self::cast_api_value( $raw, $field_config );
+			$value = self::cast_api_value( $raw, $field_config );
+
+			// Polarity, applied AFTER casting so it flips a canonical tristate
+			// rather than a raw provider value. Only meaningful for tristates;
+			// the validator rejects `invert` anywhere else.
+			//
+			// Gated on the value actually having come from the provider. Meta is
+			// already in our polarity, so a staff member correcting a pet to
+			// 'no' by hand must not have it flipped back to 'yes' — that is the
+			// 4838f0a failure re-entering through a different door. The declared
+			// default is likewise ours, not theirs.
+			if ( $came_from_api
+				&& 'tristate' === ( $field_config['type'] ?? '' )
+				&& Provider_Map::inverts( $provider, $field_name )
+			) {
+				$value = Provider_Map::invert_tristate( (string) $value );
+			}
+
+			$entity[ $field_name ] = $value;
 		}
 
 		// The registered `fields` (ps_id, api_response, api_hash) are internal
