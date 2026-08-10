@@ -66,6 +66,12 @@
           "default": [],
           "show_in_rest": true,
           "description": "Attachment IDs for a hand-curated gallery. Takes precedence over the provider snapshot's images, and unlike the snapshot carries real alt text from the media library."
+        },
+        "last_seen": {
+          "type": "string",
+          "default": "",
+          "show_in_rest": false,
+          "description": "Unix timestamp of the last successful fetch this pet appeared in. Written on every sync, complete or not, because presence is presence. remove_stale_pets() deliberately skips pruning when a fetch came back incomplete — right for a transient outage, but it means a withdrawn or cancelled account leaves pets published indefinitely against a frozen snapshot. This is what makes that visible."
         }
       },
       "api_fields": {
