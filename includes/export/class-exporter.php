@@ -180,10 +180,14 @@ class Exporter {
 
 		// Escape passed explicitly: PHP 8.4 deprecates relying on the default,
 		// and CI runs the 8.1 floor so it would not surface there.
-		fputcsv( $handle, $columns, ',', '"', '\\' );
+		// Escape '' is RFC 4180: quotes are doubled, and there is no backslash
+		// escape. It is what Excel and Google Sheets both write and read, it is
+		// what the importer parses with, and PHP 8.5 deprecates leaving the
+		// parameter to its default.
+		fputcsv( $handle, $columns, ',', '"', '' );
 
 		foreach ( self::rows( $ids, $mode ) as $row ) {
-			fputcsv( $handle, array_map( array( self::class, 'esc_csv_field' ), array_values( $row ) ), ',', '"', '\\' );
+			fputcsv( $handle, array_map( array( self::class, 'esc_csv_field' ), array_values( $row ) ), ',', '"', '' );
 		}
 
 		rewind( $handle );

@@ -35,12 +35,19 @@ class Schema {
 	public const FULL = 'full';
 
 	/**
-	 * Identity columns. `id` is the local post ID and is informational on
-	 * import; `name` is the post title.
+	 * Identity and display columns. `id` is the local post ID and is
+	 * informational on import; `name` is the post title; `description` is the
+	 * post content.
+	 *
+	 * `description` is a COMPUTED field, so it does not arrive via
+	 * editable_fields — but omitting it meant a portable export carried every
+	 * pet's data and none of its story, and a backup restored through the
+	 * importer came back with empty descriptions. Found by #31's round-trip
+	 * test, which is exactly the sort of thing only a round trip finds.
 	 *
 	 * @var string[]
 	 */
-	private const IDENTITY = array( 'id', 'name' );
+	private const IDENTITY = array( 'id', 'name', 'description' );
 
 	/**
 	 * @return array<string, mixed> The vcps_pet entity config.

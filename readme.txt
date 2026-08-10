@@ -65,9 +65,17 @@ Using Petstablished? Instead of step 3, go to **Pets → Sync Settings**, enter 
 
 No. You can add pets by hand from the WordPress editor — name, photo, description, species, breed, age, size, sex and color, plus adoption fee, health and compatibility details. Every block works the same either way.
 
-If you do use Petstablished, connect it and your listings are imported and kept up to date automatically.
+If you already keep your animals in a spreadsheet, **Pets → Import** will take it in one pass rather than making you retype it. And if you do use Petstablished, connect it and your listings are imported and kept up to date automatically.
 
-= Can I mix imported pets and hand-entered ones? =
+= I have a spreadsheet of animals. Can I upload it? =
+
+Yes. Save it as CSV and go to **Pets → Import**. Column headings are matched loosely, so "Good with dogs?" finds the right field and you do not have to rename anything; only a name column is required. You get a preview showing exactly what will be added, changed or skipped — including any heading that could not be matched — and nothing is written until you confirm.
+
+Re-uploading a corrected sheet updates the animals already on the site rather than duplicating them, matching on microchip number. Imported pets count as hand-entered, so a later sync from a connected platform will never overwrite or unpublish them.
+
+**Pets → Export** produces a file in the same format, so an export can be edited in a spreadsheet and imported straight back.
+
+= Can I mix pets from a platform, a spreadsheet and the editor? =
 
 Yes. Each pet records where it came from. A sync only ever updates the pets it imported itself, so hand-entered pets are never overwritten and never removed when an animal leaves the platform. Fields on imported pets are read-only in the editor, because the platform is the source of record for them.
 
