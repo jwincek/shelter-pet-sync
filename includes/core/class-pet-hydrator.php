@@ -132,8 +132,7 @@ class Pet_Hydrator {
 			// Priming necessarily runs before hydration, so there is no entity
 			// to read here. Take the provider's key name from the declaration
 			// rather than writing it out — bonded_pet_ids already maps it.
-			$config   = self::get_config();
-			$bonded   = $config['api_fields']['bonded_pet_ids']['api_key'] ?? 'grouped_pet_ids';
+			$bonded   = Provider_Map::key_for( Provider_Map::for_pet( $id ), 'bonded_pet_ids' ) ?? 'grouped_pet_ids';
 			$api_data = self::get_api_data( $id );
 			foreach ( (array) ( $api_data[ $bonded ] ?? [] ) as $ps_id ) {
 				$ps_id = (int) $ps_id;
@@ -305,15 +304,23 @@ class Pet_Hydrator {
 		// calls hit WordPress's per-post meta cache, primed on first access.
 		$api_data   = self::get_api_data( $id );
 		$api_fields = $config['api_fields'] ?? [];
+		$provider   = Provider_Map::for_pet( $id );
 		$editable   = $config['editable_fields'] ?? [];
 		foreach ( $api_fields as $field_name => $field_config ) {
 			if ( $include_fields && ! in_array( $field_name, $include_fields, true ) ) {
 				continue;
 			}
-			$api_key = $field_config['api_key'] ?? null;
-			if ( null === $api_key ) {
-				continue; // Computed api_field (like primary_image_url), skip.
-			}
+			// The provider's spelling comes from its map, not from the entity.
+			// Null means there is no snapshot value to read: either this
+			// provider does not carry the field, or the pet is hand-authored
+			// and has no provider at all. Both fall through to meta and then
+			// the declared default — the field must still appear in the entity
+			// at its default, because dropping the key entirely would make
+			// every consumer's `$pet['ok_with_cats']` an undefined-index
+			// notice. The default is '', which the compatibility and health
+			// blocks skip; it must never become 'unknown', which they render
+			// as "Ask us" and so assert an assessment nobody made.
+			$api_key = Provider_Map::key_for( $provider, $field_name );
 
 			$raw = null;
 
@@ -331,7 +338,8 @@ class Pet_Hydrator {
 			}
 
 			if ( null === $raw ) {
-				$raw = $api_data[ $api_key ] ?? $field_config['default'] ?? '';
+				$from_api = ( null !== $api_key ) ? $api_data[ $api_key ] ?? null : null;
+				$raw      = $from_api ?? $field_config['default'] ?? '';
 			}
 
 			$entity[ $field_name ] = self::cast_api_value( $raw, $field_config );
@@ -556,7 +564,7 @@ class Pet_Hydrator {
 
 		$api_data = self::get_api_data( $id );
 		$date_str = '';
-		foreach ( self::get_config()['api_shapes']['intake_date']['paths'] ?? [] as $path ) {
+		foreach ( Provider_Map::shapes( Provider_Map::for_pet( $id ) )['intake_date']['paths'] ?? [] as $path ) {
 			$candidate = self::dig( $api_data, (array) $path );
 			if ( is_string( $candidate ) && '' !== $candidate ) {
 				$date_str = $candidate;
@@ -621,7 +629,7 @@ class Pet_Hydrator {
 			return $url;
 		}
 
-		$shape = self::get_config()['api_shapes']['images'] ?? [];
+		$shape = Provider_Map::shapes( Provider_Map::for_pet( $id ) )['images'] ?? [];
 		if ( empty( $shape['list'] ) || empty( $shape['url'] ) ) {
 			return '';
 		}
@@ -697,7 +705,7 @@ class Pet_Hydrator {
 			return $manual;
 		}
 
-		$shape = self::get_config()['api_shapes']['images'] ?? [];
+		$shape = Provider_Map::shapes( Provider_Map::for_pet( $id ) )['images'] ?? [];
 		if ( empty( $shape['list'] ) || empty( $shape['url'] ) ) {
 			return [];
 		}

@@ -257,28 +257,54 @@ foreach ( (array) ( $entity['taxonomies'] ?? [] ) as $key => $cfg ) {
 		$add( 'error', 'taxonomies', "entity taxonomy '$key' => '$tax' is not registered in taxonomies.json." );
 	}
 }
+// Provider maps: one file per platform, each holding that platform's spelling.
+// Validating all of them means a new provider is checked the day it is added,
+// not the day its pets come out blank.
+$providers = [];
+foreach ( glob( __DIR__ . '/../config/providers/*.json' ) ?: [] as $pfile ) {
+	$decoded = json_decode( (string) file_get_contents( $pfile ), true );
+	if ( ! is_array( $decoded ) ) {
+		$add( 'error', 'providers', 'config/providers/' . basename( $pfile ) . ' is not valid JSON.' );
+		continue;
+	}
+	$providers[ basename( $pfile, '.json' ) ] = $decoded;
+}
+if ( empty( $providers ) ) {
+	$add( 'error', 'providers', 'config/providers/ holds no maps — no synced pet could resolve a single field.' );
+}
+
 $attr_tax = $entity['attribute_taxonomy'] ?? null;
 if ( $attr_tax && ! in_array( $attr_tax, $registered_tax, true ) ) {
 	$add( 'error', 'taxonomies', "attribute_taxonomy '$attr_tax' is not registered in taxonomies.json." );
 }
 
-// taxonomy_source_map drives every single-value term the sync writes. An
-// unregistered target means wp_set_object_terms() silently writes nothing.
-$tax_source_map = (array) ( $entity['taxonomy_source_map'] ?? [] );
-if ( empty( $tax_source_map ) ) {
-	$add( 'error', 'taxonomies', 'entities.json has no taxonomy_source_map — the sync would assign no single-value taxonomy terms at all.' );
-}
-foreach ( $tax_source_map as $src_key => $tax ) {
-	if ( ! in_array( $tax, $registered_tax, true ) ) {
-		$add( 'error', 'taxonomies', "taxonomy_source_map '$src_key' => '$tax' is not registered in taxonomies.json." );
+// A provider's taxonomies map drives every single-value term the sync writes.
+// An unregistered target means wp_set_object_terms() silently writes nothing.
+foreach ( $providers as $pslug => $pmap ) {
+	$tax_source_map = (array) ( $pmap['taxonomies'] ?? [] );
+	if ( empty( $tax_source_map ) ) {
+		$add( 'error', 'providers', "providers/$pslug.json has no taxonomies map — a sync from it would assign no single-value terms at all." );
+	}
+	foreach ( $tax_source_map as $src_key => $tax ) {
+		if ( ! in_array( $tax, $registered_tax, true ) ) {
+			$add( 'error', 'providers', "providers/$pslug.json maps '$src_key' => '$tax', which is not registered in taxonomies.json." );
+		}
 	}
 }
-$api_keys = [];
-foreach ( (array) ( $entity['api_fields'] ?? [] ) as $cfg ) {
-	if ( isset( $cfg['api_key'] ) ) {
-		$api_keys[] = $cfg['api_key'];
+// A provider map names canonical fields on the left. A typo there is invisible
+// at runtime — the hydrator simply never finds the field and leaves it '', which
+// looks exactly like a provider that does not carry it.
+foreach ( $providers as $pslug => $pmap ) {
+	foreach ( (array) ( $pmap['fields'] ?? [] ) as $field => $cfg ) {
+		if ( ! in_array( $field, $valid_fields, true ) ) {
+			$add( 'error', 'providers', "providers/$pslug.json maps '$field', which is not a declared entity field — it would hydrate nothing." );
+		}
+		if ( empty( $cfg['from'] ) || ! is_string( $cfg['from'] ) ) {
+			$add( 'error', 'providers', "providers/$pslug.json field '$field' needs a non-empty string 'from'." );
+		}
 	}
 }
+
 // attribute_terms is keyed on OUR field names, not the provider's, because the
 // terms are derived from the hydrated entity. Checking it against $api_keys
 // would compare the two sides of the very indirection this replaced.
@@ -524,11 +550,17 @@ foreach ( $ia_files as $pf ) {
 
 // ── Check 7: change-detection hash covers every consumed API field ───────────
 $sync_src = $read( 'includes/class-petsync-sync.php' );
-$consumed = [];
-foreach ( (array) ( $entity['api_fields'] ?? [] ) as $cfg ) {
-	if ( ! empty( $cfg['api_key'] ) ) {
-		$consumed[ $cfg['api_key'] ] = true;
+// Petsync_Sync::PROVIDER is the only platform this sync talks to, so its map is
+// the one whose spellings the change-detection hash must cover.
+$sync_provider = preg_match( "/const PROVIDER\s*=\s*'([a-z0-9-]+)'/", $read( 'includes/class-petsync-sync.php' ), $pm ) ? $pm[1] : '';
+$consumed      = [];
+foreach ( (array) ( $providers[ $sync_provider ]['fields'] ?? [] ) as $cfg ) {
+	if ( ! empty( $cfg['from'] ) ) {
+		$consumed[ $cfg['from'] ] = true;
 	}
+}
+if ( empty( $consumed ) ) {
+	$add( 'error', 'hash-coverage', "Petsync_Sync::PROVIDER is '$sync_provider' but config/providers/$sync_provider.json declares no fields — nothing would hydrate." );
 }
 // attribute_terms needs no entry here: it is keyed on canonical field names,
 // and the api_key behind each one is already recorded by the loop above.
@@ -539,8 +571,8 @@ if ( preg_match( '/\$computed_sources\s*=\s*array\((.*?)\);/s', $sync_src, $m ) 
 		$consumed[ $k ] = true;
 	}
 }
-// taxonomy_source_map keys (config-driven since the map moved out of PHP).
-foreach ( array_keys( (array) ( $entity['taxonomy_source_map'] ?? [] ) ) as $k ) {
+// Taxonomy source keys, from the same provider map.
+foreach ( array_keys( (array) ( $providers[ $sync_provider ]['taxonomies'] ?? [] ) ) as $k ) {
 	$consumed[ $k ] = true;
 }
 // Extra keys listed inside get_consumed_api_keys() (post/taxonomy drivers).
@@ -708,34 +740,36 @@ if ( '' !== $templates_src && '' !== $uninstall_src ) {
 // The hydrator resolves them at runtime with ?? fallbacks, so a missing or
 // malformed shape degrades to a blank image or a pet that is never "new" —
 // silently, and only on a site with real API data.
-$shapes = (array) ( $entity['api_shapes'] ?? [] );
-
 $required_shapes = [
 	'images'      => [ 'list', 'url' ],
 	'intake_date' => [ 'paths' ],
 ];
 
-foreach ( $required_shapes as $shape_name => $keys ) {
-	if ( ! isset( $shapes[ $shape_name ] ) ) {
-		$add( 'error', 'api-shapes', "entities.json declares no api_shapes.$shape_name, which Pet_Hydrator reads." );
-		continue;
-	}
-	foreach ( $keys as $key ) {
-		$value = $shapes[ $shape_name ][ $key ] ?? null;
-		if ( ! is_array( $value ) || [] === $value ) {
-			$add( 'error', 'api-shapes', "api_shapes.$shape_name.$key must be a non-empty array." );
+foreach ( $providers as $pslug => $pmap ) {
+	$shapes = (array) ( $pmap['shapes'] ?? [] );
+
+	foreach ( $required_shapes as $shape_name => $keys ) {
+		if ( ! isset( $shapes[ $shape_name ] ) ) {
+			$add( 'error', 'api-shapes', "providers/$pslug.json declares no shapes.$shape_name, which Pet_Hydrator reads." );
+			continue;
+		}
+		foreach ( $keys as $key ) {
+			$value = $shapes[ $shape_name ][ $key ] ?? null;
+			if ( ! is_array( $value ) || [] === $value ) {
+				$add( 'error', 'api-shapes', "providers/$pslug.json shapes.$shape_name.$key must be a non-empty array." );
+			}
 		}
 	}
-}
 
-// Every path segment must be a string or int — dig() walks them as array keys.
-foreach ( $shapes as $shape_name => $shape ) {
-	foreach ( (array) $shape as $key => $value ) {
-		$paths = ( 'paths' === $key ) ? (array) $value : [ $value ];
-		foreach ( $paths as $path ) {
-			foreach ( (array) $path as $segment ) {
-				if ( ! is_string( $segment ) && ! is_int( $segment ) ) {
-					$add( 'error', 'api-shapes', "api_shapes.$shape_name.$key contains a path segment that is neither string nor int." );
+	// Every path segment must be a string or int — dig() walks them as array keys.
+	foreach ( $shapes as $shape_name => $shape ) {
+		foreach ( (array) $shape as $key => $value ) {
+			$paths = ( 'paths' === $key ) ? (array) $value : [ $value ];
+			foreach ( $paths as $path ) {
+				foreach ( (array) $path as $segment ) {
+					if ( ! is_string( $segment ) && ! is_int( $segment ) ) {
+						$add( 'error', 'api-shapes', "providers/$pslug.json shapes.$shape_name.$key contains a path segment that is neither string nor int." );
+					}
 				}
 			}
 		}
