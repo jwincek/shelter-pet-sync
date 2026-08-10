@@ -249,6 +249,52 @@ class Provider_Map {
 	}
 
 	/**
+	 * Whether a field's polarity is reversed relative to ours.
+	 *
+	 * RescueGroups carries animalNoLargeDogs, animalNoSmallDogs,
+	 * animalNoFemaleDogs, animalNoMaleDogs — fields whose `true` means NOT good
+	 * with. Read naively into a tristate, `true` becomes 'yes' and the site
+	 * advertises the exact opposite of what the shelter recorded.
+	 *
+	 * That is not hypothetical: 4838f0a fixed precisely this failure, where an
+	 * emptiness test counted 'no' as true and 22 of 93 published pets displayed
+	 * "Good with dogs, cats, kids" for animals recorded as unsafe with them. For
+	 * an adoption site it is the worst direction an error can run.
+	 *
+	 * Declaring it in config is the point. A format that cannot express
+	 * inversion pushes it into PHP, which is how the ten hardcoded provider keys
+	 * in #33 came to exist in the first place.
+	 *
+	 * @param string $slug  Provider slug.
+	 * @param string $field Canonical field name.
+	 */
+	public static function inverts( string $slug, string $field ): bool {
+		return ! empty( self::get( $slug )['fields'][ $field ]['invert'] );
+	}
+
+	/**
+	 * Flip a resolved tristate.
+	 *
+	 * Operates on the CANONICAL value, never the raw one: a provider may send
+	 * true, 'Yes', '1' or 'y', and inverting before normalisation would have to
+	 * re-implement resolve_tristate() to know what it was looking at.
+	 *
+	 * 'unknown' and '' are returned untouched. The opposite of "we do not know"
+	 * is still "we do not know" — inverting it would manufacture a definite
+	 * answer out of an absence, which is the same class of error in a quieter
+	 * form.
+	 *
+	 * @param string $tristate One of 'yes', 'no', 'unknown', ''.
+	 */
+	public static function invert_tristate( string $tristate ): string {
+		return match ( $tristate ) {
+			'yes'   => 'no',
+			'no'    => 'yes',
+			default => $tristate,
+		};
+	}
+
+	/**
 	 * The key holding the provider's own record ID — what gets stored as
 	 * _pet_ps_id and matched against on the next sync.
 	 *

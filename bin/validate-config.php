@@ -351,6 +351,19 @@ foreach ( $providers as $pslug => $pmap ) {
 		if ( array_key_exists( 'values', (array) $cfg ) ) {
 			$check_values( $cfg['values'], "providers/$pslug.json fields.$field" );
 		}
+		// `invert` flips a resolved tristate. On anything else the hydrator
+		// ignores it, so a map could declare a polarity that silently does not
+		// apply — and polarity is the one thing this codebase has already
+		// shipped backwards (4838f0a).
+		if ( array_key_exists( 'invert', (array) $cfg ) ) {
+			if ( ! is_bool( $cfg['invert'] ) ) {
+				$add( 'error', 'providers', "providers/$pslug.json fields.$field has a non-boolean 'invert'." );
+			}
+			$declared_type = $entity['api_fields'][ $field ]['type'] ?? '';
+			if ( 'tristate' !== $declared_type ) {
+				$add( 'error', 'providers', "providers/$pslug.json fields.$field declares 'invert' but the field is type '$declared_type', not tristate — the inversion would be silently ignored." );
+			}
+		}
 	}
 }
 
