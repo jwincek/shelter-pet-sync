@@ -819,7 +819,7 @@ class Petsync_Sync {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 
-		$attachment_id = media_sideload_image( $new_image_url, $post_id, $data['name'] ?? '', 'id' );
+		$attachment_id = self::sideload_within_budget( $new_image_url, $post_id, $data['name'] ?? '' );
 
 		if ( is_wp_error( $attachment_id ) ) {
 			return;
@@ -957,5 +957,83 @@ class Petsync_Sync {
 		}
 
 		return $drafted;
+	}
+
+	/**
+	 * The image sizes this plugin actually renders.
+	 *
+	 * Measured on a real install, 39% of the pet-image footprint was size
+	 * variants nothing ever requested — WooCommerce alone generating 32MB of
+	 * product-shaped derivatives of dog photos, plus Sensei course thumbnails,
+	 * plus core's 1536 and 2048 sizes. 257 attachments had become 1768 files.
+	 *
+	 * A plugin that knows which sizes it renders should not leave the answer to
+	 * whatever else happens to be installed.
+	 *
+	 * @var string[]
+	 */
+	private const RENDERED_SIZES = array( 'thumbnail', 'medium_large', 'large' );
+
+	/**
+	 * Longest edge kept for a sideloaded photo.
+	 *
+	 * WordPress defaults to 2560. A provider photo is a display image, not an
+	 * archival master, and the largest thing the plugin does with one is fill a
+	 * lightbox. Unlike the size budget above — which only skips derivatives that
+	 * can be regenerated — this DISCARDS pixels: a scaled photo cannot be scaled
+	 * back up, and if the provider drops the original there is nothing to return
+	 * to. Hence 1600 rather than something aggressive.
+	 */
+	private const MAX_EDGE = 1600;
+
+	/**
+	 * Sideload an image, generating only the sizes the plugin renders.
+	 *
+	 * The filters are added and removed around this one call, so every other
+	 * upload on the site keeps WordPress's behaviour. Both are filterable, so a
+	 * theme rendering pets at another size can ask for it rather than patching
+	 * the plugin.
+	 *
+	 * @param string $url     Remote image URL.
+	 * @param int    $post_id Pet post ID.
+	 * @param string $desc    Attachment description.
+	 * @return int|\WP_Error Attachment ID.
+	 */
+	private static function sideload_within_budget( string $url, int $post_id, string $desc ) {
+		$limit_sizes = static function ( array $sizes ): array {
+			/**
+			 * Image sizes generated for sideloaded pet photos.
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param string[] $keep Size names to generate.
+			 */
+			$keep = (array) apply_filters( 'petsync_rendered_image_sizes', self::RENDERED_SIZES );
+
+			return array_intersect_key( $sizes, array_flip( $keep ) );
+		};
+
+		$limit_edge = static function (): int {
+			/**
+			 * Longest edge kept for a sideloaded pet photo.
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param int $max_edge Pixels.
+			 */
+			return (int) apply_filters( 'petsync_max_image_edge', self::MAX_EDGE );
+		};
+
+		add_filter( 'intermediate_image_sizes_advanced', $limit_sizes, 10, 1 );
+		add_filter( 'big_image_size_threshold', $limit_edge, 10, 1 );
+
+		try {
+			return media_sideload_image( $url, $post_id, $desc, 'id' );
+		} finally {
+			// finally, not after the return: a sideload that throws must not
+			// leave these filters applied to every subsequent upload on the site.
+			remove_filter( 'intermediate_image_sizes_advanced', $limit_sizes, 10 );
+			remove_filter( 'big_image_size_threshold', $limit_edge, 10 );
+		}
 	}
 }
