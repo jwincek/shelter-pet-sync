@@ -1,0 +1,30 @@
+{
+  "_comment": "One pet as Adopt-a-Pet's pets_at_shelter is understood to return it, using only the field names recorded on issue #40. Deliberately carries NO weight, microchip_id, numerical_age, adoption_fee, hypoallergenic, coat_pattern, secondary_color, tertiary_color, or bonded-pair keys — their absence is the point, since it exercises the hydrator's declared-default precedence for a provider that simply does not have them. good_with_cats is likewise absent: the reference client never read it, so we do not get to assume it exists.",
+  "pet_id": "884213",
+  "pet_code": "AAP-884213",
+  "pet_name": "Marigold",
+  "species": "Cat",
+  "primary_breed": "Domestic Shorthair",
+  "age": "Adult",
+  "sex": "f",
+  "size": "M",
+  "color": "Calico",
+  "hair": "Short",
+  "description": "Marigold came in as a stray and has been the office greeter ever since.",
+  "good_with_dogs": true,
+  "good_with_kids": false,
+  "housetrained": "yes",
+  "spayed_neutered": true,
+  "declawed": false,
+  "purebred": false,
+  "shelter_name": "Test Shelter",
+  "email": "adopt@example.test",
+  "addr_city": "Franklin",
+  "addr_state_code": "PA",
+  "pet_details_url": "https://www.adoptapet.com/pet/884213",
+  "created_at": "2026-07-14T09:30:00Z",
+  "pet_photos": [
+    { "photo_url": "https://example.test/marigold-1.jpg" },
+    { "photo_url": "https://example.test/marigold-2.jpg" }
+  ]
+}

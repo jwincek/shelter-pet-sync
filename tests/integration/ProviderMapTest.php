@@ -158,6 +158,56 @@ final class ProviderMapTest extends PetTestCase {
 		}
 	}
 
+	/**
+	 * These four were literals in the sync until #40 moved them into the map.
+	 * They are pinned because a typo in JSON is silent where a typo in PHP is
+	 * not: every synced pet would come in called "Unnamed Pet", with an empty
+	 * body, published even when marked private upstream.
+	 */
+	public function test_the_petstablished_post_keys_match_the_literals_they_replaced(): void {
+		$post = Provider_Map::post_keys( \Petsync_Sync::PROVIDER );
+
+		$this->assertSame( 'name', $post['title'] );
+		$this->assertSame( 'description', $post['content'] );
+		$this->assertSame( 'dont_show_in_public_search', $post['private_when'] );
+
+		$this->assertSame(
+			array(
+				'secondary_breed' => 'pet_breed',
+				'secondary_color' => 'pet_color',
+			),
+			Provider_Map::appends( \Petsync_Sync::PROVIDER )
+		);
+	}
+
+	/**
+	 * A provider key that drives the post or an append must still reach the
+	 * change-detection hash, or an upstream edit to a pet's name or description
+	 * would never trigger a re-sync.
+	 */
+	public function test_post_and_append_keys_reach_the_change_detection_hash(): void {
+		$consumed = \Petsync_Sync::get_consumed_api_keys();
+
+		foreach ( Provider_Map::post_keys( \Petsync_Sync::PROVIDER ) as $role => $key ) {
+			$this->assertContains( $key, $consumed, "post.$role key '$key' is outside the hash — upstream edits to it would go unnoticed" );
+		}
+		foreach ( array_keys( Provider_Map::appends( \Petsync_Sync::PROVIDER ) ) as $key ) {
+			$this->assertContains( $key, $consumed, "append key '$key' is outside the hash" );
+		}
+	}
+
+	/**
+	 * A provider that declares no value maps must translate nothing. This is
+	 * what makes the value layer inert for Petstablished, and it is why adding
+	 * it changed no hydrated output across the 270 pets on the live install.
+	 */
+	public function test_a_provider_with_no_value_maps_translates_nothing(): void {
+		foreach ( array( 'sex', 'size', 'ok_with_dogs', 'weight' ) as $field ) {
+			$this->assertSame( array(), Provider_Map::values( \Petsync_Sync::PROVIDER, $field ) );
+			$this->assertSame( 'Female', Provider_Map::apply_values( Provider_Map::values( \Petsync_Sync::PROVIDER, $field ), 'Female' ) );
+		}
+	}
+
 	public function test_the_sync_provider_has_a_map(): void {
 		$this->assertContains(
 			\Petsync_Sync::PROVIDER,

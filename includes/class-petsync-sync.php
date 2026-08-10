@@ -504,7 +504,7 @@ class Petsync_Sync {
 	}
 
 	private function process_single_pet( array $data ): string {
-		$ps_id = $data['id'] ?? null;
+		$ps_id = $data[ \Petsync\Core\Provider_Map::identity_key( self::PROVIDER ) ] ?? null;
 
 		if ( ! $ps_id ) {
 			return 'errors';
@@ -543,14 +543,16 @@ class Petsync_Sync {
 		// are imported as drafts so they never surface on the public wall, in
 		// the publish-only abilities, or in feeds. They re-publish automatically
 		// if the flag is later cleared (it is part of the change-detection hash).
-		$is_private = ! empty( $data['dont_show_in_public_search'] );
+		$post_keys  = \Petsync\Core\Provider_Map::post_keys( self::PROVIDER );
+		$private_at = $post_keys['private_when'] ?? '';
+		$is_private = '' !== $private_at && ! empty( $data[ $private_at ] );
 
 		// Prepare post data.
 		$post_data = array(
 			'post_type'    => 'vcps_pet',
 			'post_status'  => $is_private ? 'draft' : 'publish',
-			'post_title'   => sanitize_text_field( $data['name'] ?? 'Unnamed Pet' ),
-			'post_content' => wp_kses_post( $data['description'] ?? '' ),
+			'post_title'   => sanitize_text_field( $data[ $post_keys['title'] ?? '' ] ?? 'Unnamed Pet' ),
+			'post_content' => wp_kses_post( $data[ $post_keys['content'] ?? '' ] ?? '' ),
 		);
 
 		if ( $post_id ) {
@@ -640,14 +642,30 @@ class Petsync_Sync {
 		// This provider's spellings, from its map. The sync only ever talks to
 		// its own provider, so the slug is a constant here.
 		$keys = array_values( \Petsync\Core\Provider_Map::field_keys( self::PROVIDER ) );
-		// Read straight from the snapshot by Pet_Hydrator compute_* methods:
-		// images          → compute_image() / compute_gallery()
-		// name            → compute_gallery() (image alt text)
-		// id              → compute_bonded_pair_names() (own PS id)
-		// date_aquired,
-		// created_at      → compute_is_new() (intake date)
-		// (group_id, grouped_pet_ids, siblings_names are already api_fields.)
-		$computed_sources = array( 'id', 'name', 'images', 'date_aquired', 'created_at' );
+		// Keys read straight from the snapshot by Pet_Hydrator compute_* methods.
+		// Every one is derived from the provider map rather than listed, so a
+		// provider that spells them differently needs no PHP change:
+		//   identity          → compute_bonded_pair_names() (own provider id)
+		//   post.title        → compute_gallery() (image alt text)
+		//   shapes.images     → compute_image() / compute_gallery()
+		//   shapes.intake_date→ compute_is_new()
+		// (group_id, grouped_pet_ids, siblings_names are already mapped fields.)
+		$map    = \Petsync\Core\Provider_Map::class;
+		$shapes = $map::shapes( self::PROVIDER );
+
+		$computed_sources = array_filter(
+			array_merge(
+				array( $map::identity_key( self::PROVIDER ), $map::post_keys( self::PROVIDER )['title'] ?? '' ),
+				// Only the ROOT of each path: the snapshot keeps whole values,
+				// so retaining 'images' keeps the nesting beneath it.
+				array( (string) ( $shapes['images']['list'][0] ?? '' ) ),
+				array_map(
+					static fn( $path ): string => (string) ( ( (array) $path )[0] ?? '' ),
+					(array) ( $shapes['intake_date']['paths'] ?? array() )
+				)
+			),
+			static fn( string $key ): bool => '' !== $key
+		);
 
 		return array_values( array_unique( array_merge( $keys, $computed_sources ) ) );
 	}
@@ -681,12 +699,8 @@ class Petsync_Sync {
 				array_merge(
 					self::get_retained_api_keys(),                    // stored + displayed
 					array_keys( self::get_taxonomy_source_map() ),    // taxonomy term sources
-					array(
-						'description',                  // → post_content
-						'dont_show_in_public_search',   // → post_status (draft)
-						'secondary_breed',              // → appended pet_breed term
-					)
-					// name + secondary_color are already in the retained set.
+					array_values( \Petsync\Core\Provider_Map::post_keys( self::PROVIDER ) ), // → post_title / post_content / post_status
+					array_keys( \Petsync\Core\Provider_Map::appends( self::PROVIDER ) )      // → appended taxonomy terms
 				)
 			)
 		);
@@ -720,7 +734,7 @@ class Petsync_Sync {
 	 * process_single_pet) and to scope stale-pet pruning.
 	 */
 	private function update_pet_meta( int $post_id, array $data ): void {
-		$ps_id = $data['id'] ?? null;
+		$ps_id = $data[ \Petsync\Core\Provider_Map::identity_key( self::PROVIDER ) ] ?? null;
 		if ( $ps_id ) {
 			update_post_meta( $post_id, '_pet_ps_id', sanitize_text_field( (string) $ps_id ) );
 			update_post_meta( $post_id, '_pet_provider', self::PROVIDER );
@@ -759,19 +773,31 @@ class Petsync_Sync {
 	private function update_pet_taxonomies( int $post_id, array $data ): void {
 		foreach ( self::get_taxonomy_source_map() as $api_key => $taxonomy ) {
 			$value = $data[ $api_key ] ?? '';
+
+			// A provider's own vocabulary becomes a term name verbatim, so a
+			// platform sending 'f' would create a pet_sex term called "f". Its
+			// map translates first.
+			$value = \Petsync\Core\Provider_Map::apply_values(
+				\Petsync\Core\Provider_Map::values( self::PROVIDER, $api_key ),
+				$value
+			);
+
 			if ( $value ) {
-				wp_set_object_terms( $post_id, sanitize_text_field( $value ), $taxonomy );
+				wp_set_object_terms( $post_id, sanitize_text_field( (string) $value ), $taxonomy );
 			}
 		}
 
-		// Secondary breed (appended).
-		if ( ! empty( $data['secondary_breed'] ) ) {
-			wp_set_object_terms( $post_id, sanitize_text_field( $data['secondary_breed'] ), 'pet_breed', true );
-		}
-
-		// Secondary color (appended).
-		if ( ! empty( $data['secondary_color'] ) ) {
-			wp_set_object_terms( $post_id, sanitize_text_field( $data['secondary_color'] ), 'pet_color', true );
+		// Values appended alongside the primary source — Petstablished sends a
+		// secondary breed and colour. A provider with only one of each declares
+		// no appends and this loop does nothing.
+		foreach ( \Petsync\Core\Provider_Map::appends( self::PROVIDER ) as $api_key => $taxonomy ) {
+			if ( ! empty( $data[ $api_key ] ) ) {
+				$value = \Petsync\Core\Provider_Map::apply_values(
+					\Petsync\Core\Provider_Map::values( self::PROVIDER, $api_key ),
+					$data[ $api_key ]
+				);
+				wp_set_object_terms( $post_id, sanitize_text_field( (string) $value ), $taxonomy, true );
+			}
 		}
 
 		// Boolean attributes → pet_attribute taxonomy terms. Derived from the
@@ -793,7 +819,9 @@ class Petsync_Sync {
 	 * @param array $data    Raw API response for this pet.
 	 */
 	private function maybe_set_featured_image( int $post_id, array $data ): void {
-		$new_image_url = $data['images'][0]['image']['url'] ?? '';
+		// Via the provider's declared images shape, not a second copy of its
+		// nesting — the hydrator already reads the same declaration.
+		$new_image_url = \Petsync\Core\Provider_Map::first_image_url( $data, self::PROVIDER );
 
 		if ( ! $new_image_url ) {
 			return;
@@ -813,7 +841,11 @@ class Petsync_Sync {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 
-		$attachment_id = self::sideload_within_budget( $new_image_url, $post_id, $data['name'] ?? '' );
+		// The pet's name becomes the attachment's alt text, so it comes from the
+		// provider map like every other provider key. A provider spelling it
+		// 'pet_name' would otherwise sideload every photo with an empty alt.
+		$name_key      = \Petsync\Core\Provider_Map::post_keys( self::PROVIDER )['title'] ?? '';
+		$attachment_id = self::sideload_within_budget( $new_image_url, $post_id, (string) ( $data[ $name_key ] ?? '' ) );
 
 		if ( is_wp_error( $attachment_id ) ) {
 			return;

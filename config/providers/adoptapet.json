@@ -1,0 +1,94 @@
+{
+  "_comment": "How Adopt-a-Pet names things. Every key here comes from the field list recorded on issue #40, recovered from the lynnaloo/adopt-a-pet Node client and corroborated by the FetchFree API directory entry. NOTHING here has been confirmed against a live account — the official spec at adoptapet.com/public/apis/pet_list.html returns 401, and this project's rules confine requests to the local install. Treat it as a shape to build against, not as truth. Fields Adopt-a-Pet has no visible equivalent for (weight, microchip_id, numerical_age, adoption_fee, hypoallergenic, coat_pattern, secondary/tertiary colour, and the whole bonded-pair concept) are deliberately absent: unmapped hydrates to '' and the renderers omit the row. good_with_cats is the consequential unknown — the reference client reads dogs and kids but not cats, so our compatibility triad is missing a leg until an account can confirm it.",
+  "slug": "adoptapet",
+  "label": "Adopt-a-Pet",
+  "_status": "unverified — fixture-backed only, see the gates on issue #40",
+  "fields": {
+    "ok_with_dogs": {
+      "from": "good_with_dogs"
+    },
+    "ok_with_kids": {
+      "from": "good_with_kids"
+    },
+    "housebroken": {
+      "from": "housetrained"
+    },
+    "spayed_neutered": {
+      "from": "spayed_neutered"
+    },
+    "declawed": {
+      "from": "declawed"
+    },
+    "adoption_form_url": {
+      "from": "pet_details_url"
+    }
+  },
+  "taxonomies": {
+    "species": {
+      "to": "pet_animal",
+      "values": {
+        "dog": "Dog",
+        "cat": "Cat",
+        "rabbit": "Rabbit",
+        "bird": "Bird",
+        "horse": "Horse",
+        "small&furry": "Small & Furry",
+        "barnyard": "Barnyard",
+        "reptile": "Reptile"
+      }
+    },
+    "sex": {
+      "to": "pet_sex",
+      "values": {
+        "f": "Female",
+        "m": "Male"
+      }
+    },
+    "primary_breed": {
+      "to": "pet_breed"
+    },
+    "age": {
+      "to": "pet_age"
+    },
+    "size": {
+      "to": "pet_size",
+      "values": {
+        "s": "Small",
+        "m": "Medium",
+        "l": "Large",
+        "xl": "Extra Large"
+      }
+    },
+    "color": {
+      "to": "pet_color"
+    },
+    "hair": {
+      "to": "pet_coat"
+    }
+  },
+  "shapes": {
+    "images": {
+      "list": [
+        "pet_photos"
+      ],
+      "url": [
+        "photo_url"
+      ]
+    },
+    "intake_date": {
+      "paths": [
+        [
+          "created_at"
+        ],
+        [
+          "date_posted"
+        ]
+      ]
+    }
+  },
+  "post": {
+    "title": "pet_name",
+    "content": "description"
+  },
+  "identity": "pet_id"
+}
