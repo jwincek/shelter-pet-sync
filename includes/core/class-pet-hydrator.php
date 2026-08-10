@@ -548,7 +548,14 @@ class Pet_Hydrator {
 		$cutoff         = strtotime( "-{$days_threshold} days" );
 
 		$api_data = self::get_api_data( $id );
-		$date_str = $api_data['date_aquired'] ?? $api_data['created_at'] ?? '';
+		$date_str = '';
+		foreach ( self::get_config()['api_shapes']['intake_date']['paths'] ?? [] as $path ) {
+			$candidate = self::dig( $api_data, (array) $path );
+			if ( is_string( $candidate ) && '' !== $candidate ) {
+				$date_str = $candidate;
+				break;
+			}
+		}
 
 		if ( $date_str ) {
 			$ts = strtotime( $date_str );
@@ -562,13 +569,59 @@ class Pet_Hydrator {
 	}
 
 	private static function compute_image( int $id ): string {
-		$url = get_the_post_thumbnail_url( $id, 'medium_large' );
+		return self::image_url( $id );
+	}
+
+	/**
+	 * Walk a path into a decoded API response.
+	 *
+	 * An api_key names one flat key, which is all Petstablished needs for its
+	 * scalar fields — but photo URLs sit three levels down, and the provider
+	 * this plugin was originally built against nested almost everything. So the
+	 * shapes are declared as paths in entities.json and resolved here rather
+	 * than written into the compute methods.
+	 *
+	 * @param array<mixed>       $data Decoded response, or a fragment of one.
+	 * @param array<int, string|int> $path Segments to walk.
+	 * @return mixed Null if any segment is missing.
+	 */
+	private static function dig( array $data, array $path ): mixed {
+		$node = $data;
+		foreach ( $path as $segment ) {
+			if ( ! is_array( $node ) || ! array_key_exists( $segment, $node ) ) {
+				return null;
+			}
+			$node = $node[ $segment ];
+		}
+		return $node;
+	}
+
+	/**
+	 * The pet's image URL at a given size: the WordPress attachment if there is
+	 * one, otherwise the provider's first photo.
+	 *
+	 * Public because Petsync_Helpers::get_image() needs the same answer at a
+	 * different size, and two copies of "where does the provider keep photo
+	 * URLs" is one copy too many.
+	 *
+	 * @param int    $id   Post ID.
+	 * @param string $size Image size.
+	 * @return string URL, or '' when there is none.
+	 */
+	public static function image_url( int $id, string $size = 'medium_large' ): string {
+		$url = get_the_post_thumbnail_url( $id, $size );
 		if ( $url ) {
 			return $url;
 		}
-		// Fall back to first image from API response.
-		$api_data = self::get_api_data( $id );
-		return $api_data['images'][0]['image']['url'] ?? '';
+
+		$shape = self::get_config()['api_shapes']['images'] ?? [];
+		if ( empty( $shape['list'] ) || empty( $shape['url'] ) ) {
+			return '';
+		}
+
+		$first = self::dig( self::get_api_data( $id ), array_merge( $shape['list'], [ 0 ], $shape['url'] ) );
+
+		return is_string( $first ) ? $first : '';
 	}
 
 	/**
@@ -637,15 +690,23 @@ class Pet_Hydrator {
 			return $manual;
 		}
 
-		$api_data = self::get_api_data( $id );
-		$images   = $api_data['images'] ?? [];
+		$shape = self::get_config()['api_shapes']['images'] ?? [];
+		if ( empty( $shape['list'] ) || empty( $shape['url'] ) ) {
+			return [];
+		}
+
+		$images = self::dig( self::get_api_data( $id ), $shape['list'] );
 		if ( empty( $images ) || ! is_array( $images ) ) {
 			return [];
 		}
+
+		$url_path = $shape['url'];
+		$alt      = $entity['name'] ?? '';
+
 		return array_map(
-			fn( $img ) => [
-				'url' => $img['image']['url'] ?? '',
-				'alt' => $entity['name'] ?? '',
+			static fn( $img ) => [
+				'url' => is_array( $img ) ? ( self::dig( $img, $url_path ) ?? '' ) : '',
+				'alt' => $alt,
 			],
 			$images
 		);

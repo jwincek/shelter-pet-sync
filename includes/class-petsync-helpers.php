@@ -37,27 +37,14 @@ class Petsync_Helpers {
 
 	// === Pet Data Formatting ===
 
-	/**
-	 * Get the decoded API response data for a pet.
-	 *
-	 * Delegates to the hydrator's cached decoder.
-	 *
-	 * @param int $id Post ID.
-	 * @return array Decoded API response.
-	 */
-	public static function get_api_data( int $id ): array {
-		return \Petsync\Core\Pet_Hydrator::get_api_data( $id );
-	}
-
 	// === Pet Data Formatting ===
 
 	public static function get_image( int $id, string $size = 'medium_large' ): string {
-		$url = get_the_post_thumbnail_url( $id, $size );
-		if ( $url ) {
-			return $url;
-		}
-		$api_data = self::get_api_data( $id );
-		return $api_data['images'][0]['image']['url'] ?? '';
+		// Delegates rather than duplicating: where the provider keeps photo URLs
+		// is declared once, in entities.json api_shapes, and resolved once, in
+		// Pet_Hydrator. This method existed as a near-copy that differed only in
+		// taking a size.
+		return \Petsync\Core\Pet_Hydrator::image_url( $id, $size );
 	}
 
 	// === Taxonomy Queries ===

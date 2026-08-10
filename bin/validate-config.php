@@ -20,6 +20,8 @@
  *                     attribute_terms key is a declared entity field.
  *   6. interactivity (heuristic) — actions.X / callbacks.X referenced in
  *                     block render.php are defined in a view.js / store.
+ *  11. api-shapes    — the provider response paths Pet_Hydrator resolves are
+ *                     declared and well-formed.
  *   7. hash-coverage — every literal $data['key'] the sync reads is in
  *                     get_consumed_api_keys(), so the change-detection hash
  *                     can't silently miss a field (stale-display risk).
@@ -698,6 +700,45 @@ if ( '' !== $templates_src && '' !== $uninstall_src ) {
 
 	foreach ( array_diff( $covered, $declared ) as $extra ) {
 		$add( 'warning', 'uninstall', "uninstall.php deletes wp_theme namespace '$extra', which Petsync_Templates does not declare — stale entry, or a rename that never reached the constants." );
+	}
+}
+
+// ── Check 11: api_shapes the hydrator reads actually exist ──────────────────
+// api_shapes declares provider response PATHS that an api_key cannot express.
+// The hydrator resolves them at runtime with ?? fallbacks, so a missing or
+// malformed shape degrades to a blank image or a pet that is never "new" —
+// silently, and only on a site with real API data.
+$shapes = (array) ( $entity['api_shapes'] ?? [] );
+
+$required_shapes = [
+	'images'      => [ 'list', 'url' ],
+	'intake_date' => [ 'paths' ],
+];
+
+foreach ( $required_shapes as $shape_name => $keys ) {
+	if ( ! isset( $shapes[ $shape_name ] ) ) {
+		$add( 'error', 'api-shapes', "entities.json declares no api_shapes.$shape_name, which Pet_Hydrator reads." );
+		continue;
+	}
+	foreach ( $keys as $key ) {
+		$value = $shapes[ $shape_name ][ $key ] ?? null;
+		if ( ! is_array( $value ) || [] === $value ) {
+			$add( 'error', 'api-shapes', "api_shapes.$shape_name.$key must be a non-empty array." );
+		}
+	}
+}
+
+// Every path segment must be a string or int — dig() walks them as array keys.
+foreach ( $shapes as $shape_name => $shape ) {
+	foreach ( (array) $shape as $key => $value ) {
+		$paths = ( 'paths' === $key ) ? (array) $value : [ $value ];
+		foreach ( $paths as $path ) {
+			foreach ( (array) $path as $segment ) {
+				if ( ! is_string( $segment ) && ! is_int( $segment ) ) {
+					$add( 'error', 'api-shapes', "api_shapes.$shape_name.$key contains a path segment that is neither string nor int." );
+				}
+			}
+		}
 	}
 }
 
