@@ -122,8 +122,13 @@ class Pet_Hydrator {
 				}
 			}
 
+			// Priming necessarily runs before hydration, so there is no entity
+			// to read here. Take the provider's key name from the declaration
+			// rather than writing it out — bonded_pet_ids already maps it.
+			$config   = self::get_config();
+			$bonded   = $config['api_fields']['bonded_pet_ids']['api_key'] ?? 'grouped_pet_ids';
 			$api_data = self::get_api_data( $id );
-			foreach ( (array) ( $api_data['grouped_pet_ids'] ?? [] ) as $ps_id ) {
+			foreach ( (array) ( $api_data[ $bonded ] ?? [] ) as $ps_id ) {
 				$ps_id = (int) $ps_id;
 				if ( $ps_id > 0 ) {
 					$partner_ids[] = $ps_id;
@@ -514,14 +519,14 @@ class Pet_Hydrator {
 			'adoption_title' => sprintf( /* translators: %s: pet name */ __( 'Adopt %s', 'shelterkit-pets' ), $entity['name'] ?? '' ),
 			'adoption_fee_formatted' => self::compute_formatted_fee( $entity ),
 			'has_adoption_info' => ! empty( $entity['adoption_fee'] ) || ! empty( $entity['adoption_form_url'] ),
-			'gallery' => self::compute_gallery( $id ),
-			'gallery_count' => count( self::compute_gallery( $id ) ),
+			'gallery' => self::compute_gallery( $id, $entity ),
+			'gallery_count' => count( self::compute_gallery( $id, $entity ) ),
 			'is_new' => self::compute_is_new( $id, $post ),
 			'favorited' => in_array( $id, \Petsync_Helpers::get_favorites(), true ),
 			'description' => wp_kses_post( wpautop( $post->post_content ) ),
 			'videos' => self::compute_videos( $entity ),
-			'is_bonded_pair' => self::compute_is_bonded_pair( $id ),
-			'bonded_pair_names' => self::compute_bonded_pair_names( $id ),
+			'is_bonded_pair' => self::compute_is_bonded_pair( $entity ),
+			'bonded_pair_names' => self::compute_bonded_pair_names( $id, $entity ),
 			'special_needs_summary' => self::compute_special_needs_summary( $entity ),
 			default => null,
 		};
@@ -623,7 +628,7 @@ class Pet_Hydrator {
 		return $fee ? '$' . number_format( (float) $fee, 0 ) : '';
 	}
 
-	private static function compute_gallery( int $id ): array {
+	private static function compute_gallery( int $id, array $entity = [] ): array {
 		// Hand-curated images win, mirroring the precedence the scalar fields
 		// use. Without this a pet with no provider gets only its featured
 		// image, however many photos the shelter has.
@@ -640,7 +645,7 @@ class Pet_Hydrator {
 		return array_map(
 			fn( $img ) => [
 				'url' => $img['image']['url'] ?? '',
-				'alt' => $api_data['name'] ?? '',
+				'alt' => $entity['name'] ?? '',
 			],
 			$images
 		);
@@ -693,10 +698,8 @@ class Pet_Hydrator {
 	 *
 	 * Reads from the hydrated entity's bonded_group_id (sourced from API JSON).
 	 */
-	private static function compute_is_bonded_pair( int $id ): bool {
-		$api_data = self::get_api_data( $id );
-		$group_id = $api_data['group_id'] ?? null;
-		return ! empty( $group_id );
+	private static function compute_is_bonded_pair( array $entity ): bool {
+		return ! empty( $entity['bonded_group_id'] );
 	}
 
 	/**
@@ -710,15 +713,18 @@ class Pet_Hydrator {
 	 *
 	 * Returns an array of [ 'id' => local_post_id|null, 'name' => string ].
 	 */
-	private static function compute_bonded_pair_names( int $id ): array {
-		$api_data = self::get_api_data( $id );
-		$group_id = $api_data['group_id'] ?? null;
-		if ( empty( $group_id ) ) {
+	private static function compute_bonded_pair_names( int $id, array $entity ): array {
+		if ( empty( $entity['bonded_group_id'] ) ) {
 			return [];
 		}
 
-		$ps_ids    = $api_data['grouped_pet_ids'] ?? [];
-		$own_ps_id = (int) ( $api_data['id'] ?? 0 );
+		$ps_ids = $entity['bonded_pet_ids'] ?? [];
+
+		// Our own meta key, not the provider's `id`. The record id is already
+		// stored under _pet_ps_id by the sync, so there is no reason to reach
+		// back into the raw snapshot for it.
+		$config    = self::get_config();
+		$own_ps_id = (int) get_post_meta( $id, ( $config['meta_prefix'] ?? '_pet_' ) . 'ps_id', true );
 
 		$partners = [];
 		if ( is_array( $ps_ids ) ) {
@@ -742,7 +748,7 @@ class Pet_Hydrator {
 
 		// Fall back to siblings_names from API.
 		if ( empty( $partners ) ) {
-			$siblings_str = $api_data['siblings_names'] ?? '';
+			$siblings_str = $entity['bonded_names'] ?? '';
 			if ( $siblings_str ) {
 				$parts = array_map( 'trim', explode( ',', $siblings_str ) );
 				foreach ( $parts as $part ) {
