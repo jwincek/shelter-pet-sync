@@ -212,8 +212,15 @@ function petsync_init(): void {
 	require_once PETSYNC_DIR . 'includes/class-petsync-rest.php';
 	add_action( 'rest_api_init', [ 'Petsync_REST', 'register_routes' ] );
 
+	// Export. Petsync\Export\* resolves through the autoloader above —
+	// includes/export/class-schema.php and friends — so nothing needs requiring.
+	if ( defined( 'WP_CLI' ) && WP_CLI ) {
+		\WP_CLI::add_command( 'shelterkit', \Petsync\Export\CLI::class );
+	}
+
 	// Admin & Sync (admin only).
 	if ( is_admin() ) {
+		new \Petsync\Export\Admin();
 		new Petsync_Admin();
 		new Petsync_Pet_Fields();
 		new Petsync_Kennel_Cards();
