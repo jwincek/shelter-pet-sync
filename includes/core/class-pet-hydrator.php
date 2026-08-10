@@ -339,7 +339,19 @@ class Pet_Hydrator {
 
 			if ( null === $raw ) {
 				$from_api = ( null !== $api_key ) ? $api_data[ $api_key ] ?? null : null;
-				$raw      = $from_api ?? $field_config['default'] ?? '';
+
+				// Value translation applies to the PROVIDER's value only. Meta
+				// is already in our vocabulary — a hand-entered pet whose sex
+				// reads 'Female' must not be run through Adopt-a-Pet's f/m map
+				// and come out unchanged by luck rather than by design.
+				if ( null !== $from_api ) {
+					$from_api = Provider_Map::apply_values(
+						Provider_Map::values( $provider, $field_name ),
+						$from_api
+					);
+				}
+
+				$raw = $from_api ?? $field_config['default'] ?? '';
 			}
 
 			$entity[ $field_name ] = self::cast_api_value( $raw, $field_config );

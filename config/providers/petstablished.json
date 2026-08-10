@@ -103,5 +103,15 @@
         ]
       ]
     }
-  }
+  },
+  "post": {
+    "title": "name",
+    "content": "description",
+    "private_when": "dont_show_in_public_search"
+  },
+  "appends": {
+    "secondary_breed": "pet_breed",
+    "secondary_color": "pet_color"
+  },
+  "identity": "id"
 }

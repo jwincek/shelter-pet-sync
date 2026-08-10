@@ -280,12 +280,47 @@ if ( $attr_tax && ! in_array( $attr_tax, $registered_tax, true ) ) {
 
 // A provider's taxonomies map drives every single-value term the sync writes.
 // An unregistered target means wp_set_object_terms() silently writes nothing.
+// A value map translates a provider's vocabulary into ours ('f' => 'Female').
+// A malformed one is silent: apply_values() simply matches nothing and the raw
+// provider value passes through, so 'f' becomes a pet_sex term called "f".
+$check_values = static function ( $values, string $where ) use ( $add ): void {
+	if ( ! is_array( $values ) || [] === $values ) {
+		$add( 'error', 'providers', "$where declares an empty or non-array 'values' — it would translate nothing." );
+		return;
+	}
+	$seen = [];
+	foreach ( $values as $from => $to ) {
+		if ( ! is_string( $to ) || '' === trim( $to ) ) {
+			$add( 'error', 'providers', "$where maps '$from' to an empty or non-string value." );
+		}
+		// apply_values() matches case- and whitespace-insensitively, so two
+		// keys differing only in case would make the winner arbitrary.
+		$norm = strtolower( trim( (string) $from ) );
+		if ( isset( $seen[ $norm ] ) ) {
+			$add( 'error', 'providers', "$where has two 'values' keys that differ only in case or whitespace ('{$seen[ $norm ]}' and '$from') — matching is case-insensitive, so which one wins is arbitrary." );
+		}
+		$seen[ $norm ] = $from;
+	}
+};
+
 foreach ( $providers as $pslug => $pmap ) {
 	$tax_source_map = (array) ( $pmap['taxonomies'] ?? [] );
 	if ( empty( $tax_source_map ) ) {
 		$add( 'error', 'providers', "providers/$pslug.json has no taxonomies map — a sync from it would assign no single-value terms at all." );
 	}
-	foreach ( $tax_source_map as $src_key => $tax ) {
+	foreach ( $tax_source_map as $src_key => $cfg ) {
+		// Either a bare taxonomy slug or { "to": …, "values": { … } }.
+		if ( is_string( $cfg ) ) {
+			$tax = $cfg;
+		} elseif ( is_array( $cfg ) && isset( $cfg['to'] ) && is_string( $cfg['to'] ) ) {
+			$tax = $cfg['to'];
+			if ( array_key_exists( 'values', $cfg ) ) {
+				$check_values( $cfg['values'], "providers/$pslug.json taxonomies.$src_key" );
+			}
+		} else {
+			$add( 'error', 'providers', "providers/$pslug.json taxonomies.$src_key must be a taxonomy slug or an object with a 'to'." );
+			continue;
+		}
 		if ( ! in_array( $tax, $registered_tax, true ) ) {
 			$add( 'error', 'providers', "providers/$pslug.json maps '$src_key' => '$tax', which is not registered in taxonomies.json." );
 		}
@@ -295,12 +330,52 @@ foreach ( $providers as $pslug => $pmap ) {
 // at runtime — the hydrator simply never finds the field and leaves it '', which
 // looks exactly like a provider that does not carry it.
 foreach ( $providers as $pslug => $pmap ) {
+	// Checked against api_fields + fields ONLY, not $valid_fields. A computed
+	// field is derived from other data, so the hydrator never looks for it in a
+	// provider response — mapping 'description' (computed from post_content)
+	// looked valid against $valid_fields and hydrated nothing.
+	$mappable = array_merge(
+		array_keys( (array) ( $entity['api_fields'] ?? [] ) ),
+		array_keys( (array) ( $entity['fields'] ?? [] ) )
+	);
 	foreach ( (array) ( $pmap['fields'] ?? [] ) as $field => $cfg ) {
-		if ( ! in_array( $field, $valid_fields, true ) ) {
-			$add( 'error', 'providers', "providers/$pslug.json maps '$field', which is not a declared entity field — it would hydrate nothing." );
+		if ( ! in_array( $field, $mappable, true ) ) {
+			$hint = in_array( $field, $computed_keys, true )
+				? " — it is a computed field, derived rather than read from a response"
+				: '';
+			$add( 'error', 'providers', "providers/$pslug.json maps '$field', which is not a declared entity field$hint — it would hydrate nothing." );
 		}
 		if ( empty( $cfg['from'] ) || ! is_string( $cfg['from'] ) ) {
 			$add( 'error', 'providers', "providers/$pslug.json field '$field' needs a non-empty string 'from'." );
+		}
+		if ( array_key_exists( 'values', (array) $cfg ) ) {
+			$check_values( $cfg['values'], "providers/$pslug.json fields.$field" );
+		}
+	}
+}
+
+// The post section drives post_title / post_content / post_status, and appends
+// add a second term to a taxonomy. Both are provider keys, so only the roles and
+// targets can be checked here — but a missing title or content key is fatal:
+// every synced pet would come in called "Unnamed Pet" with an empty body.
+foreach ( $providers as $pslug => $pmap ) {
+	$post_keys = (array) ( $pmap['post'] ?? [] );
+	foreach ( [ 'title', 'content' ] as $role ) {
+		if ( empty( $post_keys[ $role ] ) || ! is_string( $post_keys[ $role ] ) ) {
+			$add( 'error', 'providers', "providers/$pslug.json declares no post.$role — every pet synced from it would have an empty post_$role." );
+		}
+	}
+	foreach ( array_keys( $post_keys ) as $role ) {
+		if ( ! in_array( $role, [ 'title', 'content', 'private_when' ], true ) ) {
+			$add( 'warning', 'providers', "providers/$pslug.json declares post.$role, which the sync does not read." );
+		}
+	}
+	if ( empty( $pmap['identity'] ) || ! is_string( $pmap['identity'] ) ) {
+		$add( 'error', 'providers', "providers/$pslug.json declares no 'identity' — the sync could not tell one pet from another, and every sync would re-create every pet." );
+	}
+	foreach ( (array) ( $pmap['appends'] ?? [] ) as $src => $tax ) {
+		if ( ! in_array( $tax, $registered_tax, true ) ) {
+			$add( 'error', 'providers', "providers/$pslug.json appends '$src' to '$tax', which is not registered in taxonomies.json." );
 		}
 	}
 }
@@ -564,13 +639,17 @@ if ( empty( $consumed ) ) {
 }
 // attribute_terms needs no entry here: it is keyed on canonical field names,
 // and the api_key behind each one is already recorded by the loop above.
-// computed_sources[] literal in get_retained_api_keys().
-if ( preg_match( '/\$computed_sources\s*=\s*array\((.*?)\);/s', $sync_src, $m ) ) {
-	preg_match_all( "/'([a-z_]+)'/", $m[1], $cm );
-	foreach ( $cm[1] as $k ) {
-		$consumed[ $k ] = true;
-	}
+// computed_sources is no longer a literal list — it is derived from the same
+// provider map, so record what that derivation yields: the identity key, the
+// post title key, and the root segment of each declared shape path.
+$pmap_for_sync             = $providers[ $sync_provider ] ?? [];
+$consumed[ (string) ( $pmap_for_sync['identity'] ?? '' ) ]      = true;
+$consumed[ (string) ( $pmap_for_sync['post']['title'] ?? '' ) ] = true;
+$consumed[ (string) ( $pmap_for_sync['shapes']['images']['list'][0] ?? '' ) ] = true;
+foreach ( (array) ( $pmap_for_sync['shapes']['intake_date']['paths'] ?? [] ) as $path ) {
+	$consumed[ (string) ( ( (array) $path )[0] ?? '' ) ] = true;
 }
+unset( $consumed[''] );
 // Taxonomy source keys, from the same provider map.
 foreach ( array_keys( (array) ( $providers[ $sync_provider ]['taxonomies'] ?? [] ) ) as $k ) {
 	$consumed[ $k ] = true;

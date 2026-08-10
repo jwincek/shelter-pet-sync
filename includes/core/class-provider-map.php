@@ -119,11 +119,83 @@ class Provider_Map {
 	/**
 	 * Provider key => taxonomy slug.
 	 *
+	 * An entry is either a bare slug or an object carrying a value map:
+	 *
+	 *     "primary_breed": "pet_breed"
+	 *     "sex": { "to": "pet_sex", "values": { "f": "Female", "m": "Male" } }
+	 *
+	 * Both forms normalise to the same thing here, so callers that only want to
+	 * know where a key lands need no special case.
+	 *
 	 * @param string $slug Provider slug.
 	 * @return array<string, string>
 	 */
 	public static function taxonomies( string $slug ): array {
-		return (array) ( self::get( $slug )['taxonomies'] ?? array() );
+		$out = array();
+		foreach ( (array) ( self::get( $slug )['taxonomies'] ?? array() ) as $source => $cfg ) {
+			if ( is_string( $cfg ) ) {
+				$out[ $source ] = $cfg;
+			} elseif ( is_array( $cfg ) && ! empty( $cfg['to'] ) && is_string( $cfg['to'] ) ) {
+				$out[ $source ] = $cfg['to'];
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * The value map for one field or taxonomy source, if it declares one.
+	 *
+	 * Renaming a field is not enough for every provider. Adopt-a-Pet sends sex
+	 * as 'f' / 'm', and the pet_sex taxonomy holds Female / Male — a difference
+	 * an `api_key` cannot express. Putting the translation in config rather than
+	 * reaching for a PHP callback is deliberate: "config could not express it"
+	 * is exactly how the ten hardcoded provider keys in #33 got written.
+	 *
+	 * @param string $slug  Provider slug.
+	 * @param string $field Canonical field name, or a taxonomy source key.
+	 * @return array<string, string>
+	 */
+	public static function values( string $slug, string $field ): array {
+		$map = self::get( $slug );
+
+		$from_field = $map['fields'][ $field ]['values'] ?? null;
+		if ( is_array( $from_field ) ) {
+			return $from_field;
+		}
+
+		$from_taxonomy = $map['taxonomies'][ $field ]['values'] ?? null;
+		return is_array( $from_taxonomy ) ? $from_taxonomy : array();
+	}
+
+	/**
+	 * Translate one raw provider value through a value map.
+	 *
+	 * Matching is case- and whitespace-insensitive because Adopt-a-Pet
+	 * aggregates from many upstream shelter systems and its own documentation
+	 * warns of "inconsistent data formatting" between them.
+	 *
+	 * An unmatched value passes through unchanged rather than blanking. A
+	 * surprise value then shows up as itself — visible, and correctable in the
+	 * map — where blanking would silently discard real data and look identical
+	 * to a field the provider never sent.
+	 *
+	 * @param array<string, string> $values Value map.
+	 * @param mixed                 $raw    Raw provider value.
+	 * @return mixed
+	 */
+	public static function apply_values( array $values, mixed $raw ): mixed {
+		if ( array() === $values || ! is_scalar( $raw ) || is_bool( $raw ) ) {
+			return $raw;
+		}
+
+		$needle = strtolower( trim( (string) $raw ) );
+		foreach ( $values as $from => $to ) {
+			if ( strtolower( trim( (string) $from ) ) === $needle ) {
+				return $to;
+			}
+		}
+
+		return $raw;
 	}
 
 	/**
@@ -134,6 +206,98 @@ class Provider_Map {
 	 */
 	public static function shapes( string $slug ): array {
 		return (array) ( self::get( $slug )['shapes'] ?? array() );
+	}
+
+	/**
+	 * The provider keys that drive the WP_Post itself rather than post meta:
+	 * `title`, `content`, and `private_when` (a truthy value drafts the pet).
+	 *
+	 * These are not entity fields — post_title and post_content are columns, and
+	 * the entity reads them back through the `description` computed field — so
+	 * they cannot be expressed in `fields`. They were the last hardcoded
+	 * provider keys in the sync.
+	 *
+	 * @param string $slug Provider slug.
+	 * @return array<string, string>
+	 */
+	public static function post_keys( string $slug ): array {
+		$out = array();
+		foreach ( (array) ( self::get( $slug )['post'] ?? array() ) as $role => $key ) {
+			if ( is_string( $key ) && '' !== $key ) {
+				$out[ $role ] = $key;
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * Provider key => taxonomy that its value is APPENDED to, alongside whatever
+	 * the primary source already set. Petstablished sends a secondary breed and
+	 * colour; a provider with only one of each declares nothing here.
+	 *
+	 * @param string $slug Provider slug.
+	 * @return array<string, string>
+	 */
+	public static function appends( string $slug ): array {
+		$out = array();
+		foreach ( (array) ( self::get( $slug )['appends'] ?? array() ) as $key => $taxonomy ) {
+			if ( is_string( $taxonomy ) && '' !== $taxonomy ) {
+				$out[ $key ] = $taxonomy;
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * The key holding the provider's own record ID — what gets stored as
+	 * _pet_ps_id and matched against on the next sync.
+	 *
+	 * @param string $slug Provider slug.
+	 */
+	public static function identity_key( string $slug ): string {
+		$key = self::get( $slug )['identity'] ?? '';
+		return is_string( $key ) ? $key : '';
+	}
+
+	/**
+	 * Walk a declared path into a response.
+	 *
+	 * @param array<mixed> $data Response data.
+	 * @param array<mixed> $path Path segments.
+	 * @return mixed
+	 */
+	public static function dig( array $data, array $path ): mixed {
+		$value = $data;
+		foreach ( $path as $segment ) {
+			if ( ! is_array( $value ) || ! array_key_exists( $segment, $value ) ) {
+				return null;
+			}
+			$value = $value[ $segment ];
+		}
+		return $value;
+	}
+
+	/**
+	 * The first photo URL in a raw response, via the provider's declared images
+	 * shape.
+	 *
+	 * The sync had this path written out as a literal —
+	 * `$data['images'][0]['image']['url']` — duplicating the shape the hydrator
+	 * already reads from config. Two copies of one provider's nesting is exactly
+	 * the coupling #33 catalogued.
+	 *
+	 * @param array<mixed> $data Raw response for one pet.
+	 * @param string       $slug Provider slug.
+	 */
+	public static function first_image_url( array $data, string $slug ): string {
+		$shape = self::shapes( $slug )['images'] ?? array();
+		if ( empty( $shape['list'] ) || empty( $shape['url'] ) ) {
+			return '';
+		}
+
+		$url = self::dig( $data, array_merge( (array) $shape['list'], array( 0 ), (array) $shape['url'] ) );
+
+		return is_string( $url ) ? $url : '';
 	}
 
 	/**
