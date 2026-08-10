@@ -147,6 +147,29 @@ final class ExportTest extends PetTestCase {
 		$this->assertSame( Schema::columns( Schema::PORTABLE ), $header );
 	}
 
+	/**
+	 * @return array{headers: string[], rows: array<int, string[]>}
+	 */
+	private function parse_csv( string $csv ): array {
+		$handle = fopen( 'php://temp', 'r+' );
+		fwrite( $handle, $csv );
+		rewind( $handle );
+
+		$headers = fgetcsv( $handle, 0, ',', '"', '' );
+		$rows    = array();
+		while ( ( $row = fgetcsv( $handle, 0, ',', '"', '' ) ) !== false ) {
+			if ( array( null ) !== $row ) {
+				$rows[] = $row;
+			}
+		}
+		fclose( $handle );
+
+		return array(
+			'headers' => (array) $headers,
+			'rows'    => $rows,
+		);
+	}
+
 	public function test_a_pets_values_survive_the_round_trip_to_csv(): void {
 		$id = $this->make_manual_pet();
 		wp_update_post(
@@ -159,10 +182,14 @@ final class ExportTest extends PetTestCase {
 		update_post_meta( $id, $this->prefix . 'ok_with_dogs', 'yes' );
 		\Petsync\Core\Pet_Hydrator::flush_cache();
 
-		$csv    = Exporter::to_csv( array( $id ) );
-		$lines  = array_filter( explode( "\n", trim( $csv ) ) );
-		$header = str_getcsv( array_shift( $lines ), ',', '"', '\\' );
-		$row    = array_combine( $header, str_getcsv( array_shift( $lines ), ',', '"', '\\' ) );
+		$csv = Exporter::to_csv( array( $id ) );
+
+		// Parsed with a real CSV reader, not by splitting on newlines: a
+		// description is quoted and may legitimately contain one, so a line
+		// split tears a single record into pieces. That is precisely what a CSV
+		// parser exists to handle, and what this format is for.
+		$parsed = $this->parse_csv( $csv );
+		$row    = array_combine( $parsed['headers'], $parsed['rows'][0] );
 
 		$this->assertSame( 'Pepper', $row['name'] );
 		$this->assertSame( '985141000123456', $row['microchip_id'] );
