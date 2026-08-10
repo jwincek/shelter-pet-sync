@@ -342,23 +342,6 @@
         "coat_length": "pet_coat"
       },
       "attribute_taxonomy": "pet_attribute",
-      "attribute_map": {
-        "is_ok_with_other_dogs": "good-with-dogs",
-        "is_ok_with_other_cats": "good-with-cats",
-        "is_ok_with_other_kids": "good-with-kids",
-        "shots_up_to_date": "shots-current",
-        "is_spayed": "spayed-neutered",
-        "is_housebroken": "housebroken",
-        "has_special_need": "special-needs",
-        "is_hypoallergenic": "hypoallergenic",
-        "declawed": "declawed"
-      },
-      "attribute_truthy_values": [
-        "yes",
-        "Yes",
-        "1",
-        "true"
-      ],
       "computed": {
         "image": {
           "function": "get_image",
@@ -557,7 +540,19 @@
         "housebroken",
         "hypoallergenic",
         "declawed"
-      ]
+      ],
+      "_comment_attribute_terms": "Canonical field -> pet_attribute term slug. Applied AFTER hydration, against the resolved tristate, so the term and the field can never disagree. Replaced attribute_map, which was keyed on provider field names and read raw API data — a second derivation that silently dropped non-string values and never ran at all for hand-entered pets.",
+      "attribute_terms": {
+        "ok_with_dogs": "good-with-dogs",
+        "ok_with_cats": "good-with-cats",
+        "ok_with_kids": "good-with-kids",
+        "shots_current": "shots-current",
+        "spayed_neutered": "spayed-neutered",
+        "housebroken": "housebroken",
+        "has_special_needs": "special-needs",
+        "hypoallergenic": "hypoallergenic",
+        "declawed": "declawed"
+      }
     }
   }
 }

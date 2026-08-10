@@ -623,8 +623,6 @@ class Petsync_Sync {
 				$keys[] = $field['api_key'];
 			}
 		}
-		$keys = array_merge( $keys, array_keys( $config['attribute_map'] ?? array() ) );
-
 		// Read straight from the snapshot by Pet_Hydrator compute_* methods:
 		// images          → compute_image() / compute_gallery()
 		// name            → compute_gallery() (image alt text)
@@ -724,7 +722,7 @@ class Petsync_Sync {
 	/**
 	 * Single-value taxonomy mappings: raw API key → taxonomy.
 	 *
-	 * Lives in entities.json alongside attribute_map, its direct sibling, so a
+	 * Lives in entities.json alongside attribute_terms, its direct sibling, so a
 	 * future provider can remap which of its fields feed the standard taxonomies
 	 * without touching PHP. Also consumed by get_consumed_api_keys() so the
 	 * change-detection hash covers every key listed here.
@@ -757,35 +755,12 @@ class Petsync_Sync {
 			wp_set_object_terms( $post_id, sanitize_text_field( $data['secondary_color'] ), 'pet_color', true );
 		}
 
-		// Boolean attributes → pet_attribute taxonomy terms.
-		$this->update_attribute_terms( $post_id, $data );
+		// Boolean attributes → pet_attribute taxonomy terms. Derived from the
+		// hydrated entity rather than from $data, so the term and the canonical
+		// field cannot disagree — see CPT_Registry::sync_attribute_terms().
+		\Petsync\Core\CPT_Registry::sync_attribute_terms( $post_id );
 	}
 
-	/**
-	 * Assign pet_attribute taxonomy terms based on boolean API fields.
-	 *
-	 * Reads the attribute_map from entities.json config to map API fields
-	 * to taxonomy term slugs. A pet gets a term if its API value is truthy.
-	 * The full term set is replaced each sync (not appended) so removed
-	 * attributes are correctly cleared.
-	 */
-	private function update_attribute_terms( int $post_id, array $data ): void {
-		$config    = \Petsync\Core\Config::get_path( 'entities', 'entities.vcps_pet', [] );
-		$attr_map  = $config['attribute_map'] ?? [];
-		$truthy    = $config['attribute_truthy_values'] ?? [ 'yes', 'Yes', '1', 'true' ];
-		$truthy_lc = array_map( 'strtolower', $truthy );
-
-		$terms = [];
-		foreach ( $attr_map as $api_key => $term_slug ) {
-			$value = $data[ $api_key ] ?? '';
-			if ( is_string( $value ) && in_array( strtolower( $value ), $truthy_lc, true ) ) {
-				$terms[] = $term_slug;
-			}
-		}
-
-		// Replace all attribute terms (false = not append).
-		wp_set_object_terms( $post_id, $terms, 'pet_attribute', false );
-	}
 
 	/**
 	 * Set or update the featured image from the API's primary photo.

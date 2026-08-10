@@ -192,22 +192,6 @@ class Petsync_Helpers {
 		return (bool) $value;
 	}
 
-	public static function get_gallery( int $id ): array {
-		$api_data = self::get_api_data( $id );
-		$images   = $api_data['images'] ?? [];
-		if ( empty( $images ) || ! is_array( $images ) ) {
-			return array();
-		}
-		return array_map(
-			function ( $img ) use ( $api_data ) {
-				return array(
-					'url' => $img['image']['url'] ?? '',
-					'alt' => $api_data['name'] ?? '',
-				);
-			},
-			$images
-		);
-	}
 
 	// === Taxonomy Queries ===
 
