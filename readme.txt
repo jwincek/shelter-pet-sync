@@ -4,7 +4,7 @@ Tags: pets, adoption, animal shelter, rescue, animals
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,18 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 
 == Changelog ==
 
+= 1.1.0 =
+* Renamed to ShelterKit Pets. Stored data is unaffected — placed blocks, pets, and their details all carry over.
+* New: import pets from a spreadsheet. Pets → Import takes a CSV, matches your column headings loosely so you need not rename anything, and shows a preview before writing. Re-uploading a corrected sheet updates rather than duplicates.
+* New: export pets to CSV or JSON from Pets → Export, in the same format the importer reads.
+* New: `wp shelterkit migrate`, so a database upgrade can be run deliberately with `--dry-run` first.
+* New: a notice when your adoption platform stops listing an animal, so a pet that quietly vanishes from the feed is visible.
+* Pet photos are now capped at 1600px and generate only the sizes the plugin renders, cutting the media a shelter stores by about 39%. Existing photos are untouched.
+* Fixed: a portable export left out every pet's description. If you took an export before this release, please re-export.
+* Fixed: the photo lightbox could open behind the page.
+* Fixed: hand-entered pets did not appear in compatibility filtering.
+* Kennel-card printing now requires the Editor role.
+
 = 1.0.0 =
 * Initial public release.
 * Printable kennel cards from Pets → Kennel Cards, in three sizes, with the card design editable as a block template part.
@@ -126,6 +138,9 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 * Built on the WordPress Abilities API and Block Bindings.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+The plugin is renamed to ShelterKit Pets. Your pets, photos and placed blocks carry over untouched. If you have taken a CSV or JSON export before now, re-export it — descriptions were missing from the portable format.
 
 = 1.0.0 =
 Initial public release.

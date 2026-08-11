@@ -7,6 +7,86 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-11
+
+Renamed to **ShelterKit Pets**. The slug, text domain and main plugin file all
+changed with it; the plugin's internal naming (`Petsync\`, `PETSYNC_`) and every
+stored identifier — post type, taxonomies, meta keys, option names, cron hooks
+and all 21 block names — deliberately did not, so no placed block or stored
+record is affected.
+
+### Added
+- **Import pets from CSV.** Pets → Import, and `wp shelterkit import`. Column
+  headings are matched loosely, so "Good with dogs?" finds the right field and a
+  shelter's existing spreadsheet needs no renaming. A preview shows exactly what
+  will be added, changed or skipped — including any heading that could not be
+  placed — and nothing is written until it is confirmed. Re-uploading a corrected
+  sheet updates rather than duplicates, matching on microchip number. Imported
+  pets count as hand-entered, so a later sync never overwrites or unpublishes
+  them.
+- **Export pets to CSV and JSON.** Pets → Export, and `wp shelterkit export`.
+  Two modes: `portable` re-imports, `full` includes computed fields for reading.
+  Both use the same column schema as the importer, so an export can be edited in
+  a spreadsheet and imported straight back.
+- **`wp shelterkit migrate`**, so a database upgrade is deliberate and
+  observable rather than firing on whichever page load happens to be first.
+  `--dry-run` names every pending migration without writing. The rail no longer
+  runs automatically under WP-CLI; web traffic still triggers it as before.
+- **Provider vocabulary moved into `config/providers/<slug>.json`.** Adding a
+  platform is adding a file, not editing PHP. Maps can rename a field, translate
+  a value (Adopt-a-Pet sends sex as `f`/`m`), invert a polarity, and declare
+  nested response paths.
+- Fixture-backed maps for **Adopt-a-Pet** and **RescueGroups.org**, neither
+  verified against a live account and both marked as such in the file. They exist
+  to prove the provider layer is general, not to be shipped to a shelter.
+- **A notice when the provider goes dark.** Pets carry `_pet_last_seen`, so a
+  feed that stops returning an animal is visible rather than silent.
+- **Read abilities offered to MCP clients** via `meta.mcp.public`, after the read
+  surface was covered by tests.
+- Pet gallery images can be managed from the dashboard.
+- A test suite: 248 integration and unit tests at this release.
+
+### Changed
+- **Image sizes are budgeted.** A sideloaded photo is capped at 1600px on its
+  longest edge and generates only the three sizes the plugin actually renders,
+  cutting the pet media footprint by 39%. Filterable via
+  `petsync_max_image_edge` and `petsync_rendered_image_sizes`. Existing
+  attachments are untouched.
+- **CSV is written and read as RFC 4180** — quotes doubled, no backslash escape —
+  which is what Excel and Google Sheets both produce and consume.
+- Kennel-card printing now requires `edit_others_posts` rather than being
+  available to any author.
+- The canonical field vocabulary is frozen, with two renames carried by a
+  migration and one block-binding alias kept for compatibility.
+
+### Fixed
+- **A portable export omitted every pet's description.** `description` is
+  computed from the post content, so it never arrived through the editable-field
+  list — a backup carried all of a pet's data and none of its story, and
+  restoring one produced empty descriptions. Found by the import round-trip.
+  **Anyone holding an export taken before this release should re-export.**
+- **The gallery lightbox opened behind the page.** `position: sticky` always
+  creates a stacking context, even at `z-index: auto`, so a sticky ancestor
+  buried the overlay. Now a native `<dialog>`, whose top layer escapes every
+  stacking context without moving the element.
+- **Hand-entered pets received no compatibility attribute terms**, so they were
+  invisible to filtering while looking correct on their own page. Terms are now
+  derived from the canonical field rather than from raw provider data.
+- **Site Editor customisations survived the renames.** Migrations 4 and 5
+  consolidate template customisations filed under any of the plugin's four
+  previous `wp_theme` namespaces.
+- A negative ID passed to the batch-get ability resolved to a real, unrelated
+  pet, because `absint()` takes the absolute value. Three separate occurrences
+  fixed to `intval()` with a positive filter.
+- The hero crossfade read state where it should have read context.
+- Kennel-card block styles are loaded on the admin screen, so the print sheet
+  is styled.
+
+### Security
+- Visitor favourite and comparison cookies are guarded, and the REST security
+  model is documented at `Petsync_REST::check_permission`.
+- Kennel-card ID parsing and plugin deactivation paths are hardened.
+
 ## [1.0.0] - 2026-07-30
 
 ### Added
