@@ -88,6 +88,36 @@ if (( ${#LEAKED[@]} )); then
 	exit 1
 fi
 
+# The list above is a DENYLIST: it catches the dev paths someone thought of. It
+# could not catch screenshots-draft/, eleven megabytes of untracked working
+# files that rsync swept in because .distignore had never heard of them, on a
+# build made minutes before cutting a release.
+#
+# Every file this plugin ships is committed, so "tracked by git" is the correct
+# invariant, and unlike the list above it holds for paths nobody has invented
+# yet.
+if git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+	TRACKED="$(mktemp)"
+	trap 'rm -f "$TRACKED"' EXIT
+	git -C "$ROOT" ls-files > "$TRACKED"
+
+	UNTRACKED=()
+	while IFS= read -r -d '' f; do
+		rel="${f#"$DEST"/}"
+		grep -Fxq "$rel" "$TRACKED" || UNTRACKED+=("$rel")
+	done < <(find "$DEST" -type f -print0)
+
+	if (( ${#UNTRACKED[@]} )); then
+		echo "Error: ${#UNTRACKED[@]} untracked file(s) reached the build:" >&2
+		printf '  %s\n' "${UNTRACKED[@]:0:10}" >&2
+		(( ${#UNTRACKED[@]} > 10 )) && echo "  ... and $(( ${#UNTRACKED[@]} - 10 )) more" >&2
+		echo "Add them to .distignore, or commit them if they are meant to ship." >&2
+		exit 1
+	fi
+else
+	echo "Warning: not a git work tree — skipping the untracked-file check." >&2
+fi
+
 # Likewise, a missing runtime file would ship a broken plugin.
 MISSING=()
 for f in "$SLUG.php" readme.txt uninstall.php LICENSE config includes blocks; do
