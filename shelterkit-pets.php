@@ -218,6 +218,7 @@ function petsync_init(): void {
 	if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		\WP_CLI::add_command( 'shelterkit', \Petsync\Export\CLI::class );
 		\WP_CLI::add_command( 'shelterkit import', \Petsync\Import\CLI::class );
+		\WP_CLI::add_command( 'shelterkit migrate', \Petsync\CLI\Migrate::class );
 	}
 
 	// Admin & Sync (admin only).
@@ -272,16 +273,36 @@ function petsync_get_migrations(): array {
 }
 
 /**
- * Run any migrations the installed schema version hasn't seen yet.
+ * Run the migration rail.
  *
- * Hooked late on `init` so the CPT (priority 10) and its registered meta
- * (priority 11) both exist before a migration touches pet records.
+ * The single implementation, shared by the automatic `init` pass and
+ * `wp shelterkit migrate`. A second copy would drift, and the thing most worth
+ * not drifting is the rule below about what gets recorded.
+ *
+ * @param bool               $dry_run    Report what would run without running it.
+ * @param callable|null      $reporter   Called as ( int $version, string $event, float $seconds )
+ *                                       where $event is 'start', 'done', 'failed' or 'skipped'.
+ * @param array<int,callable>|null $migrations Override the rail. For tests only — the
+ *                                       failure path decides whether a botched upgrade
+ *                                       retries or is skipped forever, and it cannot be
+ *                                       exercised through the shipped migrations, which
+ *                                       all succeed. Deliberately a parameter rather than
+ *                                       a filter: a filter would let any plugin inject
+ *                                       migrations into this site's schema.
+ * @return array{installed:int, target:int, completed:int, ran:int[], failed:?int}
  */
-function petsync_maybe_upgrade(): void {
+function petsync_run_migrations( bool $dry_run = false, ?callable $reporter = null, ?array $migrations = null ): array {
 	$installed = (int) get_option( 'petsync_db_version', 0 );
+	$result    = array(
+		'installed' => $installed,
+		'target'    => PETSYNC_DB_VERSION,
+		'completed' => $installed,
+		'ran'       => array(),
+		'failed'    => null,
+	);
 
 	if ( $installed >= PETSYNC_DB_VERSION ) {
-		return;
+		return $result;
 	}
 
 	// Record only what actually completed. A migration may signal failure by
@@ -295,21 +316,79 @@ function petsync_maybe_upgrade(): void {
 	// Migrations returning void are unaffected: null is not identical to false.
 	$completed = $installed;
 
-	foreach ( petsync_get_migrations() as $version => $callback ) {
-		if ( $version <= $installed || ! is_callable( $callback ) ) {
+	foreach ( $migrations ?? petsync_get_migrations() as $version => $callback ) {
+		if ( $version <= $installed ) {
 			continue;
 		}
 
-		if ( false === call_user_func( $callback ) ) {
+		if ( ! is_callable( $callback ) ) {
+			if ( $reporter ) {
+				$reporter( $version, 'skipped', 0.0 );
+			}
+			continue;
+		}
+
+		if ( $dry_run ) {
+			$result['ran'][] = $version;
+			if ( $reporter ) {
+				$reporter( $version, 'start', 0.0 );
+			}
+			$completed = $version;
+			continue;
+		}
+
+		if ( $reporter ) {
+			$reporter( $version, 'start', 0.0 );
+		}
+
+		$started = microtime( true );
+		$outcome = call_user_func( $callback );
+		$elapsed = microtime( true ) - $started;
+
+		if ( false === $outcome ) {
+			$result['failed'] = $version;
+			if ( $reporter ) {
+				$reporter( $version, 'failed', $elapsed );
+			}
 			break;
 		}
 
-		$completed = $version;
+		$result['ran'][] = $version;
+		$completed       = $version;
+
+		if ( $reporter ) {
+			$reporter( $version, 'done', $elapsed );
+		}
 	}
 
-	if ( $completed > $installed ) {
+	if ( ! $dry_run && $completed > $installed ) {
 		update_option( 'petsync_db_version', $completed, true );
 	}
+
+	$result['completed'] = $completed;
+
+	return $result;
+}
+
+/**
+ * Run any migrations the installed schema version hasn't seen yet.
+ *
+ * Hooked late on `init` so the CPT (priority 10) and its registered meta
+ * (priority 11) both exist before a migration touches pet records.
+ *
+ * Deliberately does nothing under WP-CLI. Two reasons, and the second is the
+ * one that matters: an operator at a terminal can run `wp shelterkit migrate`
+ * and watch it, which is the whole point of that command existing; and a
+ * multi-second data migration should not fire as a side effect of an unrelated
+ * command like `wp plugin list`. Web traffic still triggers the rail normally,
+ * so a site that is never migrated from the command line still migrates itself.
+ */
+function petsync_maybe_upgrade(): void {
+	if ( defined( 'WP_CLI' ) && WP_CLI ) {
+		return;
+	}
+
+	petsync_run_migrations();
 }
 add_action( 'init', 'petsync_maybe_upgrade', 20 );
 

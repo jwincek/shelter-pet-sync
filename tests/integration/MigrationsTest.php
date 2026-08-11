@@ -442,4 +442,183 @@ final class MigrationsTest extends PetTestCase {
 		$this->assertSame( 'Pepper', get_post_meta( $id, $this->prefix . 'bonded_names', true ) );
 		$this->assertCount( 1, get_post_meta( $id, $this->prefix . 'bonded_names' ) );
 	}
+
+	// ─── The rail runner itself ─────────────────────────────────────────────
+
+	/**
+	 * The rail is the riskiest part of an upgrade and it used to fire on
+	 * whichever page load happened to be first — on a live site, a member of
+	 * the public's. `wp shelterkit migrate` makes it deliberate, and both paths
+	 * share this one implementation so they cannot drift.
+	 */
+	public function test_a_dry_run_reports_every_pending_migration_and_writes_nothing(): void {
+		update_option( 'petsync_db_version', 0, true );
+
+		$result = petsync_run_migrations( true );
+
+		$this->assertSame( 0, $result['installed'] );
+		$this->assertSame( PETSYNC_DB_VERSION, $result['target'] );
+		$this->assertSame( array_keys( petsync_get_migrations() ), $result['ran'] );
+		$this->assertNull( $result['failed'] );
+
+		$this->assertSame(
+			0,
+			(int) get_option( 'petsync_db_version' ),
+			'a dry run that advances the recorded version is not a dry run'
+		);
+	}
+
+	public function test_a_real_run_advances_the_recorded_version(): void {
+		update_option( 'petsync_db_version', 0, true );
+
+		$result = petsync_run_migrations();
+
+		$this->assertSame( PETSYNC_DB_VERSION, $result['completed'] );
+		$this->assertSame( PETSYNC_DB_VERSION, (int) get_option( 'petsync_db_version' ) );
+	}
+
+	public function test_nothing_runs_when_already_up_to_date(): void {
+		update_option( 'petsync_db_version', PETSYNC_DB_VERSION, true );
+
+		$result = petsync_run_migrations();
+
+		$this->assertSame( array(), $result['ran'] );
+		$this->assertNull( $result['failed'] );
+	}
+
+	/**
+	 * The rule the whole rail exists for: a failure records the completed steps
+	 * and stops, so the failed one RETRIES rather than being skipped forever.
+	 *
+	 * Unreachable through the shipped migrations, which all succeed — so the
+	 * rail is injected. Before this design the version advanced unconditionally,
+	 * which made any migration failure both silent and permanent.
+	 */
+	public function test_a_failure_stops_the_rail_and_records_only_what_completed(): void {
+		update_option( 'petsync_db_version', 0, true );
+
+		$ran        = array();
+		$migrations = array(
+			1 => static function () use ( &$ran ) {
+				$ran[] = 1;
+			},
+			2 => static function () use ( &$ran ) {
+				$ran[] = 2;
+				return false;
+			},
+			3 => static function () use ( &$ran ) {
+				$ran[] = 3;
+			},
+		);
+
+		$result = petsync_run_migrations( false, null, $migrations );
+
+		$this->assertSame( array( 1, 2 ), $ran, 'the rail must stop at the failure, not carry on' );
+		$this->assertSame( 2, $result['failed'] );
+		$this->assertSame( array( 1 ), $result['ran'] );
+		$this->assertSame( 1, $result['completed'] );
+		$this->assertSame(
+			1,
+			(int) get_option( 'petsync_db_version' ),
+			'recording 2 would skip the failed migration forever; recording 0 would re-run the one that worked'
+		);
+	}
+
+	/**
+	 * And the retry actually happens: running again re-attempts the failed one
+	 * without repeating the completed one.
+	 */
+	public function test_the_failed_migration_is_retried_and_the_completed_one_is_not(): void {
+		update_option( 'petsync_db_version', 0, true );
+
+		$ran     = array();
+		$fails   = true;
+		$rail    = static function () use ( &$ran, &$fails ): array {
+			return array(
+				1 => static function () use ( &$ran ) {
+					$ran[] = 1;
+				},
+				2 => static function () use ( &$ran, &$fails ) {
+					$ran[] = 2;
+					return $fails ? false : null;
+				},
+			);
+		};
+
+		petsync_run_migrations( false, null, $rail() );
+		$this->assertSame( array( 1, 2 ), $ran );
+
+		$fails = false;
+		petsync_run_migrations( false, null, $rail() );
+
+		$this->assertSame( array( 1, 2, 2 ), $ran, 'migration 1 must not run twice; migration 2 must be retried' );
+		$this->assertSame( 2, (int) get_option( 'petsync_db_version' ) );
+	}
+
+	/**
+	 * A dry run must not execute a migration, only name it.
+	 */
+	public function test_a_dry_run_does_not_call_the_migrations(): void {
+		update_option( 'petsync_db_version', 0, true );
+
+		$called = false;
+		$result = petsync_run_migrations(
+			true,
+			null,
+			array(
+				1 => static function () use ( &$called ) {
+					$called = true;
+				},
+			)
+		);
+
+		$this->assertFalse( $called, 'a dry run that calls the migration is not a dry run' );
+		$this->assertSame( array( 1 ), $result['ran'] );
+	}
+
+	/**
+	 * The reporter is what `wp shelterkit migrate` prints. An upgrade that
+	 * reports nothing is the situation this command exists to end.
+	 */
+	public function test_the_reporter_is_called_for_every_migration(): void {
+		update_option( 'petsync_db_version', 0, true );
+
+		$events = array();
+		petsync_run_migrations(
+			false,
+			static function ( int $version, string $event, float $seconds ) use ( &$events ): void {
+				$events[] = array( $version, $event );
+				// Timings are what tell an operator whether to worry.
+				if ( 'done' === $event ) {
+					self::assertGreaterThanOrEqual( 0.0, $seconds );
+				}
+			}
+		);
+
+		$expected = array_keys( petsync_get_migrations() );
+
+		$this->assertSame( $expected, array_values( array_unique( array_column( $events, 0 ) ) ) );
+		foreach ( $expected as $version ) {
+			$this->assertContains( array( $version, 'start' ), $events, "migration $version never reported starting" );
+			$this->assertContains( array( $version, 'done' ), $events, "migration $version never reported finishing" );
+		}
+	}
+
+	/**
+	 * Every migration on the rail needs a line explaining what it does, because
+	 * the operator reading `--dry-run` on a live site is deciding whether to
+	 * proceed. A version added without one is a blank line in that output.
+	 */
+	public function test_every_migration_has_an_operator_facing_description(): void {
+		$described = ( new \ReflectionClass( \Petsync\CLI\Migrate::class ) )->getConstant( 'DESCRIPTIONS' );
+
+		foreach ( array_keys( petsync_get_migrations() ) as $version ) {
+			$this->assertArrayHasKey(
+				$version,
+				(array) $described,
+				"migration $version has no description, so --dry-run would not say what it does"
+			);
+			$this->assertNotSame( '', trim( (string) $described[ $version ] ) );
+		}
+	}
 }
