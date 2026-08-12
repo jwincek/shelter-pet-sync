@@ -306,10 +306,19 @@ class Pet_Hydrator {
 		$api_fields = $config['api_fields'] ?? [];
 		$provider   = Provider_Map::for_pet( $id );
 		$editable   = $config['editable_fields'] ?? [];
+		// Deliberately NOT filtered by $include_fields.
+		//
+		// Computed fields are derived from this entity, so filtering here left
+		// them deriving from a partial one: `summary` and `grid` request
+		// is_bonded_pair without requesting bonded_group_id, so every pet in a
+		// listing grid computed as not bonded and lost its badge. The output is
+		// filtered to $include_fields at the end instead, which costs a few
+		// get_post_meta() calls against an already-primed cache and makes that
+		// whole class of bug impossible rather than fixed once.
+		//
+		// The expensive work — image lookups, bonded-partner queries — is in the
+		// computed loop below, which IS still filtered.
 		foreach ( $api_fields as $field_name => $field_config ) {
-			if ( $include_fields && ! in_array( $field_name, $include_fields, true ) ) {
-				continue;
-			}
 			// The provider's spelling comes from its map, not from the entity.
 			// Null means there is no snapshot value to read: either this
 			// provider does not carry the field, or the pet is hand-authored
@@ -391,6 +400,25 @@ class Pet_Hydrator {
 				continue;
 			}
 			$entity[ $field_name ] = self::compute_field( $id, $post, $entity, $field_name, $comp_config );
+		}
+
+		// Now narrow to what was asked for. Done here rather than while
+		// hydrating so every computed field above saw a complete entity.
+		// array_intersect_key preserves $entity's order, which is the declared
+		// config order, so the returned shape is stable.
+		if ( $include_fields ) {
+			// The `…Slug` twins ride along with their taxonomy name and are
+			// never named in a shape — see the comment where they are set. A
+			// plain intersection drops them, which silently breaks the listing
+			// grid's filtering rather than anything visible.
+			$keep = $include_fields;
+			foreach ( $include_fields as $field_name ) {
+				if ( isset( $entity[ $field_name . 'Slug' ] ) ) {
+					$keep[] = $field_name . 'Slug';
+				}
+			}
+
+			$entity = array_intersect_key( $entity, array_flip( $keep ) );
 		}
 
 		return $entity;
