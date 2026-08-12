@@ -4,7 +4,7 @@ Tags: pets, adoption, animal shelter, rescue, animals
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,9 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 
 == Changelog ==
 
+= 1.1.1 =
+* Fixed: "Bonded Pair" badges were missing from pet listings, sliders and the favourites modal. The badge showed on an animal's own page but nowhere else, so a bonded pair looked adoptable separately in exactly the places visitors browse. Affects sites upgraded to 1.1.0; no data was lost and no re-sync is needed.
+
 = 1.1.0 =
 * Renamed to ShelterKit Pets. Stored data is unaffected — placed blocks, pets, and their details all carry over.
 * New: import pets from a spreadsheet. Pets → Import takes a CSV, matches your column headings loosely so you need not rename anything, and shows a preview before writing. Re-uploading a corrected sheet updates rather than duplicates.
@@ -138,6 +141,9 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 * Built on the WordPress Abilities API and Block Bindings.
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Fixes missing "Bonded Pair" badges in pet listings. If you have bonded pairs and upgraded to 1.1.0, update — the badge is currently missing everywhere except each animal's own page.
 
 = 1.1.0 =
 The plugin is renamed to ShelterKit Pets. Your pets, photos and placed blocks carry over untouched. If you have taken a CSV or JSON export before now, re-export it — descriptions were missing from the portable format.

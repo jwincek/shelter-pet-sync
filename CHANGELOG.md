@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-08-11
+
+### Fixed
+- **Bonded-pair badges vanished from listing grids, sliders and favourites
+  modals.** A bonded pet showed its badge on its own page and nowhere else, so
+  the two animals looked adoptable separately in exactly the places a visitor
+  browses.
+
+  `summary` and `grid` request the computed `is_bonded_pair` and
+  `bonded_pair_names` but not the api_fields they are derived from, and
+  hydration narrowed api_fields to the shape *before* computing. Those fields
+  therefore derived from a partial entity and always resolved to false.
+  Introduced in 1.1.0 by the provider-decoupling work, which moved the
+  computation from the always-present API snapshot onto the shape-filtered
+  entity.
+
+  Fixed structurally rather than per-field: api_fields hydrate in full and the
+  output is narrowed at the end, so a computed field always sees a complete
+  entity. Measured at 0.7ms per pet and zero extra queries for a 60-pet grid.
+
 ## [1.1.0] - 2026-08-11
 
 Renamed to **ShelterKit Pets**. The slug, text domain and main plugin file all
