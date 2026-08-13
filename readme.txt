@@ -4,7 +4,7 @@ Tags: pets, adoption, animal shelter, rescue, animals
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,11 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 
 == Changelog ==
 
+= 1.2.0 =
+* New: the kennel card design now previews against a real animal while you edit it, instead of showing an empty card. Choose which animal from Pets → Kennel Cards.
+* Fixed: printed kennel cards broke words across lines — "Spayed/Neutere d". Reprinted cards will look correct.
+* Fixed: sharing a comparison link showed "Compare Pets (0)" and cleared the recipient's own saved comparison. Their list is now left alone, and the count matches what is on screen.
+
 = 1.1.1 =
 * Fixed: "Bonded Pair" badges were missing from pet listings, sliders and the favourites modal. The badge showed on an animal's own page but nowhere else, so a bonded pair looked adoptable separately in exactly the places visitors browse. Affects sites upgraded to 1.1.0; no data was lost and no re-sync is needed.
 
@@ -141,6 +146,9 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 * Built on the WordPress Abilities API and Block Bindings.
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Fixes two visitor-facing bugs. Sharing a comparison link used to clear the recipient's own saved comparison list, and printed kennel cards broke words across lines. Both are fixed; reprint any cards made with 1.1.x.
 
 = 1.1.1 =
 Fixes missing "Bonded Pair" badges in pet listings. If you have bonded pairs and upgraded to 1.1.0, update — the badge is currently missing everywhere except each animal's own page.
