@@ -55,16 +55,6 @@ async function shot( page, selector, file, opts = {} ) {
 	const browser = await chromium.launch( { channel: 'chrome' } );
 	const ctx = await browser.newContext( { viewport: { width: 1400, height: 1000 }, deviceScaleFactor: 2 } );
 
-	// Comparison state is a cookie, so it can be seeded rather than clicked.
-	if ( COMPARE_IDS.length ) {
-		await ctx.addCookies( [ {
-			name: 'pet_comparison',
-			value: JSON.stringify( COMPARE_IDS.map( Number ) ),
-			domain: 'vchs-test.local',
-			path: '/',
-		} ] );
-	}
-
 	const page = await ctx.newPage();
 
 	await page.goto( `${ SITE }/wp-login.php`, { waitUntil: 'domcontentloaded' } );
@@ -136,13 +126,25 @@ async function shot( page, selector, file, opts = {} ) {
 		await shot( page, '.interface-complementary-area, .editor-sidebar', 'screenshot-5.png', { settle: 1200 } );
 	}
 
-	// 6. Side-by-side comparison, seeded via the cookie above.
+	// 6. Side-by-side comparison.
+	//
+	// The block returns early unless ?compare= is present — see
+	// blocks/pet-comparison/render.php:17 — and Petsync_Helpers::get_comparison()
+	// reads that parameter at HIGHEST priority, ahead of user meta and the
+	// cookie. Seeding the cookie alone, as this script used to, could never work:
+	// the early return never looked at it.
 	if ( COMPARE_IDS.length ) {
-		await page.goto( `${ SITE }/adopt/pets/?sort=name-asc`, { waitUntil: 'networkidle' } );
-		await page.waitForTimeout( 1500 );
-		const ok = await shot( page, '.pet-comparison, .wp-block-petsync-pet-comparison', 'screenshot-6.png', { settle: 1200 } );
+		await page.goto( `${ SITE }/adopt/pets/?compare=${ COMPARE_IDS.join( ',' ) }`, {
+			waitUntil: 'networkidle',
+		} );
+		const ok = await shot(
+			page,
+			'.pet-comparison, .wp-block-petsync-pet-comparison',
+			'screenshot-6.png',
+			{ settle: 1200 }
+		);
 		if ( ! ok ) {
-			console.log( '  (comparison block not rendered on the archive)' );
+			console.log( '\t(comparison block not present in the archive template)' );
 		}
 	}
 

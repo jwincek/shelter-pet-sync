@@ -99,6 +99,24 @@ class Petsync_Helpers {
 
 	// === Favorites Storage ===
 
+	/**
+	 * Whether the comparison list came from the URL rather than from the
+	 * visitor's own saved state.
+	 *
+	 * get_comparison() ranks the URL above user meta above the cookie. Only the
+	 * request that carries `?compare=` can see it, so anything asking the server
+	 * again — a REST call from the browser, say — gets a strictly worse answer
+	 * and must not be allowed to overwrite what was already seeded.
+	 *
+	 * @since 1.2.0
+	 */
+	public static function comparison_is_from_url(): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- reading a public, read-only display parameter, exactly as get_comparison() does.
+		$raw = isset( $_GET['compare'] ) ? sanitize_text_field( wp_unslash( $_GET['compare'] ) ) : '';
+
+		return '' !== trim( $raw );
+	}
+
 	public static function get_favorites(): array {
 		if ( is_user_logged_in() ) {
 			$data = get_user_meta( get_current_user_id(), '_pet_favorites', true );
