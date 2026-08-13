@@ -34,6 +34,11 @@ straight arrows stay legible all the way down.
 The badge sits clear of the paw pad rather than overlapping it — at 128px an
 overlap reads as a collision instead of a deliberate badge.
 
+The title is `ShelterKit Pets`, three characters longer than the name the banner
+was originally drawn for. It still fits, but with less headroom than before — if
+the name ever grows again, check the render rather than assuming, because the
+title has no wrapping and will simply run off the canvas.
+
 Text in `banner.svg` is live text, not outlines, so it depends on the rendering
 machine having Helvetica or Arial. If you regenerate on a machine without
 either, check the output before committing: a fallback font will change the
