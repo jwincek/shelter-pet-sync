@@ -96,3 +96,13 @@
 		transition: none;
 	}
 }
+
+/* See the note in blocks/pet-health/style.css: themes that set
+ * `word-break: break-word` collapse these labels' min-content width to a single
+ * character, so a narrow card breaks them mid-word.
+ */
+.pet-attributes__label,
+.pet-attributes__value {
+	word-break: normal;
+	overflow-wrap: break-word;
+}

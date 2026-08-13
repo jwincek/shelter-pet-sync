@@ -23,6 +23,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Petsync_Kennel_Cards {
 
+	/**
+	 * Nonce action for the one write on this otherwise read-only screen.
+	 */
+	private const PREVIEW_NONCE = 'petsync_preview_pet';
+
 	private const PAGE_SLUG = 'petsync-kennel-cards';
 	private const PART_SLUG = 'kennel-card';
 
@@ -127,7 +132,81 @@ class Petsync_Kennel_Cards {
 			return;
 		}
 
+		$this->maybe_save_preview_pet();
 		$this->render_selection();
+	}
+
+	/**
+	 * Store which pet stands in while the card design is edited.
+	 *
+	 * The rest of this screen is deliberately read-only and GET-driven, so this
+	 * is the one place on it that writes — and therefore the one place that
+	 * needs a nonce.
+	 */
+	private function maybe_save_preview_pet(): void {
+		if ( empty( $_POST['petsync_set_preview_pet'] ) ) {
+			return;
+		}
+
+		check_admin_referer( self::PREVIEW_NONCE );
+
+		// intval, not absint: absint( -17 ) is 17, a real and unrelated pet.
+		// The same trap this codebase has already fixed three times.
+		$pet_id = isset( $_POST['petsync_preview_pet'] )
+			? (int) sanitize_text_field( wp_unslash( $_POST['petsync_preview_pet'] ) )
+			: 0;
+
+		if ( $pet_id > 0 && 'vcps_pet' === get_post_type( $pet_id ) ) {
+			update_option( \Petsync\Core\Editor_Preview::OPTION, $pet_id );
+		} else {
+			delete_option( \Petsync\Core\Editor_Preview::OPTION );
+		}
+	}
+
+	/**
+	 * Choose the pet the Site Editor previews the card with.
+	 *
+	 * Worth being on this screen rather than in Settings: the pet you preview
+	 * and the pets you print are the same list, and the reason to change it is
+	 * always something you noticed on a card — a name that wraps, an animal
+	 * with no photo, a fee that is blank.
+	 *
+	 * @param \WP_Post[] $pets Pets currently listed for printing.
+	 */
+	private function render_preview_picker( array $pets ): void {
+		$current = \Petsync\Core\Editor_Preview::preview_pet();
+		$stored  = (int) get_option( \Petsync\Core\Editor_Preview::OPTION, 0 );
+		?>
+		<form method="post" action="" class="petsync-kennel__preview">
+			<?php wp_nonce_field( self::PREVIEW_NONCE ); ?>
+			<label for="petsync_preview_pet">
+				<?php esc_html_e( 'Design the card using:', 'shelterkit-pets' ); ?>
+			</label>
+			<select name="petsync_preview_pet" id="petsync_preview_pet">
+				<option value="0">
+					<?php
+					printf(
+						/* translators: %s: the pet chosen automatically. */
+						esc_html__( 'First available pet (%s)', 'shelterkit-pets' ),
+						esc_html( $current ? $current->post_title : __( 'none yet', 'shelterkit-pets' ) )
+					);
+					?>
+				</option>
+				<?php foreach ( $pets as $pet ) : ?>
+					<option value="<?php echo (int) $pet->ID; ?>" <?php selected( $stored, $pet->ID ); ?>>
+						<?php echo esc_html( $pet->post_title ); ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+			<button type="submit" name="petsync_set_preview_pet" value="1" class="button">
+				<?php esc_html_e( 'Use this pet', 'shelterkit-pets' ); ?>
+			</button>
+			<p class="description">
+				<?php esc_html_e( 'Editing the card design shows this pet\'s details, so you can see what a real card looks like. It changes nothing about what gets printed.', 'shelterkit-pets' ); ?>
+				<?php esc_html_e( 'Pick an animal with a photo, a fee and health details if you want to see every field filled in.', 'shelterkit-pets' ); ?>
+			</p>
+		</form>
+		<?php
 	}
 
 	/**
@@ -152,6 +231,8 @@ class Petsync_Kennel_Cards {
 			<p class="description">
 				<?php esc_html_e( 'Choose the pets to print. Every card uses the Kennel Card design — edit that once and all cards follow it.', 'shelterkit-pets' ); ?>
 			</p>
+
+			<?php $this->render_preview_picker( $pets ); ?>
 
 			<?php if ( ! $this->get_card_template() ) : ?>
 				<div class="notice notice-error">

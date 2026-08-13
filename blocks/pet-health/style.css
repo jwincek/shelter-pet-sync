@@ -100,3 +100,28 @@
 .pet-health__item--unknown .pet-health__status {
 	color: #4b5563;
 }
+
+/* Wrapping.
+ *
+ * These pills inherit whatever the theme sets, and several themes set
+ * `word-break: break-word`. That makes the label's min-content width ONE
+ * CHARACTER (measured: 9.6px for "Spayed/Neutered"), so a flex item is free to
+ * shrink to nothing and the text breaks mid-word — printed kennel cards read
+ * "Spayed/Neutere / d" and "YE / S".
+ *
+ * `word-break: normal` undoes that. `overflow-wrap: break-word` keeps a
+ * last-resort break for a genuinely too-narrow line WITHOUT affecting
+ * intrinsic sizing, which is the whole difference between it and `anywhere`
+ * (measured: 114.7px vs 9.6px min-content).
+ */
+.pet-health__label,
+.pet-health__status {
+	word-break: normal;
+	overflow-wrap: break-word;
+}
+
+/* A three-letter status must never break. */
+.pet-health__status {
+	white-space: nowrap;
+	flex-shrink: 0;
+}

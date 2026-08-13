@@ -159,6 +159,43 @@ class Petsync_Blocks {
 		return is_scalar( $value ) ? (string) $value : null;
 	}
 
+	/**
+	 * The preview pet's fields, for the editor's binding source.
+	 *
+	 * Localised rather than fetched so getValues() can stay synchronous — a
+	 * binding source that resolves asynchronously renders empty and then pops,
+	 * which on a design surface reads as a bug.
+	 *
+	 * Scalars only. A binding writes into a block attribute, so anything that is
+	 * not a string has nowhere to go, and shipping the arrays would put a pet's
+	 * whole gallery into an inline script for no benefit.
+	 *
+	 * @return array{label: string, id: int, fields: array<string, string>}
+	 */
+	private function get_preview_binding_data(): array {
+		$pet = \Petsync\Core\Editor_Preview::preview_pet();
+
+		$data = array(
+			'label'  => __( 'Pet Data', 'shelterkit-pets' ),
+			'id'     => $pet ? $pet->ID : 0,
+			'fields' => array(),
+		);
+
+		if ( ! $pet ) {
+			return $data;
+		}
+
+		foreach ( (array) \Petsync\Core\Pet_Hydrator::get( $pet->ID, 'full' ) as $key => $value ) {
+			if ( is_bool( $value ) ) {
+				$data['fields'][ $key ] = $value ? __( 'Yes', 'shelterkit-pets' ) : __( 'No', 'shelterkit-pets' );
+			} elseif ( is_scalar( $value ) ) {
+				$data['fields'][ $key ] = (string) $value;
+			}
+		}
+
+		return $data;
+	}
+
 	private function get_placeholder( string $key ): string {
 		$placeholders = array(
 			'status' => __( '[Status]', 'shelterkit-pets' ),
@@ -339,6 +376,23 @@ class Petsync_Blocks {
 			true
 		);
 
+		// Editor-side resolution for petsync/pet-data bindings. Without this the
+		// editor shows a bound block's saved content, which on the kennel card
+		// is empty — see Editor_Preview for why the server cannot cover this.
+		wp_enqueue_script(
+			self::NAMESPACE . '-bindings-editor',
+			PETSYNC_URL . 'assets/js/bindings-editor.js',
+			array( 'wp-blocks' ),
+			PETSYNC_VERSION,
+			true
+		);
+
+		wp_add_inline_script(
+			self::NAMESPACE . '-bindings-editor',
+			'window.petsyncPreviewPet = ' . wp_json_encode( $this->get_preview_binding_data() ) . ';',
+			'before'
+		);
+
 		// Slider block editor controls.
 		wp_enqueue_script(
 			self::NAMESPACE . '-slider-editor',
@@ -414,7 +468,7 @@ class Petsync_Blocks {
 			'shots_current'        => 'Shots Current (tristate)',
 			'spayed_neutered'      => 'Spayed/Neutered (tristate)',
 			'housebroken'          => 'Housebroken (tristate)',
-			'has_special_needs'        => 'Has Special Needs (tristate)',
+			'has_special_needs'    => 'Has Special Needs (tristate)',
 			'hypoallergenic'       => 'Hypoallergenic (tristate)',
 			'declawed'             => 'Declawed (tristate)',
 		);
