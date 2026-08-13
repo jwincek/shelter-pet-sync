@@ -30,7 +30,6 @@ const EDIT_ID = process.argv[ 5 ] || '';
 // The single-pet shot needs a real pet's slug, which differs per site. Derived
 // from WP_URL rather than hardcoded so this runs against any install.
 const FEATURED = process.env.WP_FEATURED_SLUG || 'test-pet';
-const HOST = new URL( SITE ).hostname;
 
 const HIDE = `
   #wpadminbar, #wpfooter, .notice, .update-nag, #screen-meta, #screen-meta-links,
@@ -64,18 +63,6 @@ async function shot( page, selector, file, opts = {} ) {
 		viewport: { width: 1400, height: 1000 },
 		deviceScaleFactor: 2,
 	} );
-
-	// Comparison state is a cookie, so it can be seeded rather than clicked.
-	if ( COMPARE_IDS.length ) {
-		await ctx.addCookies( [
-			{
-				name: 'pet_comparison',
-				value: JSON.stringify( COMPARE_IDS.map( Number ) ),
-				domain: HOST,
-				path: '/',
-			},
-		] );
-	}
 
 	const page = await ctx.newPage();
 
@@ -162,7 +149,27 @@ async function shot( page, selector, file, opts = {} ) {
 			await close.click();
 			await page.waitForTimeout( 800 );
 		}
-		// Expand the plugin's own panels.
+		// Show exactly what the caption promises — "adoption fee, health and
+		// temperament in grouped panels" — and nothing else.
+		//
+		// Expanding all five pushed Health and Good with above the fold of the
+		// sidebar's OWN scroll container, so the capture came out showing Adoption
+		// and an empty Media panel: the two the caption does not mention. An
+		// element screenshot captures the box, not the scrolled content, so the fix
+		// is to collapse what is not wanted and scroll back to the top.
+		const WANTED = [ 'Health', 'Good with', 'Adoption' ];
+
+		// An element screenshot of the sidebar captures its BOX, which is bound by
+		// the viewport — so at the default height the three panels do not fit and
+		// Adoption falls below the fold, which is the one the caption names first.
+		// Give this shot the room, then put the viewport back for the rest.
+		// Wide rather than tall. The sidebar on its own is a ~280px column, so
+		// capturing it alone produced a 560x3820 strip that WordPress.org would
+		// scale down to nothing. Framing the editor WITH its sidebar is both better
+		// proportioned and closer to what the caption says — "in the editor".
+		await page.setViewportSize( { width: 1600, height: 1150 } );
+		await page.waitForTimeout( 400 );
+
 		for ( const label of [
 			'Basics',
 			'Health',
@@ -173,27 +180,71 @@ async function shot( page, selector, file, opts = {} ) {
 			const btn = await page.$(
 				`button.components-panel__body-toggle:has-text("${ label }")`
 			);
-			if ( btn ) {
-				const open = await btn.getAttribute( 'aria-expanded' );
-				if ( open === 'false' ) {
-					await btn.click();
-					await page.waitForTimeout( 300 );
-				}
+			if ( ! btn ) {
+				continue;
+			}
+			const open =
+				( await btn.getAttribute( 'aria-expanded' ) ) === 'true';
+			if ( open !== WANTED.includes( label ) ) {
+				await btn.click();
+				await page.waitForTimeout( 300 );
 			}
 		}
+
+		// Scrolling to the top exposes WordPress's own document panel — featured
+		// image, word count, Status/Slug/Template and a red "Move to trash". None
+		// of that is what the caption is about, and the trash button is the most
+		// prominent thing in the frame.
+		//
+		// The plugin's panels carry `shelterkit-pets-field-panel` (pet-fields.js),
+		// so hide whatever sits above the first one rather than guessing at core's
+		// class names, which move between releases.
+		await page.evaluate( () => {
+			const sidebar = document.querySelector(
+				'.interface-complementary-area, .editor-sidebar'
+			);
+			if ( ! sidebar ) {
+				return;
+			}
+
+			const first = sidebar.querySelector( '.shelterkit-pets-field-panel' );
+			if ( first && first.parentElement ) {
+				let node = first.previousElementSibling;
+				while ( node ) {
+					node.style.display = 'none';
+					node = node.previousElementSibling;
+				}
+			}
+
+			sidebar.scrollTop = 0;
+			sidebar.querySelectorAll( '*' ).forEach( ( c ) => {
+				c.scrollTop = 0;
+			} );
+		} );
+		await page.waitForTimeout( 400 );
+
 		await shot(
 			page,
-			'.interface-complementary-area, .editor-sidebar',
+			'.interface-interface-skeleton, .block-editor__container',
 			'screenshot-5.png',
 			{ settle: 1200 }
 		);
+
+		await page.setViewportSize( { width: 1400, height: 1000 } );
 	}
 
-	// 6. Side-by-side comparison, seeded via the cookie above.
+	// 6. Side-by-side comparison.
+	//
+	// blocks/pet-comparison/render.php returns early unless ?compare= is present,
+	// and Petsync_Helpers::get_comparison() reads that parameter AHEAD of user
+	// meta and the cookie. Seeding a cookie, as this used to, could never work:
+	// the early return never looked at it, so the block rendered nothing and the
+	// shot was silently skipped.
 	if ( COMPARE_IDS.length ) {
-		await page.goto( `${ SITE }/adopt/pets/?sort=name-asc`, {
-			waitUntil: 'networkidle',
-		} );
+		await page.goto(
+			`${ SITE }/adopt/pets/?compare=${ COMPARE_IDS.join( ',' ) }`,
+			{ waitUntil: 'networkidle' }
+		);
 		await page.waitForTimeout( 1500 );
 		const ok = await shot(
 			page,
@@ -202,7 +253,7 @@ async function shot( page, selector, file, opts = {} ) {
 			{ settle: 1200 }
 		);
 		if ( ! ok ) {
-			console.log( '  (comparison block not rendered on the archive)' );
+			console.log( '\t(comparison block not in the archive template)' );
 		}
 	}
 
