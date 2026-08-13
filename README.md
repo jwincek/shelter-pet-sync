@@ -60,6 +60,43 @@ npm run lint:js
 npm run lint:css
 ```
 
+## Releasing
+
+Publishing is one command:
+
+```bash
+git tag v1.2.0 && git push origin v1.2.0
+```
+
+That builds the package, deploys it to WordPress.org, and creates the GitHub
+Release with the installable zip attached.
+
+Before tagging, bump the version everywhere it lives and write the changelogs:
+
+```bash
+php bin/bump-version.php 1.2.0   # header, PETSYNC_VERSION, Stable tag,
+                                 # package.json, and all 21 block.json files
+```
+
+The release workflow refuses to publish if the tag and the plugin header
+disagree, so a tag cut from an unbumped tree fails loudly rather than shipping a
+`Stable tag` that points at code which does not exist.
+
+**Do not create the GitHub Release by hand.** The tag drives everything; a
+release created first cannot have been checked. That is how v1.1.1 came to be
+published with no assets.
+
+### WordPress.org assets
+
+`.wordpress-org/` is synced to SVN `assets/` by the deploy — a *sibling* of
+`trunk/`, not inside it. Banners, icons and `screenshot-N.png` go there and are
+excluded from the plugin zip by `.distignore`, so they never ship to users.
+Screenshot captions pair by number with the `== Screenshots ==` list in
+`readme.txt`; a gap makes captions attach to the wrong image, silently.
+
+The deploy step is skipped until the `SVN_USERNAME` and `SVN_PASSWORD` secrets
+exist, so everything else still runs before the plugin is approved.
+
 ## Architecture
 
 The plugin follows a config-driven, layered architecture:
