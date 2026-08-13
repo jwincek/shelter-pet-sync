@@ -35,7 +35,9 @@ Petstablished is the supported platform today; support for additional shelter-ma
 * Anonymous favorites and side-by-side comparison that work without a login.
 * Toast notifications confirm favorites, comparison, and sharing actions — visible on screen and announced to screen readers.
 
-This plugin is not affiliated with, endorsed by, or sponsored by Petstablished. "Petstablished" is a trademark of its respective owner and is used here only to describe compatibility.
+This plugin is not affiliated with, endorsed by, or sponsored by Petstablished, Adopt-a-Pet, RescueGroups.org, Shelterluv or Petfinder. Those names are trademarks of their respective owners and are used here only to describe compatibility.
+
+Only Petstablished is contacted. The plugin ships field mappings describing how other platforms name their data, so that support for them can be added later, but nothing in this release sends a request to any of them.
 
 == External services ==
 
