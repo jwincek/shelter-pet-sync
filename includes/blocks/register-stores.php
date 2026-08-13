@@ -47,6 +47,11 @@ function register_stores(): void {
 		[
 			'favorites'            => \Petsync_Helpers::get_favorites(),
 			'comparison'           => $comparison,
+			// Tells the client that this list came from the URL and is therefore
+			// authoritative. Without it, comparison.js re-fetches over REST — a
+			// request that cannot carry ?compare= — and overwrites this with the
+			// visitor's own (empty) saved state.
+			'comparisonFromUrl'    => \Petsync_Helpers::comparison_is_from_url(),
 			'comparisonMax'        => 4,
 			'pets'                 => array(),
 			'isLoading'            => false,
