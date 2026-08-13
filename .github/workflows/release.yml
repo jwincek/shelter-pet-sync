@@ -92,6 +92,36 @@ jobs:
           ./bin/build-dist.sh --zip
           ls -l build/*.zip
 
+      # The auto-generated "Source code" archive is the whole repository and is
+      # not installable, so this is what anyone deploying from GitHub actually
+      # wants. --clobber so a re-run replaces rather than fails.
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.ver.outputs.tag }}
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          set -euo pipefail
+          ZIP="build/shelterkit-pets-${VERSION}.zip"
+
+          gh release create "$TAG" \
+            --title "$VERSION" \
+            --notes "See CHANGELOG.md for details." \
+            "$ZIP" \
+          || gh release upload "$TAG" "$ZIP" --clobber
+
+      # LAST, deliberately. The GitHub Release above is the fallback way to
+      # install this plugin, and it must not depend on WordPress.org accepting
+      # anything. Before approval the SVN repository does not exist, so a deploy
+      # attempted with credentials in place FAILS — and when this step ran first,
+      # that failure took the whole job with it and left a tag with no release
+      # attached, which is the exact situation this workflow was written to
+      # prevent.
+      #
+      # SLUG must match what WordPress.org actually assigned at approval, which
+      # is derived from the submitted plugin name and is not guaranteed to be
+      # what we assumed here. Confirm it before adding the secrets.
+      #
       # Deploys build/shelterkit-pets to trunk/ and tags/<version>/, and syncs
       # .wordpress-org/ into SVN assets/ — which is a SIBLING of trunk, not
       # inside it, and is the part everyone gets wrong by hand.
@@ -115,21 +145,3 @@ jobs:
         run: |
           echo "::notice::WordPress.org deploy skipped — SVN_USERNAME and SVN_PASSWORD are not set."
           echo "::notice::The zip is still built and attached to the GitHub Release below."
-
-      # The auto-generated "Source code" archive is the whole repository and is
-      # not installable, so this is what anyone deploying from GitHub actually
-      # wants. --clobber so a re-run replaces rather than fails.
-      - name: Publish the GitHub Release
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.ver.outputs.tag }}
-          VERSION: ${{ steps.ver.outputs.version }}
-        run: |
-          set -euo pipefail
-          ZIP="build/shelterkit-pets-${VERSION}.zip"
-
-          gh release create "$TAG" \
-            --title "$VERSION" \
-            --notes "See CHANGELOG.md for details." \
-            "$ZIP" \
-          || gh release upload "$TAG" "$ZIP" --clobber
