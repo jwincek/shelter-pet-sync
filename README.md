@@ -169,7 +169,24 @@ Business logic lives in **abilities** — thin, testable operations with JSON Sc
 2. Run `composer install && npm install` to set up linting tools.
 3. Make your changes and ensure `composer lint`, `npm run lint:js` and `composer test` pass.
    The integration suite needs the WordPress test library — see `tests/README.md`.
-4. Open a pull request against `main`. The CI workflow will run automatically.
+4. Open a pull request against `main`.
+
+**CI does not start on its own for a first pull request.** GitHub holds workflow
+runs from forks until a maintainer approves them, so an empty checks list on a
+new PR is normal and not something you have done wrong. Once approved, five
+checks must pass before anything can merge:
+
+```
+PHP Coding Standards · Config Contract Validator · JS & CSS Lint
+Build distribution zip · Plugin Check (WordPress.org review suite)
+```
+
+Those checks are required for **everyone**, maintainers included — there is no
+bypass — so running the linters and tests locally first is the fastest route
+through.
+
+Review and merging are done by a maintainer; only maintainers have write access,
+so a pull request cannot be merged by its author.
 
 ## License
 
