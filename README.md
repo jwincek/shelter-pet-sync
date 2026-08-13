@@ -13,10 +13,16 @@ A Petstablished account is optional. Without one, pets are entered in the editor
 
 ## Installation
 
-1. Download or clone this repository into `wp-content/plugins/shelterkit-pets/`.
+1. Download `shelterkit-pets-<version>.zip` from the [latest release](https://github.com/jwincek/shelterkit-pets/releases)
+   and install it via **Plugins → Add New → Upload Plugin**.
 2. Activate the plugin in **Plugins → Installed Plugins**.
-3. Go to **Pets → Add New** and enter an animal.
+3. Go to **Pets → Add New** and enter an animal, or import a spreadsheet from
+   **Pets → Import**.
 4. Add the pet blocks to your pages and templates from the block inserter.
+
+The release zip is the distributable. This repository is not: it carries tests,
+build scripts and CI config that `bin/build-dist.sh` strips out, so cloning it
+into `wp-content/plugins/` ships development files to a live site.
 
 Using Petstablished? Instead of step 3, go to **Pets → Sync Settings**, enter your public key, and click **Sync Now**.
 
@@ -102,15 +108,40 @@ exist, so everything else still runs before the plugin is approved.
 The plugin follows a config-driven, layered architecture:
 
 ```
-config/          → JSON definitions (entities, abilities, post types, schemas)
-includes/core/   → Reusable infrastructure (Config loader, CPT registry, Query builder, Hydrator)
-includes/abilities/ → Ability callbacks registered via the WP 6.9 Abilities API
-blocks/          → Server-rendered blocks with Interactivity API view scripts
-templates/       → Block theme templates (archive-vcps_pet.html, single-vcps_pet.html)
-parts/           → Template parts (pet-floating-ui; kennel-card, the printable card design)
-tests/           → Unit suite (no WordPress) and integration suite (real WordPress + database)
-assets/          → Editor scripts, Interactivity stores, stylesheets
+config/            → JSON definitions (entities, abilities, post types, schemas)
+config/providers/  → One file per shelter platform: how it names things
+includes/core/     → Reusable infrastructure (Config loader, CPT registry, Query builder, Hydrator)
+includes/abilities/→ Ability callbacks registered via the WP 6.9 Abilities API
+includes/import/   → CSV import: header matching, validation, dry run
+includes/export/   → CSV and JSON export, sharing one column schema with the importer
+includes/cli/      → WP-CLI commands
+blocks/            → Server-rendered blocks with Interactivity API view scripts
+templates/         → Block theme templates (archive-vcps_pet.html, single-vcps_pet.html)
+parts/             → Template parts (pet-floating-ui; kennel-card, the printable card design)
+tests/             → Unit suite (no WordPress) and integration suite (real WordPress + database)
+assets/            → Editor scripts, Interactivity stores, stylesheets
+bin/               → build-dist, bump-version, validate-config,
+                     capture-screenshots, install-wp-tests
 ```
+
+### What a pet *is*, and what a platform *calls* it
+
+`config/entities.json` declares the canonical vocabulary — what a pet has.
+`config/providers/<slug>.json` is the only place that knows how one platform
+spells those things: field renames, value translation (`f` → `Female`), polarity
+inversion, and the nested response paths a flat key cannot express.
+
+Adding a platform is adding a file, not editing PHP. `bin/validate-config.php`
+checks every provider map against the entity, so a typo fails the build instead
+of hydrating silently to nothing.
+
+### Config contracts
+
+`bin/validate-config.php` runs in CI and enforces agreements the language cannot:
+that every block binding resolves to a real store member, that the
+change-detection hash covers every field the sync reads, that declared
+Interactivity references exist, and that the version agrees across the plugin
+header, `PETSYNC_VERSION`, `readme.txt` and all 21 `block.json` files.
 
 Business logic lives in **abilities** — thin, testable operations with JSON Schema validation and permission callbacks. Blocks, REST endpoints, and admin UI are thin consumers that delegate to abilities.
 
@@ -118,11 +149,19 @@ Business logic lives in **abilities** — thin, testable operations with JSON Sc
 
 - **Printable kennel cards** — pick animals, choose a size, print. The card's design is a block template part, so it is rearranged in the Site Editor rather than in code, and every field on it is a block binding.
 - **Manual entry** — every field a sync would supply can be typed in the editor, so the plugin works with no platform account at all.
+- **Import from a spreadsheet** — **Pets → Import** takes a CSV, matches column
+  headings loosely so nothing needs renaming, and previews every row before
+  writing. Re-uploading a corrected sheet updates rather than duplicates.
+- **Export to CSV or JSON** in the same format the importer reads, so an export
+  can be edited in a spreadsheet and imported straight back.
 - **Batched sync** with admin progress UI and WP-Cron scheduling.
 - **21 blocks** for pet cards, grids, sliders, filters, galleries, comparison, favorites, adoption CTAs, and more.
 - **Interactivity API** for reactive front-end (favorites, compare, filters, gallery, toast notifications) — no build step required.
 - **Block Bindings** to connect block attributes to pet post meta.
 - **Taxonomy filtering** (species, breed, age, size, gender, color) with URL-driven compatibility meta filters.
+- **WP-CLI**: `wp shelterkit import`, `wp shelterkit export`, and
+  `wp shelterkit migrate` — the last so a database upgrade is deliberate and
+  observable rather than firing on whichever page load happens to be first.
 
 ## Contributing
 
