@@ -212,6 +212,12 @@ function petsync_init(): void {
 	require_once PETSYNC_DIR . 'includes/class-petsync-rest.php';
 	add_action( 'rest_api_init', [ 'Petsync_REST', 'register_routes' ] );
 
+	// Stands a real pet in while the kennel card is designed in the Site
+	// Editor, where there is no queried pet. Scoped to petsync/* block-renderer
+	// requests that carry no post_id, so nothing on the front end and no other
+	// plugin's block preview is affected.
+	\Petsync\Core\Editor_Preview::register();
+
 	// Export and import. Petsync\Export\* and Petsync\Import\* resolve through
 	// the autoloader above — includes/export/class-schema.php and friends — so
 	// nothing needs requiring.

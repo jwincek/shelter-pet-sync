@@ -1,20 +1,28 @@
 name: Release
 
-# CI already builds the zip on every push, but only as a workflow artifact:
-# it expires, and downloading it needs a GitHub login. A release that people
-# are told to deploy from needs the zip attached to the release itself.
+# Publishing is driven entirely by pushing a version tag:
 #
-# v1.1.0 was published with no asset at all, which is what prompted this.
+#   git tag v1.2.0 && git push origin v1.2.0
+#
+# That one command builds the package, deploys it to WordPress.org, and creates
+# the GitHub Release with the installable zip attached.
+#
+# Deliberately NOT `release: published`. That was the previous trigger, and it
+# meant the release had to be created by hand first — so v1.1.1 was published
+# with no assets at all when the version bump had not reached main and the
+# guard below (correctly) refused to attach anything. Driving from the tag means
+# the release cannot exist before the checks have passed.
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
 
-  # So a release published before this workflow existed — or one whose upload
-  # failed — can be fixed without cutting a new tag.
+  # For a tag that was pushed before this workflow existed, or a run that failed
+  # after the tag was already correct. Everything below is idempotent.
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Existing release tag to build and attach to (e.g. v1.1.0)'
+        description: 'Existing tag to build, deploy and attach to (e.g. v1.2.0)'
         required: true
         type: string
 
@@ -22,19 +30,33 @@ permissions:
   contents: write
 
 jobs:
-  attach:
-    name: Build and attach the distribution zip
+  publish:
+    name: Build, deploy to WordPress.org, and attach the zip
     runs-on: ubuntu-latest
 
+    env:
+      # Evaluated at job level so the deploy step's `if` can read it reliably.
+      # Until the secrets exist the deploy is skipped and everything else still
+      # runs, so this is safe to merge before the plugin is approved.
+      HAS_SVN_CREDENTIALS: ${{ secrets.SVN_USERNAME != '' }}
+
     steps:
-      - name: Resolve the tag
-        id: tag
-        run: echo "tag=${{ github.event.release.tag_name || inputs.tag }}" >> "$GITHUB_OUTPUT"
+      - name: Resolve tag and version
+        id: ver
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+          # Git tags are v-prefixed; WordPress.org versions are not. The deploy
+          # action defaults VERSION to the raw tag, which would create SVN
+          # tags/v1.2.0 while `Stable tag: 1.2.0` points at tags/1.2.0 — a
+          # mismatch that silently serves nothing. Strip it once, here.
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
 
       - name: Checkout the tagged code
         uses: actions/checkout@v7
         with:
-          ref: ${{ steps.tag.outputs.tag }}
+          ref: ${{ steps.ver.outputs.tag }}
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -43,42 +65,71 @@ jobs:
 
       # validate-config.php check 8 proves the header, the version constant,
       # readme.txt's Stable tag, package.json and every block.json agree with
-      # EACH OTHER. It cannot know what the release was tagged, so nothing
-      # stops a v1.2.0 tag being cut from a tree that still says 1.1.0 — which
-      # would publish a zip whose Stable tag serves the wrong code.
+      # EACH OTHER. It cannot know what the release was tagged, so nothing else
+      # stops a v1.2.0 tag cut from a tree that still says 1.1.1 — which would
+      # publish a Stable tag pointing at code that does not exist.
       - name: Tag must match the plugin version
         run: |
           set -euo pipefail
-          TAG="${{ steps.tag.outputs.tag }}"
-          TAG_VERSION="${TAG#v}"
           HEADER_VERSION="$(sed -n 's/^ \* Version:[[:space:]]*//p' shelterkit-pets.php | head -1 | tr -d '[:space:]')"
 
-          if [[ "$TAG_VERSION" != "$HEADER_VERSION" ]]; then
-            echo "::error::Release is tagged $TAG but the plugin header says $HEADER_VERSION." >&2
-            echo "Run bin/bump-version.php $TAG_VERSION and re-tag, or tag v$HEADER_VERSION." >&2
+          if [[ "${{ steps.ver.outputs.version }}" != "$HEADER_VERSION" ]]; then
+            echo "::error::Release is tagged ${{ steps.ver.outputs.tag }} but the plugin header says $HEADER_VERSION." >&2
+            echo "Run bin/bump-version.php ${{ steps.ver.outputs.version }} and re-tag, or tag v$HEADER_VERSION." >&2
             exit 1
           fi
-          echo "Tag $TAG matches the plugin version $HEADER_VERSION."
+          echo "Tag ${{ steps.ver.outputs.tag }} matches the plugin version $HEADER_VERSION."
 
       - name: Validate config contracts
         run: php bin/validate-config.php
 
-      # The build script fails if a dev file leaks in or a runtime file goes
-      # missing, so this is a packaging gate and not just an artifact step.
-      - name: Build distribution zip
-        id: build
+      # bin/build-dist.sh fails if a dev file leaks in, if a runtime file goes
+      # missing, or if any untracked file reaches the output — so this is a
+      # packaging gate, not just an artifact step.
+      - name: Build distribution package
         run: |
           set -euo pipefail
-          VERSION="$(./bin/build-dist.sh --zip | tail -1)"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          ./bin/build-dist.sh --zip
           ls -l build/*.zip
 
-      - name: Attach to the release
+      # Deploys build/shelterkit-pets to trunk/ and tags/<version>/, and syncs
+      # .wordpress-org/ into SVN assets/ — which is a SIBLING of trunk, not
+      # inside it, and is the part everyone gets wrong by hand.
+      #
+      # BUILD_DIR points at what the step above produced rather than letting the
+      # action re-derive a package from .distignore, so what WordPress.org
+      # serves is byte-identical to the zip attached to the release below.
+      - name: Deploy to WordPress.org
+        if: env.HAS_SVN_CREDENTIALS == 'true'
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: shelterkit-pets
+          ASSETS_DIR: .wordpress-org
+          BUILD_DIR: build/shelterkit-pets
+          VERSION: ${{ steps.ver.outputs.version }}
+
+      - name: Note when the deploy was skipped
+        if: env.HAS_SVN_CREDENTIALS != 'true'
+        run: |
+          echo "::notice::WordPress.org deploy skipped — SVN_USERNAME and SVN_PASSWORD are not set."
+          echo "::notice::The zip is still built and attached to the GitHub Release below."
+
+      # The auto-generated "Source code" archive is the whole repository and is
+      # not installable, so this is what anyone deploying from GitHub actually
+      # wants. --clobber so a re-run replaces rather than fails.
+      - name: Publish the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.ver.outputs.tag }}
+          VERSION: ${{ steps.ver.outputs.version }}
         run: |
           set -euo pipefail
-          # --clobber so re-running this on an existing release replaces the
-          # asset rather than failing, which is the whole point of the manual
-          # trigger above.
-          gh release upload "${{ steps.tag.outputs.tag }}" build/*.zip --clobber
+          ZIP="build/shelterkit-pets-${VERSION}.zip"
+
+          gh release create "$TAG" \
+            --title "$VERSION" \
+            --notes "See CHANGELOG.md for details." \
+            "$ZIP" \
+          || gh release upload "$TAG" "$ZIP" --clobber
