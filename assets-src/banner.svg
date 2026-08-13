@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 772 250" width="772" height="250" role="img" aria-label="Shelter Pets">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 772 250" width="772" height="250" role="img" aria-label="ShelterKit Pets">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#17A398"/>
@@ -43,7 +43,7 @@
   </g>
 
   <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
-    <text x="248" y="116" fill="#FFFFFF" font-size="58" font-weight="700" letter-spacing="-0.5">Shelter Pets</text>
+    <text x="248" y="116" fill="#FFFFFF" font-size="58" font-weight="700" letter-spacing="-0.5">ShelterKit Pets</text>
     <text x="250" y="156" fill="#BFF0EA" font-size="19" font-weight="400">Your animals on your site — and on the kennel door</text>
     <g font-size="16" font-weight="600" fill="#0B5F59">
       <rect x="250" y="176" width="132" height="30" rx="15" fill="#BFF0EA" opacity="0.95"/>
