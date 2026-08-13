@@ -120,13 +120,25 @@ async function shot( page, selector, file, opts = {} ) {
 	} );
 
 	// 4. A single pet page.
-	await page.goto( `${ SITE }/adopt/pets/${ FEATURED }/`, {
+	//
+	// Captured in a SEPARATE, logged-out context. This shot frames the whole
+	// page including the theme header, and the header carries a "Log out" link
+	// for an authenticated session — which no visitor ever sees, and which is not
+	// the admin bar, so HIDE does not catch it. The pet pages are public, so
+	// there is nothing to log in for.
+	const publicCtx = await browser.newContext( {
+		viewport: { width: 1400, height: 1500 },
+		deviceScaleFactor: 2,
+	} );
+	const publicPage = await publicCtx.newPage();
+	await publicPage.goto( `${ SITE }/adopt/pets/${ FEATURED }/`, {
 		waitUntil: 'networkidle',
 	} );
-	await shot( page, 'main, .wp-site-blocks', 'screenshot-4.png', {
+	await shot( publicPage, 'main, .wp-site-blocks', 'screenshot-4.png', {
 		settle: 1200,
 		cap: { sel: 'main, .wp-site-blocks', h: 1500 },
 	} );
+	await publicCtx.close();
 
 	// 5. Editor sidebar panels — the manual-entry story.
 	if ( EDIT_ID ) {
