@@ -27,6 +27,11 @@ const PRINT_IDS = ( process.argv[ 3 ] || '' ).split( ',' ).filter( Boolean );
 const COMPARE_IDS = ( process.argv[ 4 ] || '' ).split( ',' ).filter( Boolean );
 const EDIT_ID = process.argv[ 5 ] || '';
 
+// The single-pet shot needs a real pet's slug, which differs per site. Derived
+// from WP_URL rather than hardcoded so this runs against any install.
+const FEATURED = process.env.WP_FEATURED_SLUG || 'test-pet';
+const HOST = new URL( SITE ).hostname;
+
 const HIDE = `
   #wpadminbar, #wpfooter, .notice, .update-nag, #screen-meta, #screen-meta-links,
   #wpbody-content > .notice { display: none !important; }
@@ -36,9 +41,11 @@ const HIDE = `
 async function shot( page, selector, file, opts = {} ) {
 	await page.addStyleTag( { content: HIDE } ).catch( () => {} );
 	if ( opts.cap ) {
-		await page.addStyleTag( {
-			content: `${ opts.cap.sel } { max-height: ${ opts.cap.h }px !important; overflow: hidden !important; }`,
-		} ).catch( () => {} );
+		await page
+			.addStyleTag( {
+				content: `${ opts.cap.sel } { max-height: ${ opts.cap.h }px !important; overflow: hidden !important; }`,
+			} )
+			.catch( () => {} );
 	}
 	await page.waitForTimeout( opts.settle || 700 );
 	const el = await page.$( selector );
@@ -53,21 +60,28 @@ async function shot( page, selector, file, opts = {} ) {
 
 ( async () => {
 	const browser = await chromium.launch( { channel: 'chrome' } );
-	const ctx = await browser.newContext( { viewport: { width: 1400, height: 1000 }, deviceScaleFactor: 2 } );
+	const ctx = await browser.newContext( {
+		viewport: { width: 1400, height: 1000 },
+		deviceScaleFactor: 2,
+	} );
 
 	// Comparison state is a cookie, so it can be seeded rather than clicked.
 	if ( COMPARE_IDS.length ) {
-		await ctx.addCookies( [ {
-			name: 'pet_comparison',
-			value: JSON.stringify( COMPARE_IDS.map( Number ) ),
-			domain: 'vchs-test.local',
-			path: '/',
-		} ] );
+		await ctx.addCookies( [
+			{
+				name: 'pet_comparison',
+				value: JSON.stringify( COMPARE_IDS.map( Number ) ),
+				domain: HOST,
+				path: '/',
+			},
+		] );
 	}
 
 	const page = await ctx.newPage();
 
-	await page.goto( `${ SITE }/wp-login.php`, { waitUntil: 'domcontentloaded' } );
+	await page.goto( `${ SITE }/wp-login.php`, {
+		waitUntil: 'domcontentloaded',
+	} );
 	await page.fill( '#user_login', USER );
 	await page.fill( '#user_pass', PASS );
 	await page.click( '#wp-submit' );
@@ -82,9 +96,12 @@ async function shot( page, selector, file, opts = {} ) {
 
 	// 1. Archive with filters. Sorted by name so the "Test Pet" fixture is not
 	//    the first thing on the listing page.
-	await page.goto( `${ SITE }/adopt/pets/?sort=name-asc`, { waitUntil: 'networkidle' } );
+	await page.goto( `${ SITE }/adopt/pets/?sort=name-asc`, {
+		waitUntil: 'networkidle',
+	} );
 	await shot( page, '.pet-listing-grid', 'screenshot-1.png', {
-		settle: 1800, cap: { sel: '.pet-listing-grid', h: 1150 },
+		settle: 1800,
+		cap: { sel: '.pet-listing-grid', h: 1150 },
 	} );
 
 	// 2. Printed kennel cards, four to a sheet.
@@ -94,37 +111,68 @@ async function shot( page, selector, file, opts = {} ) {
 			`${ SITE }/wp-admin/edit.php?post_type=vcps_pet&page=petsync-kennel-cards&view=print&size=index&${ q }`,
 			{ waitUntil: 'networkidle' }
 		);
-		await shot( page, '.petsync-cards', 'screenshot-2.png', { settle: 1500 } );
+		await shot( page, '.petsync-cards', 'screenshot-2.png', {
+			settle: 1500,
+		} );
 	}
 
 	// 3. The picker, mid-selection.
-	await page.goto( `${ SITE }/wp-admin/edit.php?post_type=vcps_pet&page=petsync-kennel-cards`, { waitUntil: 'networkidle' } );
-	const boxes = await page.$$( '.petsync-kennel__picker input[type=checkbox]' );
+	await page.goto(
+		`${ SITE }/wp-admin/edit.php?post_type=vcps_pet&page=petsync-kennel-cards`,
+		{ waitUntil: 'networkidle' }
+	);
+	const boxes = await page.$$(
+		'.petsync-kennel__picker input[type=checkbox]'
+	);
 	for ( let i = 0; i < Math.min( 6, boxes.length ); i++ ) {
 		await boxes[ i ].check();
 	}
-	await shot( page, '.petsync-kennel', 'screenshot-3.png', { settle: 600, cap: { sel: '.petsync-kennel', h: 1100 } } );
+	await shot( page, '.petsync-kennel', 'screenshot-3.png', {
+		settle: 600,
+		cap: { sel: '.petsync-kennel', h: 1100 },
+	} );
 
 	// 4. A single pet page.
-	await page.goto( `${ SITE }/adopt/pets/test-pet/`, { waitUntil: 'networkidle' } );
+	await page.goto( `${ SITE }/adopt/pets/${ FEATURED }/`, {
+		waitUntil: 'networkidle',
+	} );
 	await shot( page, 'main, .wp-site-blocks', 'screenshot-4.png', {
-		settle: 1200, cap: { sel: 'main, .wp-site-blocks', h: 1500 },
+		settle: 1200,
+		cap: { sel: 'main, .wp-site-blocks', h: 1500 },
 	} );
 
 	// 5. Editor sidebar panels — the manual-entry story.
 	if ( EDIT_ID ) {
-		await page.goto( `${ SITE }/wp-admin/post.php?post=${ EDIT_ID }&action=edit`, { waitUntil: 'domcontentloaded' } );
-		await page.waitForSelector( '.edit-post-visual-editor, .editor-visual-editor', { timeout: 45000 } ).catch( () => {} );
+		await page.goto(
+			`${ SITE }/wp-admin/post.php?post=${ EDIT_ID }&action=edit`,
+			{ waitUntil: 'domcontentloaded' }
+		);
+		await page
+			.waitForSelector(
+				'.edit-post-visual-editor, .editor-visual-editor',
+				{ timeout: 45000 }
+			)
+			.catch( () => {} );
 		await page.waitForTimeout( 5000 );
 		// Dismiss the welcome guide if it appears.
-		const close = await page.$( '.components-modal__header button[aria-label*="lose"]' );
+		const close = await page.$(
+			'.components-modal__header button[aria-label*="lose"]'
+		);
 		if ( close ) {
 			await close.click();
 			await page.waitForTimeout( 800 );
 		}
 		// Expand the plugin's own panels.
-		for ( const label of [ 'Basics', 'Health', 'Good with', 'Adoption', 'Media' ] ) {
-			const btn = await page.$( `button.components-panel__body-toggle:has-text("${ label }")` );
+		for ( const label of [
+			'Basics',
+			'Health',
+			'Good with',
+			'Adoption',
+			'Media',
+		] ) {
+			const btn = await page.$(
+				`button.components-panel__body-toggle:has-text("${ label }")`
+			);
 			if ( btn ) {
 				const open = await btn.getAttribute( 'aria-expanded' );
 				if ( open === 'false' ) {
@@ -133,22 +181,40 @@ async function shot( page, selector, file, opts = {} ) {
 				}
 			}
 		}
-		await shot( page, '.interface-complementary-area, .editor-sidebar', 'screenshot-5.png', { settle: 1200 } );
+		await shot(
+			page,
+			'.interface-complementary-area, .editor-sidebar',
+			'screenshot-5.png',
+			{ settle: 1200 }
+		);
 	}
 
 	// 6. Side-by-side comparison, seeded via the cookie above.
 	if ( COMPARE_IDS.length ) {
-		await page.goto( `${ SITE }/adopt/pets/?sort=name-asc`, { waitUntil: 'networkidle' } );
+		await page.goto( `${ SITE }/adopt/pets/?sort=name-asc`, {
+			waitUntil: 'networkidle',
+		} );
 		await page.waitForTimeout( 1500 );
-		const ok = await shot( page, '.pet-comparison, .wp-block-petsync-pet-comparison', 'screenshot-6.png', { settle: 1200 } );
+		const ok = await shot(
+			page,
+			'.pet-comparison, .wp-block-petsync-pet-comparison',
+			'screenshot-6.png',
+			{ settle: 1200 }
+		);
 		if ( ! ok ) {
 			console.log( '  (comparison block not rendered on the archive)' );
 		}
 	}
 
 	// 7. Sync settings.
-	await page.goto( `${ SITE }/wp-admin/edit.php?post_type=vcps_pet&page=shelterkit-pets`, { waitUntil: 'networkidle' } );
-	await shot( page, '.wrap', 'screenshot-7.png', { settle: 800, cap: { sel: '.wrap', h: 1400 } } );
+	await page.goto(
+		`${ SITE }/wp-admin/edit.php?post_type=vcps_pet&page=shelterkit-pets`,
+		{ waitUntil: 'networkidle' }
+	);
+	await shot( page, '.wrap', 'screenshot-7.png', {
+		settle: 800,
+		cap: { sel: '.wrap', h: 1400 },
+	} );
 
 	await browser.close();
 	console.log( 'done' );
