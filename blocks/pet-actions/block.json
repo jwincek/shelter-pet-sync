@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "petsync/pet-actions",
-	"version": "1.1.1",
+	"version": "1.2.0",
 	"title": "Pet Actions",
 	"category": "petsync",
 	"description": "Quick action buttons for favorite, compare, and share.",

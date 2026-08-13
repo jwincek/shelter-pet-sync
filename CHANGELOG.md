@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-13
+
+### Added
+- **The kennel card design previews against a real pet.** Editing it in the Site
+  Editor used to show an empty card — bound fields carry no fallback content and
+  the pet blocks render their nothing-to-show branch — so a newly inserted block
+  looked identical whether it worked or not. A pet now stands in, chosen from a
+  picker on the Kennel Cards screen and defaulting to the first animal you would
+  print.
+
+  Two halves, because bindings and dynamic blocks resolve differently: a shim
+  for server-rendered previews, and the plugin's first JS block-bindings source
+  for the name, photo and URL.
+
+### Fixed
+- **Printed kennel cards broke labels mid-word.** Cards read
+  "Spayed/Neutere / d" and "YE / S". Several themes set
+  `word-break: break-word`, which collapses a label's minimum width to a single
+  character; the card blocks now assert their own wrapping. **Cards printed on
+  1.1.x will look different when reprinted — this is the fix, not a change of
+  design.**
+- **A shared comparison link wiped the visitor's own comparison.** Opening the
+  link the Share button produces showed "Compare Pets (0)" above a full table,
+  and silently cleared whatever the visitor had saved. The client re-fetched the
+  list over a request that cannot carry the `?compare=` parameter, got an empty
+  answer, overwrote the correct state and persisted the emptiness. It now
+  refuses to overwrite a list the URL supplied, and never lets an empty answer
+  clear a list that already exists. Clearing on purpose still works.
+
+### Internal
+- Releases publish from a pushed tag: one command builds the package, deploys it
+  to WordPress.org and attaches the installable zip to the GitHub release. The
+  tag must match the plugin header or nothing is published.
+- The screenshot capture script produces images that match their captions;
+  two shots were previously wrong in ways only visible by looking at them.
+
 ## [1.1.1] - 2026-08-11
 
 ### Fixed

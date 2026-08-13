@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "petsync/pet-toast",
-	"version": "1.1.1",
+	"version": "1.2.0",
 	"title": "Pet Notifications",
 	"category": "petsync",
 	"description": "Floating toast that surfaces favorites, comparison, and sharing confirmations. Add once per page (bundled in the Pet Floating UI template part).",
