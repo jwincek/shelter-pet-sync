@@ -69,6 +69,18 @@ class Petsync_Blocks {
 			)
 		);
 
+		// The shelter's own identity. No pet context: this is the same on every
+		// card, which is exactly why it belongs in a setting rather than typed
+		// into the design — see the placeholder that printed on real cards.
+		register_block_bindings_source(
+			'petsync/shelter',
+			array(
+				'label'              => __( 'Shelter Details', 'shelterkit-pets' ),
+				'get_value_callback' => array( $this, 'get_shelter_binding_value' ),
+				'uses_context'       => array(),
+			)
+		);
+
 		// Adoption statistics — aggregate data for archive/landing pages.
 		register_block_bindings_source(
 			'petsync/adoption-stats',
@@ -78,6 +90,50 @@ class Petsync_Blocks {
 				'uses_context'       => array(),
 			)
 		);
+	}
+
+	/**
+	 * Resolve a shelter-details binding.
+	 *
+	 * Returns '' rather than a prompt when nothing is filled in. A printed card
+	 * is public — the shipped placeholder that told the reader to enter an
+	 * address went out on real cards, and an empty line is strictly better than
+	 * instructions aimed at someone else. The prompt to fill it in belongs on
+	 * the Kennel Cards screen, where the person who can act on it will see it.
+	 *
+	 * @param array<string, mixed> $args Binding args; `key` selects the field.
+	 * @return string
+	 */
+	public function get_shelter_binding_value( array $args ): string {
+		if ( ! class_exists( 'ShelterKit_Profile' ) ) {
+			return '';
+		}
+
+		$key = (string) ( $args['key'] ?? '' );
+
+		switch ( $key ) {
+			case 'address':
+				return \ShelterKit_Profile::address_line();
+
+			case 'contact':
+				// One line for a card that has room for one. Nothing is emitted
+				// at all until there is something worth printing, so a shelter
+				// that has not filled this in gets a clean card rather than a
+				// stray separator.
+				if ( ! \ShelterKit_Profile::has_contact_details() ) {
+					return '';
+				}
+
+				$parts = array_filter(
+					array( \ShelterKit_Profile::address_line(), \ShelterKit_Profile::get( 'phone' ) ),
+					static fn( string $p ): bool => '' !== trim( $p )
+				);
+
+				return implode( ' · ', $parts );
+
+			default:
+				return \ShelterKit_Profile::get( $key );
+		}
 	}
 
 	/**
