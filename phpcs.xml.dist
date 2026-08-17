@@ -69,6 +69,13 @@
 				<element value="Petstablished"/>
 				<element value="petsync"/>
 				<element value="vcps"/>
+				<!-- Not this plugin's prefix, deliberately. includes/shelterkit/
+				     holds files copied byte-identically into the sibling
+				     ShelterKit plugins, so their classes must carry a shared
+				     name rather than this plugin's — the class_exists() guard
+				     that decides which copy wins depends on it. -->
+				<element value="shelterkit"/>
+				<element value="ShelterKit"/>
 			</property>
 		</properties>
 	</rule>

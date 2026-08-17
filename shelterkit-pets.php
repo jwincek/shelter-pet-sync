@@ -229,6 +229,19 @@ function petsync_init(): void {
 
 	// Admin & Sync (admin only).
 	if ( is_admin() ) {
+		// Whichever ShelterKit plugin carries the newest copy renders this
+		// screen. If Events won the negotiation, its menu hosts it and this
+		// call is simply not reached — the class is loaded either way, so
+		// reading the profile works regardless of who owns the UI.
+		if ( class_exists( 'ShelterKit_Profile' ) ) {
+			add_action(
+				'admin_menu',
+				static function (): void {
+					ShelterKit_Profile::add_settings_page( 'edit.php?post_type=vcps_pet' );
+				}
+			);
+		}
+
 		new \Petsync\Export\Admin();
 		new \Petsync\Import\Admin();
 		new Petsync_Admin();
@@ -237,6 +250,14 @@ function petsync_init(): void {
 	}
 	new Petsync_Sync();
 }
+// The shelter profile is a SHARED class, carried byte-identically by every
+// ShelterKit plugin — the Action Scheduler pattern. Registering at file scope
+// (not on a hook) is what lets the registry see every plugin's copy before it
+// picks the highest on plugins_loaded. Nothing here depends on a sibling plugin
+// being installed: alone, this copy simply wins.
+require_once PETSYNC_DIR . 'includes/shelterkit/class-shelterkit-profile-versions.php';
+ShelterKit_Profile_Versions::register( '1.0.0', PETSYNC_DIR . 'includes/shelterkit/class-shelterkit-profile.php' );
+
 add_action( 'plugins_loaded', 'petsync_init' );
 
 /**

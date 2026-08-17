@@ -174,6 +174,15 @@ function vcps_uninstall_site(): bool {
 	// preserve-by-default path keeps its stored data correctly versioned for
 	// a later reinstall.
 	delete_option( 'petsync_db_version' );
+
+	// NOT deleted: shelterkit_organization. The shelter's own name, address and
+	// phone are shared with the other ShelterKit plugins, so removing Pets must
+	// not take them with it — a shelter uninstalling one plugin would silently
+	// blank the contact details on another's output. It is also the kind of
+	// thing someone retypes from memory and gets wrong.
+	//
+	// A shelter removing every ShelterKit plugin leaves one option row behind.
+	// That is the right trade.
 	// Legacy pre-1.0 option names, in case the rename migration never ran.
 	delete_option( 'petstablished_sync_settings' );
 	delete_option( 'petstablished_last_sync' );
