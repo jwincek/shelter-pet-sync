@@ -164,6 +164,31 @@ class Petsync_Kennel_Cards {
 	}
 
 	/**
+	 * Prompt for the shelter's contact details, if the cards would print without.
+	 *
+	 * The card used to carry "Add your shelter's phone, email and address here"
+	 * as its own text, so the instruction printed on every card until someone
+	 * noticed — and on the live site, nobody did. A prompt belongs where the
+	 * person who can act on it is standing, not on a card handed to the public.
+	 */
+	private function render_shelter_details_notice(): void {
+		if ( ! class_exists( 'ShelterKit_Profile' ) || \ShelterKit_Profile::has_contact_details() ) {
+			return;
+		}
+
+		$url = admin_url( 'edit.php?post_type=vcps_pet&page=shelterkit-profile' );
+		?>
+		<div class="notice notice-info">
+			<p>
+				<?php esc_html_e( 'These cards will print without your shelter\'s address or phone number.', 'shelterkit-pets' ); ?>
+				<a href="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'Add your shelter details', 'shelterkit-pets' ); ?></a>
+				<?php esc_html_e( '— entered once, and they appear on every card.', 'shelterkit-pets' ); ?>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Choose the pet the Site Editor previews the card with.
 	 *
 	 * Worth being on this screen rather than in Settings: the pet you preview
@@ -231,6 +256,8 @@ class Petsync_Kennel_Cards {
 			<p class="description">
 				<?php esc_html_e( 'Choose the pets to print. Every card uses the Kennel Card design — edit that once and all cards follow it.', 'shelterkit-pets' ); ?>
 			</p>
+
+			<?php $this->render_shelter_details_notice(); ?>
 
 			<?php $this->render_preview_picker( $pets ); ?>
 
