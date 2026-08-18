@@ -110,8 +110,9 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 3. Choose the animals, choose a size, print. Cards for a whole run of kennels in about a minute.
 4. Every animal gets a full page: photo gallery, health, temperament, and a way to apply.
 5. Add an animal by hand — adoption fee, health and temperament in grouped panels in the editor. No platform account is needed for any of it.
-6. Compare animals side by side, so a family can weigh up two dogs without losing track of either.
-7. Already using Petstablished? Connect it and your listings are imported and kept current on a schedule you choose.
+6. Already keep your animals in a spreadsheet? Upload it and see exactly what will happen before anything is written — every row checked, every column matched, nothing changed until you say so.
+7. Compare animals side by side, so a family can weigh up two dogs without losing track of either.
+8. Already using Petstablished? Connect it and your listings are imported and kept current on a schedule you choose.
 
 == Changelog ==
 
