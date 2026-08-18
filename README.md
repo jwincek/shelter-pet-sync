@@ -72,7 +72,7 @@ Publishing is one command, **run from `main` after the release PR is merged**:
 
 ```bash
 git checkout main && git pull
-git tag v1.3.0 && git push origin v1.3.0
+git tag v1.3.1 && git push origin v1.3.1
 ```
 
 Tagging from the release branch instead produces a tag that points at a commit
@@ -87,7 +87,7 @@ Release with the installable zip attached.
 Before tagging, bump the version everywhere it lives and write the changelogs:
 
 ```bash
-php bin/bump-version.php 1.3.0   # header, PETSYNC_VERSION, Stable tag,
+php bin/bump-version.php 1.3.1   # header, PETSYNC_VERSION, Stable tag,
                                  # package.json, and all 21 block.json files
 ```
 

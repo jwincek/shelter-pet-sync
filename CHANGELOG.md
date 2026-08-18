@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-08-18
+
+### Fixed
+- **The structured-data setting would not save.** Ticking "Search engines" under
+  Pets → Shelter Details appeared to work and was gone on the next page load, so
+  the feature added in 1.3.0 could not actually be switched on.
+
+  The plugin's settings are sanitised through a list of known keys, and that
+  list runs on every write to the option — not only on saves from the settings
+  form — so a setting added on a different screen was discarded on the way in,
+  silently and with no error. **If you tried to turn this on in 1.3.0, turn it
+  on again.**
+
+### Internal
+- The release workflow refuses a tag that is not on `main`. v1.2.0 and v1.3.0
+  were both tagged from their release branch, so they point at commits `main`
+  never took — identical content, but unreachable from the history, and the
+  release page reads "1 commit to main since this release" permanently. The
+  instruction that caused it never said where to tag from; documentation alone
+  did not prevent it, so the workflow now checks.
+
 ## [1.3.0] - 2026-08-17
 
 ### Added
