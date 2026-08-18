@@ -17,7 +17,7 @@
  * or Donations do the same if they are. Any one of them works installed alone.
  *
  * @package ShelterKit
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -26,7 +26,7 @@ if ( ! class_exists( 'ShelterKit_Profile' ) ) {
 
 	class ShelterKit_Profile {
 
-		public const VERSION = '1.0.0';
+		public const VERSION = '1.1.0';
 
 		/**
 		 * Deliberately not prefixed with any one plugin's name. The profile
@@ -215,6 +215,15 @@ if ( ! class_exists( 'ShelterKit_Profile' ) ) {
 				$posted = isset( $_POST['shelterkit_profile'] ) ? (array) wp_unslash( $_POST['shelterkit_profile'] ) : array();
 
 				self::save( $posted );
+
+				/**
+				 * Save anything the host plugin added to this form. The nonce has
+				 * already been verified above.
+				 *
+				 * @since 1.1.0
+				 */
+				do_action( 'shelterkit_profile_saved' );
+
 				$saved = true;
 			}
 
@@ -255,6 +264,20 @@ if ( ! class_exists( 'ShelterKit_Profile' ) ) {
 							</tr>
 						<?php endforeach; ?>
 					</table>
+
+					<?php
+					/**
+					 * Room for the host plugin to add settings that belong beside
+					 * the shelter's identity rather than in its own screen.
+					 *
+					 * Fires inside the form and before the submit button, so a
+					 * listener's fields post with the profile and are saved by the
+					 * same nonce check.
+					 *
+					 * @since 1.1.0
+					 */
+					do_action( 'shelterkit_profile_settings' );
+					?>
 
 					<?php submit_button( __( 'Save shelter details', 'shelterkit-pets' ), 'primary', 'shelterkit_profile_submit' ); ?>
 				</form>

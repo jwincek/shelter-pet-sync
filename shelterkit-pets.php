@@ -218,6 +218,13 @@ function petsync_init(): void {
 	// plugin's block preview is affected.
 	\Petsync\Core\Editor_Preview::register();
 
+	// Structured data. Off unless switched on — this changes what search engines
+	// are told about a site, and where an SEO plugin already describes the
+	// organisation, this refines that rather than emitting a second one.
+	\Petsync\Schema\Animal_Shelter::register();
+	add_action( 'shelterkit_profile_settings', 'petsync_render_schema_setting' );
+	add_action( 'shelterkit_profile_saved', 'petsync_save_schema_setting' );
+
 	// Export and import. Petsync\Export\* and Petsync\Import\* resolve through
 	// the autoloader above — includes/export/class-schema.php and friends — so
 	// nothing needs requiring.
@@ -256,7 +263,59 @@ function petsync_init(): void {
 // picks the highest on plugins_loaded. Nothing here depends on a sibling plugin
 // being installed: alone, this copy simply wins.
 require_once PETSYNC_DIR . 'includes/shelterkit/class-shelterkit-profile-versions.php';
-ShelterKit_Profile_Versions::register( '1.0.0', PETSYNC_DIR . 'includes/shelterkit/class-shelterkit-profile.php' );
+ShelterKit_Profile_Versions::register( '1.1.0', PETSYNC_DIR . 'includes/shelterkit/class-shelterkit-profile.php' );
+
+/**
+ * The structured-data toggle, rendered inside the shared Shelter Details form.
+ *
+ * Lives beside the address it describes rather than on a sync-settings screen,
+ * and says which SEO plugin it detected so the behaviour is not a mystery.
+ */
+function petsync_render_schema_setting(): void {
+	$adapter = \Petsync\Schema\Animal_Shelter::active_adapter();
+	$unknown = \Petsync\Schema\Animal_Shelter::unknown_seo_plugin_active();
+	?>
+	<table class="form-table" role="presentation">
+		<tr>
+			<th scope="row"><?php esc_html_e( 'Search engines', 'shelterkit-pets' ); ?></th>
+			<td>
+				<label>
+					<input type="checkbox" name="petsync_schema_enabled" value="1" <?php checked( \Petsync\Schema\Animal_Shelter::is_enabled() ); ?>>
+					<?php esc_html_e( 'Describe this site as an animal shelter in its structured data', 'shelterkit-pets' ); ?>
+				</label>
+				<p class="description">
+					<?php
+					if ( null !== $adapter ) {
+						printf(
+							/* translators: %s: the SEO plugin's name. */
+							esc_html__( '%s is active, so this refines the organisation it already describes. Nothing extra is added to your pages.', 'shelterkit-pets' ),
+							esc_html( $adapter['label'] )
+						);
+					} elseif ( $unknown ) {
+						esc_html_e( 'An SEO plugin is active that this cannot work with, so nothing will be added — two descriptions of the same organisation are worse than one.', 'shelterkit-pets' );
+					} else {
+						esc_html_e( 'No SEO plugin was detected, so your shelter details will be described on pet pages. Requires an address or phone number above.', 'shelterkit-pets' );
+					}
+					?>
+				</p>
+			</td>
+		</tr>
+	</table>
+	<?php
+}
+
+/**
+ * Save the toggle. The nonce was verified by the profile screen before this runs.
+ */
+function petsync_save_schema_setting(): void {
+	$settings = get_option( 'petsync_settings', array() );
+	$settings = is_array( $settings ) ? $settings : array();
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by ShelterKit_Profile::render_page() before this action fires.
+	$settings[ \Petsync\Schema\Animal_Shelter::SETTING ] = ! empty( $_POST['petsync_schema_enabled'] );
+
+	update_option( 'petsync_settings', $settings );
+}
 
 add_action( 'plugins_loaded', 'petsync_init' );
 
