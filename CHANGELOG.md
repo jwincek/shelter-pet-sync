@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-08-17
+
+### Added
+- **Shelter Details.** The shelter's own name, address, phone, email and website
+  are entered once under **Pets → Shelter Details** and used wherever the
+  shelter identifies itself. Shared with the other ShelterKit plugins, so
+  entering it here fills it in for all of them, and removing one plugin does not
+  take it away from the others.
+- **Optional structured data.** Switched on, the site describes itself to search
+  engines as an animal shelter, with the address entered above. Where an SEO
+  plugin already describes your organisation — SEOPress, Slim SEO or The SEO
+  Framework — it refines what that plugin emits rather than adding a second,
+  competing description. Off by default, and it says which SEO plugin it found.
+
+### Fixed
+- **Printed kennel cards no longer carry the placeholder instruction.** The card
+  shipped with "Add your shelter's phone, email and address here" as part of its
+  design, so it printed on every card until the design was edited by hand. The
+  contact line now comes from Shelter Details, prints nothing at all until those
+  are filled in, and the prompt to fill them in appears on the Kennel Cards
+  screen instead — where the person who can act on it will see it.
+
+  **If you have printed cards, reprint them.** Anyone who has not edited the
+  card design has been handing out cards with that instruction on them.
+
+### Internal
+- The shelter profile is a shared class carried byte-identically by each
+  ShelterKit plugin, with the newest copy winning — so a shelter running two of
+  them gets the newer screen without either depending on the other.
+- Contributing documents that CI waits for approval on a first pull request from
+  a fork, which is otherwise indistinguishable from being ignored.
+
 ## [1.2.0] - 2026-08-13
 
 ### Added

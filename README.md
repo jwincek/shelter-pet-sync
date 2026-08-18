@@ -71,7 +71,7 @@ npm run lint:css
 Publishing is one command:
 
 ```bash
-git tag v1.2.0 && git push origin v1.2.0
+git tag v1.3.0 && git push origin v1.3.0
 ```
 
 That builds the package, deploys it to WordPress.org, and creates the GitHub
@@ -80,7 +80,7 @@ Release with the installable zip attached.
 Before tagging, bump the version everywhere it lives and write the changelogs:
 
 ```bash
-php bin/bump-version.php 1.2.0   # header, PETSYNC_VERSION, Stable tag,
+php bin/bump-version.php 1.3.0   # header, PETSYNC_VERSION, Stable tag,
                                  # package.json, and all 21 block.json files
 ```
 
@@ -115,6 +115,8 @@ includes/abilities/→ Ability callbacks registered via the WP 6.9 Abilities API
 includes/import/   → CSV import: header matching, validation, dry run
 includes/export/   → CSV and JSON export, sharing one column schema with the importer
 includes/cli/      → WP-CLI commands
+includes/schema/   → AnimalShelter JSON-LD, and the per-SEO-plugin adapters
+includes/shelterkit/ → SHARED between ShelterKit plugins; copied, not imported
 blocks/            → Server-rendered blocks with Interactivity API view scripts
 templates/         → Block theme templates (archive-vcps_pet.html, single-vcps_pet.html)
 parts/             → Template parts (pet-floating-ui; kennel-card, the printable card design)
@@ -134,6 +136,17 @@ inversion, and the nested response paths a flat key cannot express.
 Adding a platform is adding a file, not editing PHP. `bin/validate-config.php`
 checks every provider map against the entity, so a typo fails the build instead
 of hydrating silently to nothing.
+
+### Shared files
+
+`includes/shelterkit/` holds files copied **byte-identically** into each
+ShelterKit plugin — the Action Scheduler pattern. Each copy registers its
+version; the highest present is the one loaded. That is why those classes are
+neither namespaced nor prefixed with this plugin's name: `class_exists()` is
+what decides the winner, so every copy must declare the same class.
+
+Edit them here, then copy across. `phpcs.xml.dist` allows the `ShelterKit`
+prefix for that directory alone.
 
 ### Config contracts
 
@@ -159,6 +172,12 @@ Business logic lives in **abilities** — thin, testable operations with JSON Sc
 - **Interactivity API** for reactive front-end (favorites, compare, filters, gallery, toast notifications) — no build step required.
 - **Block Bindings** to connect block attributes to pet post meta.
 - **Taxonomy filtering** (species, breed, age, size, gender, color) with URL-driven compatibility meta filters.
+- **Shelter Details** — the shelter's own name, address, phone and email, entered
+  once and shared with the other ShelterKit plugins. The kennel card binds to it,
+  so the contact line is data rather than text typed into a design.
+- **Optional `AnimalShelter` structured data** — refines the organisation an
+  active SEO plugin already describes (SEOPress, Slim SEO, The SEO Framework)
+  rather than emitting a competing one. Off by default.
 - **WP-CLI**: `wp shelterkit import`, `wp shelterkit export`, and
   `wp shelterkit migrate` — the last so a database upgrade is deliberate and
   observable rather than firing on whichever page load happens to be first.
