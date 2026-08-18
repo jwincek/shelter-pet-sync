@@ -215,4 +215,69 @@ final class AnimalShelterSchemaTest extends PetTestCase {
 
 		$this->assertStringNotContainsString( 'AnimalShelter', $html, 'a duplicate Organization is worse than no refinement' );
 	}
+
+	// ─── The sanitiser that silently ate this setting ───────────────────────
+
+	/**
+	 * register_setting() hooks Petsync_Admin::sanitize_settings() onto
+	 * sanitize_option_petsync_settings, so EVERY update_option() for that
+	 * option runs through it — not just the settings form. It rebuilds the
+	 * array from a whitelist, so a key it does not know is dropped on the way
+	 * in, wherever it was written from.
+	 *
+	 * That is why the toggle would not save: stripped silently, no error.
+	 *
+	 * These tests register the callback explicitly, because a test running
+	 * outside the admin never triggers admin_init and would therefore pass
+	 * against the broken code — which is exactly what happened.
+	 */
+	public function test_the_toggle_survives_the_settings_sanitiser(): void {
+		delete_option( 'petsync_settings' );
+		( new \Petsync_Admin() )->register_settings();
+
+		update_option( 'petsync_settings', array( Animal_Shelter::SETTING => true ) );
+
+		$this->assertTrue(
+			Animal_Shelter::is_enabled(),
+			'the sanitiser rebuilds from a whitelist; a key missing from it is dropped'
+		);
+	}
+
+	public function test_unticking_survives_it_too(): void {
+		( new \Petsync_Admin() )->register_settings();
+
+		update_option( 'petsync_settings', array( Animal_Shelter::SETTING => true ) );
+		update_option( 'petsync_settings', array( Animal_Shelter::SETTING => false ) );
+
+		$this->assertFalse( Animal_Shelter::is_enabled() );
+	}
+
+	/**
+	 * Saving the sync settings must not clear a toggle set on another screen.
+	 */
+	public function test_saving_sync_settings_does_not_clear_the_toggle(): void {
+		( new \Petsync_Admin() )->register_settings();
+
+		update_option( 'petsync_settings', array( Animal_Shelter::SETTING => true ) );
+
+		$settings               = (array) get_option( 'petsync_settings' );
+		$settings['public_key'] = 'pk_test';
+		update_option( 'petsync_settings', $settings );
+
+		$this->assertTrue( Animal_Shelter::is_enabled(), 'a save from the sync screen must preserve it' );
+		$this->assertSame( 'pk_test', get_option( 'petsync_settings' )['public_key'] );
+	}
+
+	/**
+	 * The general rule, so the next key added anywhere is not lost the same way.
+	 */
+	public function test_the_sanitiser_preserves_every_key_the_plugin_writes(): void {
+		$src = (string) file_get_contents( PETSYNC_DIR . 'includes/class-petsync-admin.php' );
+
+		$this->assertStringContainsString(
+			'Animal_Shelter::SETTING',
+			$src,
+			'a key written into petsync_settings from elsewhere must be listed in sanitize_settings()'
+		);
+	}
 }
