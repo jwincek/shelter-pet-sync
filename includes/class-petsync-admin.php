@@ -135,6 +135,20 @@ class Petsync_Admin {
 		$sanitized['batch_size']               = max( 1, min( 50, $sanitized['batch_size'] ) );
 		$sanitized['delete_data_on_uninstall'] = ! empty( $input['delete_data_on_uninstall'] );
 
+		// Set on the Shelter Details screen, not this one — but it lives in this
+		// option, and register_setting() hooks this callback to
+		// sanitize_option_petsync_settings, so EVERY update_option() for it
+		// passes through here. Rebuilding from a whitelist therefore drops
+		// anything not listed, wherever it was written from.
+		//
+		// That is what made the toggle refuse to save: it was stripped on the
+		// way in, silently, with no error and no failing test — because a test
+		// running outside the admin never registers this callback at all.
+		//
+		// Anything added to petsync_settings from anywhere must be preserved
+		// here too.
+		$sanitized[ \Petsync\Schema\Animal_Shelter::SETTING ] = ! empty( $input[ \Petsync\Schema\Animal_Shelter::SETTING ] );
+
 		// Reschedule cron if auto_sync or interval changed.
 		$old = self::get_settings();
 		if ( $sanitized['auto_sync'] !== $old['auto_sync'] || $sanitized['sync_interval'] !== $old['sync_interval'] ) {
