@@ -4,7 +4,7 @@ Tags: pets, adoption, animal shelter, rescue, animals
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,11 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 
 == Changelog ==
 
+= 1.3.0 =
+* New: **Pets → Shelter Details** — enter your shelter's address, phone and email once and they appear wherever the shelter identifies itself, including on printed kennel cards.
+* New: optional structured data describing your site as an animal shelter. If you already use an SEO plugin it refines what that plugin says rather than competing with it. Off until you switch it on.
+* Fixed: kennel cards printed with the placeholder text "Add your shelter's phone, email and address here" unless the card design had been edited by hand. Cards now use Shelter Details, and print nothing there until it is filled in. Reprint any cards you have already made.
+
 = 1.2.0 =
 * New: the kennel card design now previews against a real animal while you edit it, instead of showing an empty card. Choose which animal from Pets → Kennel Cards.
 * Fixed: printed kennel cards broke words across lines — "Spayed/Neutere d". Reprinted cards will look correct.
@@ -148,6 +153,9 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 * Built on the WordPress Abilities API and Block Bindings.
 
 == Upgrade Notice ==
+
+= 1.3.0 =
+Kennel cards were printing placeholder instructions unless you had edited the card design. Enter your details under Pets → Shelter Details, then reprint. Also adds optional structured data for search engines.
 
 = 1.2.0 =
 Fixes two visitor-facing bugs. Sharing a comparison link used to clear the recipient's own saved comparison list, and printed kennel cards broke words across lines. Both are fixed; reprint any cards made with 1.1.x.
