@@ -68,11 +68,18 @@ npm run lint:css
 
 ## Releasing
 
-Publishing is one command:
+Publishing is one command, **run from `main` after the release PR is merged**:
 
 ```bash
+git checkout main && git pull
 git tag v1.3.0 && git push origin v1.3.0
 ```
+
+Tagging from the release branch instead produces a tag that points at a commit
+`main` never took, because the PR is squash-merged into a new one. The content is
+identical, so nothing ships wrong — but the tag is orphaned from the history, and
+the release page reads "1 commit to main since this release" forever. The
+workflow refuses such a tag rather than letting it through.
 
 That builds the package, deploys it to WordPress.org, and creates the GitHub
 Release with the installable zip attached.
