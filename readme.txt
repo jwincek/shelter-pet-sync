@@ -4,7 +4,7 @@ Tags: pets, adoption, animal shelter, rescue, animals
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,9 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 
 == Changelog ==
 
+= 1.3.1 =
+* Fixed: the "Search engines" setting under Pets → Shelter Details would not save, so the structured data added in 1.3.0 could not be switched on. If you tried, turn it on again.
+
 = 1.3.0 =
 * New: **Pets → Shelter Details** — enter your shelter's address, phone and email once and they appear wherever the shelter identifies itself, including on printed kennel cards.
 * New: optional structured data describing your site as an animal shelter. If you already use an SEO plugin it refines what that plugin says rather than competing with it. Off until you switch it on.
@@ -153,6 +156,9 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 * Built on the WordPress Abilities API and Block Bindings.
 
 == Upgrade Notice ==
+
+= 1.3.1 =
+The "Search engines" setting added in 1.3.0 would not save. If you tried to switch structured data on and it did not stick, this is why — update and switch it on again.
 
 = 1.3.0 =
 Kennel cards were printing placeholder instructions unless you had edited the card design. Enter your details under Pets → Shelter Details, then reprint. Also adds optional structured data for search engines.
