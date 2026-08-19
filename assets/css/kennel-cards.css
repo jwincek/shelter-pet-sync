@@ -268,33 +268,19 @@
  * opt-out and shows up as the "Stack on mobile" toggle in the Site Editor. This
  * rule is the belt to that braces, for a card customised before the change:
  * a shelter's saved copy keeps the old markup and would still stack. */
-.petsync-cards .wp-block-columns > .wp-block-column {
-	flex-basis: 0 !important;
-	flex-grow: 1;
+@media (max-width: 781px) {
+
+	.petsync-cards .wp-block-columns:not(.is-not-stacked-on-mobile) {
+		flex-wrap: nowrap;
+	}
 }
 
-/* Reweight the card's two columns.
- *
- * A 4-up cell is 3.85in = 370px, and the design gives the photo 44% of it. That
- * leaves the attributes 207px — too narrow for two tracks at any usable size, so
- * the block's `repeat(auto-fill, minmax(140px, 1fr))` resolves to one column and
- * the card runs to roughly twice the height it needs.
- *
- * Meanwhile the photo column is mostly empty: the image occupies its top third
- * and the rest is white. Taking a third of that back gives the attributes 251px,
- * which fits two 110px tracks with room to spare, and costs the photo nothing it
- * was using.
- *
- * This is the CSS-only version of the fix. The structural one — photo and name
- * across the top, attributes spanning the full 370px beneath — belongs in
- * parts/kennel-card.html and is a change to the shipped design, so it is a
- * separate decision rather than something to slip in here. */
-.petsync-cards .kennel-card__top > .wp-block-column:first-child {
-	flex-basis: 68% !important;
-}
-
-.petsync-cards .kennel-card__top > .wp-block-column:last-child {
-	flex-basis: 32% !important;
+/* The button and the photo share a narrow column, so nothing in it may break
+   mid-word — "Adopt me!" came out one letter per line when that column was
+   squeezed. */
+.petsync-cards .wp-block-button__link {
+	white-space: nowrap;
+	word-break: keep-all;
 }
 
 .petsync-cards .pet-attributes {
