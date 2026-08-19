@@ -245,7 +245,36 @@ async function shot( page, selector, file, opts = {} ) {
 		await page.setViewportSize( { width: 1400, height: 1000 } );
 	}
 
-	// 6. Side-by-side comparison.
+	// 6. The import dry run — the audience-defining feature, and the screen that
+	// makes it trustworthy: every row checked and nothing written yet.
+	//
+	// Needs a real CSV posted through the form, so this drives the actual upload
+	// rather than faking the report. WP_IMPORT_CSV points at a file to use; with
+	// none, the shot is skipped rather than showing an empty screen.
+	//
+	// Use a sheet that tells the story: several rows to add, one matching an
+	// existing microchip so "update" appears, one deliberately bad row so the
+	// per-row error column is not empty, and a column heading the mapper cannot
+	// place so the "ignored" notice shows. A sheet where everything is perfect
+	// photographs as a table of identical green rows and says nothing.
+	if ( process.env.WP_IMPORT_CSV ) {
+		await page.goto( `${ SITE }/wp-admin/edit.php?post_type=vcps_pet&page=shelterkit-import`, {
+			waitUntil: 'networkidle',
+		} );
+		await page.setInputFiles( 'input[name="petsync_csv"]', process.env.WP_IMPORT_CSV );
+		await Promise.all( [
+			page.waitForNavigation( { waitUntil: 'networkidle' } ),
+			page.click( 'button[name="petsync_import_submit"]' ),
+		] );
+		await shot( page, '.wrap', 'screenshot-6.png', {
+			settle: 800,
+			cap: { sel: '.wrap', h: 1200 },
+		} );
+	} else {
+		console.log( '\tSKIP screenshot-6.png — set WP_IMPORT_CSV to a sample sheet' );
+	}
+
+	// 7. Side-by-side comparison.
 	//
 	// blocks/pet-comparison/render.php returns early unless ?compare= is present,
 	// and Petsync_Helpers::get_comparison() reads that parameter AHEAD of user
@@ -261,7 +290,7 @@ async function shot( page, selector, file, opts = {} ) {
 		const ok = await shot(
 			page,
 			'.pet-comparison, .wp-block-petsync-pet-comparison',
-			'screenshot-6.png',
+			'screenshot-7.png',
 			{ settle: 1200 }
 		);
 		if ( ! ok ) {
@@ -269,12 +298,12 @@ async function shot( page, selector, file, opts = {} ) {
 		}
 	}
 
-	// 7. Sync settings.
+	// 8. Sync settings.
 	await page.goto(
 		`${ SITE }/wp-admin/edit.php?post_type=vcps_pet&page=shelterkit-pets`,
 		{ waitUntil: 'networkidle' }
 	);
-	await shot( page, '.wrap', 'screenshot-7.png', {
+	await shot( page, '.wrap', 'screenshot-8.png', {
 		settle: 800,
 		cap: { sel: '.wrap', h: 1400 },
 	} );
