@@ -235,6 +235,49 @@
 	border: 1px dashed #c3c4c7;
 }
 
+/* ── The card is not a page ──────────────────────────────────────────────── */
+
+/*
+ * The card's root is a wp:group, so it arrives carrying `has-global-padding`
+ * and `is-layout-constrained`. Both are right for a group on a page and wrong
+ * for one inside a 3.85in cell: the padding eats horizontal space the card does
+ * not have, and the constrained layout caps its children at the theme's content
+ * width. Neither is visible in a harness without the theme's global styles,
+ * which is why this took a real print to spot.
+ */
+
+/* Block spacing. The card's sections are siblings in a group, so core puts a
+ * full --wp--style--block-gap between each — about 24px a time, roughly 72px of
+ * a 478px card spent on gaps between four sections. Set on the card so every
+ * child inherits it, rather than overriding margins one selector at a time. */
+.petsync-cards .kennel-card > * + * {
+	margin-block-start: 0.5rem !important;
+}
+
+.petsync-cards .kennel-card.has-global-padding {
+	padding-right: 0 !important;
+	padding-left: 0 !important;
+}
+
+.petsync-cards .is-layout-constrained > * {
+	max-width: none;
+}
+
+/* The banner is a paragraph, not a button block — which is why an earlier
+   `white-space: nowrap` aimed at .wp-block-button__link did nothing at all, and
+   "Adopt me!" kept printing one letter per line in a narrow column. */
+.petsync-cards .kennel-card__banner {
+	white-space: nowrap;
+	word-break: keep-all;
+}
+
+/* And the name, for the same reason a label broke mid-word in #78: several
+   themes set word-break: break-word, which lets "Elmira" become "Elmir" + "a". */
+.petsync-cards .kennel-card__name {
+	word-break: normal;
+	overflow-wrap: break-word;
+}
+
 /* ── Attributes, on a card ───────────────────────────────────────────────── */
 
 /*
@@ -284,7 +327,7 @@
 }
 
 .petsync-cards .pet-attributes {
-	grid-template-columns: repeat( auto-fill, minmax( 110px, 1fr ) );
+	grid-template-columns: repeat( auto-fill, minmax( 150px, 1fr ) );
 	gap: 0.35rem;
 }
 
@@ -300,7 +343,7 @@
 	flex-wrap: wrap;
 	align-items: baseline;
 	gap: 0 0.4em;
-	padding: 0.3rem 0.5rem;
+	padding: 0.22rem 0.45rem;
 }
 
 .petsync-cards .pet-attributes__label {
@@ -313,6 +356,57 @@
 
 .petsync-cards .pet-health {
 	gap: 0.3rem;
+}
+
+/* Measured budget for a 4-up cell (370 x 480px), on the richest pet on the
+ * test site, before these rules:
+ *
+ *   top row     230px   <- the photo alone was 188
+ *   attributes  136px
+ *   health      128px
+ *   footer       79px
+ *   total       648px   against 478px of usable cell
+ *
+ * The photo was taking nearly 40% of a card that also has to carry the data
+ * someone reads from a corridor, so it is capped rather than left to the
+ * image's own aspect ratio. The rest is trimmed proportionally. */
+.petsync-cards--index .kennel-card__photo img {
+
+	/* Absolute, not a percentage. Two earlier attempts here used 45% and 32%,
+	   and both did nothing at all: a percentage max-height resolves against the
+	   parent's height, and the parent has none, so the declaration is dropped.
+	   The photo stayed at its natural 188px through both. */
+	max-height: 0.9in;
+	object-fit: cover;
+}
+
+.petsync-cards .pet-health {
+	gap: 0.25rem;
+}
+
+.petsync-cards .pet-health__item {
+	padding: 0.2rem 0.45rem;
+	font-size: 0.95em;
+}
+
+.petsync-cards .kennel-card__org,
+.petsync-cards .kennel-card__contact,
+.petsync-cards .kennel-card__more,
+.petsync-cards .kennel-card__url {
+	font-size: 0.9em;
+	line-height: 1.25;
+}
+
+/* The cell's own padding costs 32px of the 480px height. Ten is enough to keep
+ * a card clear of the cut line, and buys back 12px for content. */
+.petsync-cards--index .petsync-cards__cell {
+	padding: 10px;
+}
+
+/* The row already has 8px from the next section's margin; its own 12px on top
+   is just doubling up. */
+.petsync-cards .kennel-card__top {
+	margin-bottom: 0;
 }
 
 /* ── Print ──────────────────────────────────────────────────────────────── */
@@ -402,9 +496,6 @@
 		page-break-after: always;
 	}
 
-	.kennel-card__photo img {
-		max-height: 45%;
-	}
 
 	/* Browsers drop background colours when printing unless told otherwise, so
 	   every grey attribute pill, every health badge and the adoption button
@@ -447,9 +538,6 @@
 		margin-bottom: 0.2em;
 	}
 
-	.petsync-cards--index .kennel-card__photo img {
-		max-height: 32%;
-	}
 }
 
 .petsync-kennel__filter {
