@@ -248,6 +248,31 @@
  * preview is now drawn at paper size and the two must agree.
  */
 
+/* The card's columns must not stack.
+ *
+ * Core stacks every wp-block-columns below 782px:
+ *
+ *   @media (max-width:781px) {
+ *     .wp-block-columns:not(.is-not-stacked-on-mobile) > .wp-block-column {
+ *       flex-basis: 100% !important;
+ *     }
+ *   }
+ *
+ * A Letter page with 0.4in margins is 739px of content, so PRINT is below that
+ * breakpoint and a browser window is not. The card therefore printed a
+ * different layout from the one on screen — photo dropped full width below the
+ * attributes and cropped at the cell edge — which is the worst kind of bug
+ * here, because the design you approve is not the design that comes out.
+ *
+ * parts/kennel-card.html now sets isStackedOnMobile:false, which is core's own
+ * opt-out and shows up as the "Stack on mobile" toggle in the Site Editor. This
+ * rule is the belt to that braces, for a card customised before the change:
+ * a shelter's saved copy keeps the old markup and would still stack. */
+.petsync-cards .wp-block-columns > .wp-block-column {
+	flex-basis: 0 !important;
+	flex-grow: 1;
+}
+
 /* Reweight the card's two columns.
  *
  * A 4-up cell is 3.85in = 370px, and the design gives the photo 44% of it. That
