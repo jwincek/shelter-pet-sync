@@ -58,21 +58,21 @@ final class AbilityOutputSchemaTest extends PetTestCase {
 	 */
 	private function inputs(): array {
 		return array(
-			'petsync/get-pet'             => array( 'id' => $this->pet ),
-			'petsync/list-pets'           => array(),
-			'petsync/filter-pets'         => array(),
-			'petsync/batch-get-pets'      => array( 'ids' => array( $this->pet ) ),
-			'petsync/get-filter-options'  => array(),
-			'petsync/toggle-favorite'     => array( 'id' => $this->pet ),
-			'petsync/get-favorites'       => array(),
-			'petsync/clear-favorites'     => array(),
-			'petsync/update-comparison'   => array(
+			'petsync/get-pet'            => array( 'id' => $this->pet ),
+			'petsync/list-pets'          => array(),
+			'petsync/filter-pets'        => array(),
+			'petsync/batch-get-pets'     => array( 'ids' => array( $this->pet ) ),
+			'petsync/get-filter-options' => array(),
+			'petsync/toggle-favorite'    => array( 'id' => $this->pet ),
+			'petsync/get-favorites'      => array(),
+			'petsync/clear-favorites'    => array(),
+			'petsync/update-comparison'  => array(
 				'action' => 'add',
 				'id'     => $this->pet,
 			),
-			'petsync/get-comparison'      => array(),
-			'petsync/get-adoption-stats'  => array(),
-			'petsync/set-pet-gallery'     => array(
+			'petsync/get-comparison'     => array(),
+			'petsync/get-adoption-stats' => array(),
+			'petsync/set-pet-gallery'    => array(
 				'id'             => $this->pet,
 				'attachment_ids' => array(),
 			),
