@@ -235,6 +235,55 @@
 	border: 1px dashed #c3c4c7;
 }
 
+/* ── Attributes, on a card ───────────────────────────────────────────────── */
+
+/*
+ * A kennel card is 3.85 × 5in at four to a sheet. The attributes block is built
+ * for a website column and costs about 85px a row there — eight rows is 680px
+ * in a 480px cell, so the health badges and the whole shelter footer were being
+ * clipped by overflow: hidden with nothing to indicate they had gone.
+ *
+ * Both rules below are scoped to .petsync-cards, so the pet's own page on the
+ * website is untouched. They apply on screen as well as in print, because the
+ * preview is now drawn at paper size and the two must agree.
+ */
+
+/* The card's left column is about 280px. The block's own
+   `repeat(auto-fill, minmax(140px, 1fr))` needs 280px PLUS the gap for two
+   columns, so it misses by a few pixels and drops to one — doubling the height
+   for the sake of nothing. 120px clears it. */
+.petsync-cards .pet-attributes {
+	grid-template-columns: repeat( auto-fill, minmax( 120px, 1fr ) );
+	gap: 0.35rem;
+}
+
+/* Label beside the value rather than above it.
+ *
+ * Checked against the real data before relying on it: of the seven fields a
+ * card shows, six have values of nine characters or fewer — only breed runs
+ * long, up to "Coonhound (Unknown Type)". flex-wrap means those six sit on one
+ * line and breed drops below its label, which is precisely the current layout.
+ * So this can only ever reduce the height, never add to it. */
+.petsync-cards .pet-attributes__item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 0.4em;
+	padding: 0.3rem 0.5rem;
+}
+
+.petsync-cards .pet-attributes__label {
+	margin-bottom: 0;
+}
+
+.petsync-cards .pet-health__item {
+	padding: 0.3rem 0.5rem;
+}
+
+.petsync-cards .pet-health {
+	gap: 0.3rem;
+}
+
 /* ── Print ──────────────────────────────────────────────────────────────── */
 
 @media print {
@@ -349,24 +398,6 @@
 	   
 	   Pinned rather than widened, because the cell width is fixed by the sheet
 	   size and cannot grow. */
-
-	/* No column override here any more. With the preview at paper size the cell
-	   is the same width in both media, so pet-attributes' own
-	   `repeat(auto-fill, minmax(140px, 1fr))` resolves identically — and if it
-	   resolves to something wrong, that is now visible on screen instead of
-	   only on paper. Forcing it would hide exactly the signal worth keeping. */
-	.petsync-cards .pet-attributes {
-		gap: 0.35rem;
-	}
-
-	.petsync-cards .pet-attributes__item,
-	.petsync-cards .pet-health__item {
-		padding: 0.3rem 0.5rem;
-	}
-
-	.petsync-cards .pet-health {
-		gap: 0.3rem;
-	}
 
 	/* The card is sized for a screen column, so everything is scaled down to the
 	   printed cell. Measured under print emulation, a data-rich pet came to
