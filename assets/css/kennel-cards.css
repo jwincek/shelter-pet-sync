@@ -248,12 +248,32 @@
  * preview is now drawn at paper size and the two must agree.
  */
 
-/* The card's left column is about 280px. The block's own
-   `repeat(auto-fill, minmax(140px, 1fr))` needs 280px PLUS the gap for two
-   columns, so it misses by a few pixels and drops to one — doubling the height
-   for the sake of nothing. 120px clears it. */
+/* Reweight the card's two columns.
+ *
+ * A 4-up cell is 3.85in = 370px, and the design gives the photo 44% of it. That
+ * leaves the attributes 207px — too narrow for two tracks at any usable size, so
+ * the block's `repeat(auto-fill, minmax(140px, 1fr))` resolves to one column and
+ * the card runs to roughly twice the height it needs.
+ *
+ * Meanwhile the photo column is mostly empty: the image occupies its top third
+ * and the rest is white. Taking a third of that back gives the attributes 251px,
+ * which fits two 110px tracks with room to spare, and costs the photo nothing it
+ * was using.
+ *
+ * This is the CSS-only version of the fix. The structural one — photo and name
+ * across the top, attributes spanning the full 370px beneath — belongs in
+ * parts/kennel-card.html and is a change to the shipped design, so it is a
+ * separate decision rather than something to slip in here. */
+.petsync-cards .kennel-card__top > .wp-block-column:first-child {
+	flex-basis: 68% !important;
+}
+
+.petsync-cards .kennel-card__top > .wp-block-column:last-child {
+	flex-basis: 32% !important;
+}
+
 .petsync-cards .pet-attributes {
-	grid-template-columns: repeat( auto-fill, minmax( 120px, 1fr ) );
+	grid-template-columns: repeat( auto-fill, minmax( 110px, 1fr ) );
 	gap: 0.35rem;
 }
 
