@@ -22,6 +22,8 @@
  *                     block render.php are defined in a view.js / store.
  *  11. api-shapes    — the provider response paths Pet_Hydrator resolves are
  *                     declared and well-formed.
+ *  12. wp-tested    — readme.txt's "Tested up to" matches the WordPress
+ *                     version CI installs the test library for.
  *   7. hash-coverage — every literal $data['key'] the sync reads is in
  *                     get_consumed_api_keys(), so the change-detection hash
  *                     can't silently miss a field (stale-display risk).
@@ -866,6 +868,50 @@ foreach ( $providers as $pslug => $pmap ) {
 			}
 		}
 	}
+}
+
+// ── Check 12: "Tested up to" is backed by a CI run ──────────────────────────
+// Plugin Check fails the moment WordPress ships a release newer than this
+// value, and the temptation is to bump the string and move on. But the string
+// is a CLAIM — WordPress.org shows it to users deciding whether to trust the
+// plugin on their site — and bumping it alone makes the claim untrue.
+//
+// So it is checked against the version CI actually installs the test library
+// for. Raise them together, or the readme promises something no test has ever
+// exercised.
+$tested_up_to = null;
+$ci_wp        = null;
+
+if ( isset( $readme_path ) && is_file( $readme_path ) ) {
+	if ( preg_match( '/^Tested up to:\s*(\S+)/mi', (string) file_get_contents( $readme_path ), $m ) ) {
+		$tested_up_to = $m[1];
+	} else {
+		$add( 'error', 'wp-tested', 'readme.txt has no "Tested up to:" header — WordPress.org hides plugins without one from search results.' );
+	}
+}
+
+$ci_path = $root . '/.github/workflows/ci.yml';
+
+if ( is_file( $ci_path ) ) {
+	if ( preg_match( '/install-wp-tests\.sh\s+\S+\s+\S+\s+\S+\s+\S+\s+(\S+)/', (string) file_get_contents( $ci_path ), $m ) ) {
+		$ci_wp = $m[1];
+	} else {
+		$add( 'warning', 'wp-tested', 'Could not find the WordPress version passed to install-wp-tests.sh in ci.yml, so "Tested up to" could not be verified.' );
+	}
+}
+
+// 7.1 and 7.1.0 are the same release: wordpress.org ships X.Y for a ".0"
+// release while wordpress-develop tags it X.Y.0, and install-wp-tests.sh
+// already normalises between them.
+$normalise = static fn( string $v ): string => rtrim( preg_replace( '/^(\d+\.\d+)(\.0)?$/', '$1', trim( $v ) ) ?? $v, '.' );
+
+if ( $tested_up_to !== null && $ci_wp !== null && $normalise( $tested_up_to ) !== $normalise( $ci_wp ) ) {
+	$add(
+		'error',
+		'wp-tested',
+		"readme.txt says \"Tested up to: $tested_up_to\" but CI installs the WordPress $ci_wp test library. "
+		. 'Raise both together — the readme claim should not outrun what the suite has actually run against.'
+	);
 }
 
 // ── Report ───────────────────────────────────────────────────────────────────
