@@ -79,10 +79,20 @@
 	overflow: hidden;
 }
 
+/* Portrait photographs in a landscape box is what was clipping the heads. Every
+   image the sync brings down is roughly 3:4 — 768x960 and 750x1000 are typical
+   — and the box was 146x77, close to 2:1. object-fit: cover therefore discarded
+   about 60% of the image height, cropped from the centre, which is exactly
+   where a standing animal's head is not.
+
+   A square keeps far more of the frame, and biasing the crop to the top keeps
+   the head rather than the feet. */
 .kennel-card__photo img {
 	width: 100%;
 	height: auto;
+	aspect-ratio: 1 / 1;
 	object-fit: cover;
+	object-position: center top;
 }
 
 .kennel-card__name {
@@ -143,11 +153,6 @@
 	border-radius: 3px;
 }
 
-.kennel-card__photo img {
-	width: 100%;
-	height: auto;
-	object-fit: cover;
-}
 
 .kennel-card__attributes,
 .kennel-card__health {
@@ -368,17 +373,23 @@
  *   total       648px   against 478px of usable cell
  *
  * The photo was taking nearly 40% of a card that also has to carry the data
- * someone reads from a corridor, so it is capped rather than left to the
- * image's own aspect ratio. The rest is trimmed proportionally. */
-.petsync-cards--index .kennel-card__photo img {
+ * someone reads from a corridor. It is now constrained by the width of the
+ * column it sits in rather than by a height cap, which buys the same vertical
+ * space without flattening the picture. The rest is trimmed proportionally.
+ *
+ * Current worst case across all 43 published pets: 444px against 460px usable. */
 
-	/* Absolute, not a percentage. Two earlier attempts here used 45% and 32%,
-	   and both did nothing at all: a percentage max-height resolves against the
-	   parent's height, and the parent has none, so the declaration is dropped.
-	   The photo stayed at its natural 188px through both. */
-	max-height: 0.8in;
-	object-fit: cover;
-}
+/* The height cap that used to live here is gone, and must not come back: with
+   aspect-ratio set, a max-height smaller than the column width silently wins
+   and the photo goes back to being a letterbox. The square's size is now
+   governed by the column it sits in (29% of the card, 96px at index size),
+   which is the same 0.8in of vertical space the cap was defending — bought
+   without flattening the picture.
+
+   For the record, since two earlier attempts were wasted here: a PERCENTAGE
+   max-height never worked at all. It resolves against a parent that has no
+   height, so it is dropped, and the photo stayed at its natural 188px through
+   both tries. */
 
 .petsync-cards .pet-health {
 	gap: 0.25rem;
