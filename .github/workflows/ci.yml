@@ -31,8 +31,19 @@ jobs:
         run: composer lint
 
   tests:
-    name: PHPUnit
+    name: PHPUnit (WP ${{ matrix.wp }})
     runs-on: ubuntu-latest
+
+    # Both ends of the supported range, because both are CLAIMS in readme.txt.
+    # "Tested up to" was drifting behind releases; "Requires at least" was worse
+    # — nothing had ever run against 6.9, so the floor was asserted rather than
+    # tested, and it is the claim that breaks real users rather than just search
+    # ranking. validate-config check 12 keeps these two lists in step with the
+    # readme headers.
+    strategy:
+      fail-fast: false
+      matrix:
+        wp: [ '6.9', '7.1' ]
 
     services:
       mysql:
@@ -69,7 +80,7 @@ jobs:
       # An explicit version, not "latest": the test library comes from the
       # wordpress-develop repository, where "latest" is not a tag.
       - name: Install the WordPress test library
-        run: bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 7.1
+        run: bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 ${{ matrix.wp }}
 
       - name: Integration suite
         run: composer test:integration

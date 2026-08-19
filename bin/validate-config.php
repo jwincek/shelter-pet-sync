@@ -22,8 +22,9 @@
  *                     block render.php are defined in a view.js / store.
  *  11. api-shapes    — the provider response paths Pet_Hydrator resolves are
  *                     declared and well-formed.
- *  12. wp-tested    — readme.txt's "Tested up to" matches the WordPress
- *                     version CI installs the test library for.
+ *  12. wp-tested    — readme.txt's "Requires at least" and "Tested up to"
+ *                     match the floor and ceiling of the CI matrix, so both
+ *                     claims are backed by a suite that actually ran.
  *   7. hash-coverage — every literal $data['key'] the sync reads is in
  *                     get_consumed_api_keys(), so the change-detection hash
  *                     can't silently miss a field (stale-display risk).
@@ -870,48 +871,73 @@ foreach ( $providers as $pslug => $pmap ) {
 	}
 }
 
-// ── Check 12: "Tested up to" is backed by a CI run ──────────────────────────
-// Plugin Check fails the moment WordPress ships a release newer than this
-// value, and the temptation is to bump the string and move on. But the string
-// is a CLAIM — WordPress.org shows it to users deciding whether to trust the
-// plugin on their site — and bumping it alone makes the claim untrue.
+// ── Check 12: the readme's WordPress range is backed by CI runs ─────────────
+// Both headers are CLAIMS. "Tested up to" is what Plugin Check fails on and
+// what WordPress.org uses to decide whether to show the plugin in search;
+// "Requires at least" is the one that breaks real users, because someone on an
+// older WordPress installs it and it fatals.
 //
-// So it is checked against the version CI actually installs the test library
-// for. Raise them together, or the readme promises something no test has ever
-// exercised.
-$tested_up_to = null;
-$ci_wp        = null;
+// Neither is self-evidently true, so both are checked against the WordPress
+// versions CI actually runs the suite against. Raise the matrix and the readme
+// together, or a header promises something no test has ever exercised.
+$tested_up_to    = null;
+$requires_at_least = null;
+$matrix          = [];
 
 if ( isset( $readme_path ) && is_file( $readme_path ) ) {
-	if ( preg_match( '/^Tested up to:\s*(\S+)/mi', (string) file_get_contents( $readme_path ), $m ) ) {
+	$readme_src = (string) file_get_contents( $readme_path );
+
+	if ( preg_match( '/^Tested up to:\s*(\S+)/mi', $readme_src, $m ) ) {
 		$tested_up_to = $m[1];
 	} else {
 		$add( 'error', 'wp-tested', 'readme.txt has no "Tested up to:" header — WordPress.org hides plugins without one from search results.' );
+	}
+
+	if ( preg_match( '/^Requires at least:\s*(\S+)/mi', $readme_src, $m ) ) {
+		$requires_at_least = $m[1];
+	} else {
+		$add( 'error', 'wp-tested', 'readme.txt has no "Requires at least:" header.' );
 	}
 }
 
 $ci_path = $root . '/.github/workflows/ci.yml';
 
 if ( is_file( $ci_path ) ) {
-	if ( preg_match( '/install-wp-tests\.sh\s+\S+\s+\S+\s+\S+\s+\S+\s+(\S+)/', (string) file_get_contents( $ci_path ), $m ) ) {
-		$ci_wp = $m[1];
+	if ( preg_match( '/wp:\s*\[([^\]]*)\]/', (string) file_get_contents( $ci_path ), $m )
+		&& preg_match_all( "/'([^']+)'/", $m[1], $vm ) ) {
+		$matrix = $vm[1];
 	} else {
-		$add( 'warning', 'wp-tested', 'Could not find the WordPress version passed to install-wp-tests.sh in ci.yml, so "Tested up to" could not be verified.' );
+		$add( 'warning', 'wp-tested', 'Could not parse the WordPress version matrix in ci.yml, so the readme range could not be verified.' );
 	}
 }
 
 // 7.1 and 7.1.0 are the same release: wordpress.org ships X.Y for a ".0"
 // release while wordpress-develop tags it X.Y.0, and install-wp-tests.sh
 // already normalises between them.
-$normalise = static fn( string $v ): string => rtrim( preg_replace( '/^(\d+\.\d+)(\.0)?$/', '$1', trim( $v ) ) ?? $v, '.' );
+$normalise = static fn( string $v ): string => (string) preg_replace( '/^(\d+\.\d+)\.0$/', '$1', trim( $v ) );
 
-if ( $tested_up_to !== null && $ci_wp !== null && $normalise( $tested_up_to ) !== $normalise( $ci_wp ) ) {
-	$add(
-		'error',
-		'wp-tested',
-		"readme.txt says \"Tested up to: $tested_up_to\" but CI installs the WordPress $ci_wp test library. "
-		. 'Raise both together — the readme claim should not outrun what the suite has actually run against.'
-	);
+if ( $matrix ) {
+	usort( $matrix, 'version_compare' );
+	$ci_floor   = $normalise( (string) reset( $matrix ) );
+	$ci_ceiling = $normalise( (string) end( $matrix ) );
+
+	if ( $tested_up_to !== null && $normalise( $tested_up_to ) !== $ci_ceiling ) {
+		$add(
+			'error',
+			'wp-tested',
+			"readme.txt says \"Tested up to: $tested_up_to\" but the highest WordPress in the CI matrix is $ci_ceiling. "
+			. 'Raise both together — the readme claim should not outrun what the suite has actually run against.'
+		);
+	}
+
+	if ( $requires_at_least !== null && $normalise( $requires_at_least ) !== $ci_floor ) {
+		$add(
+			'error',
+			'wp-tested',
+			"readme.txt says \"Requires at least: $requires_at_least\" but the lowest WordPress in the CI matrix is $ci_floor. "
+			. 'A floor nothing runs against is a guess, and it is the claim that fatals for real users rather than only affecting search.'
+		);
+	}
 }
 
 // ── Report ───────────────────────────────────────────────────────────────────
