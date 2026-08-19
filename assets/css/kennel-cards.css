@@ -178,6 +178,63 @@
 	font-size: 0.95em;
 }
 
+/* ── The sheet, on screen ────────────────────────────────────────────────── */
+
+/*
+ * Drawn at real paper size so the preview is the thing being printed rather
+ * than an approximation of it. Before this the on-screen cell was roughly
+ * 600px and the printed one roughly 370px, so the card's internal grids
+ * resolved to different column counts, the card grew taller on paper, and
+ * `overflow: hidden` clipped the photo, the badges and the footer — none of it
+ * visible until the print dialog opened.
+ *
+ * CSS inches are a fixed 96px regardless of screen DPI, so these are faithful.
+ * Letter, less the 0.4in @page margins. A4 is 8.27in wide, so an A4 shelter
+ * previews about 3% narrow — closer than the old preview was by an order of
+ * magnitude, and the printed output is unaffected either way.
+ */
+.petsync-kennel--print .petsync-cards__page {
+	box-sizing: border-box;
+	width: 7.7in;
+	height: 10.2in;
+	margin: 0 auto 0.4in;
+	padding: 0;
+	overflow: hidden;
+	background: #fff;
+	box-shadow: 0 1px 8px rgb(0 0 0 / 25%);
+}
+
+/* Columns follow the SHEET, not the browser window — which is what makes the
+   preview and the paper agree. The cell heights below then divide the page
+   exactly: 2 × 5in and 2 × 5.2in both fit inside 10.2in. */
+.petsync-kennel--print .petsync-cards {
+	display: grid;
+	gap: 0;
+	height: 100%;
+	margin: 0;
+}
+
+.petsync-kennel--print .petsync-cards--index {
+	grid-template-columns: repeat( 2, 1fr );
+	grid-template-rows: repeat( 2, 5in );
+}
+
+.petsync-kennel--print .petsync-cards--half {
+	grid-template-columns: 1fr;
+	grid-template-rows: repeat( 2, 5.1in );
+}
+
+.petsync-kennel--print .petsync-cards--full {
+	grid-template-columns: 1fr;
+	grid-template-rows: 10.2in;
+}
+
+.petsync-kennel--print .petsync-cards__cell {
+	box-sizing: border-box;
+	overflow: hidden;
+	border: 1px dashed #c3c4c7;
+}
+
 /* ── Print ──────────────────────────────────────────────────────────────── */
 
 @media print {
@@ -216,6 +273,24 @@
 	.petsync-cards {
 		gap: 0;
 		margin: 0;
+	}
+
+	/* On paper the page box IS the sheet, so the on-screen simulation is
+	   dropped and each chunk simply breaks after itself. Deterministic, rather
+	   than relying on the browser to infer where a grid should divide. */
+	.petsync-kennel--print .petsync-cards__page {
+		width: auto;
+		height: auto;
+		margin: 0;
+		box-shadow: none;
+		overflow: visible;
+		break-after: page;
+		page-break-after: always;
+	}
+
+	.petsync-kennel--print .petsync-cards__page:last-child {
+		break-after: auto;
+		page-break-after: auto;
 	}
 
 	.petsync-cards__cell {
@@ -274,8 +349,13 @@
 	   
 	   Pinned rather than widened, because the cell width is fixed by the sheet
 	   size and cannot grow. */
+
+	/* No column override here any more. With the preview at paper size the cell
+	   is the same width in both media, so pet-attributes' own
+	   `repeat(auto-fill, minmax(140px, 1fr))` resolves identically — and if it
+	   resolves to something wrong, that is now visible on screen instead of
+	   only on paper. Forcing it would hide exactly the signal worth keeping. */
 	.petsync-cards .pet-attributes {
-		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 		gap: 0.35rem;
 	}
 
