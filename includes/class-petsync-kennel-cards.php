@@ -387,20 +387,38 @@ class Petsync_Kennel_Cards {
 				<?php return; ?>
 			<?php endif; ?>
 
-			<div class="petsync-cards petsync-cards--<?php echo esc_attr( $size ); ?>">
-				<?php
-				foreach ( $ids as $id ) {
-					// Guard the post type here rather than trusting the query
-					// string — the IDs arrive from a GET parameter.
-					if ( 'vcps_pet' !== get_post_type( $id ) ) {
-						continue;
-					}
-					echo '<div class="petsync-cards__cell">';
-					echo $this->render_card( $id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- rendered blocks, escaped by the block renderer.
-					echo '</div>';
-				}
+			<?php
+			// Guard the post type here rather than trusting the query string —
+			// the IDs arrive from a GET parameter.
+			$printable = array_values(
+				array_filter( $ids, static fn( int $id ): bool => 'vcps_pet' === get_post_type( $id ) )
+			);
+
+			$per_sheet = max( 1, (int) ( $sizes[ $size ]['per_sheet'] ?? 4 ) );
+
+			// Chunked into explicit pages rather than left as one long grid.
+			// On screen each chunk is drawn at real paper size, so the preview
+			// shows exactly where the sheets divide and how much room a card
+			// actually has — the difference between the two was what hid the
+			// clipped photos and footers until someone opened the print dialog.
+			// In print each chunk simply breaks after itself, which makes
+			// pagination deterministic instead of something the browser infers.
+			foreach ( array_chunk( $printable, $per_sheet ) as $sheet ) :
 				?>
-			</div>
+				<div class="petsync-cards__page">
+					<div class="petsync-cards petsync-cards--<?php echo esc_attr( $size ); ?>">
+						<?php
+						foreach ( $sheet as $id ) {
+							echo '<div class="petsync-cards__cell">';
+							echo $this->render_card( $id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- rendered blocks, escaped by the block renderer.
+							echo '</div>';
+						}
+						?>
+					</div>
+				</div>
+				<?php
+			endforeach;
+			?>
 		</div>
 		<?php
 	}

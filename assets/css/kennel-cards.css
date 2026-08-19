@@ -79,10 +79,20 @@
 	overflow: hidden;
 }
 
+/* Portrait photographs in a landscape box is what was clipping the heads. Every
+   image the sync brings down is roughly 3:4 — 768x960 and 750x1000 are typical
+   — and the box was 146x77, close to 2:1. object-fit: cover therefore discarded
+   about 60% of the image height, cropped from the centre, which is exactly
+   where a standing animal's head is not.
+
+   A square keeps far more of the frame, and biasing the crop to the top keeps
+   the head rather than the feet. */
 .kennel-card__photo img {
 	width: 100%;
 	height: auto;
+	aspect-ratio: 1 / 1;
 	object-fit: cover;
+	object-position: center top;
 }
 
 .kennel-card__name {
@@ -143,11 +153,6 @@
 	border-radius: 3px;
 }
 
-.kennel-card__photo img {
-	width: 100%;
-	height: auto;
-	object-fit: cover;
-}
 
 .kennel-card__attributes,
 .kennel-card__health {
@@ -176,6 +181,261 @@
 	overflow-wrap: anywhere;
 	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 	font-size: 0.95em;
+}
+
+/* ── The sheet, on screen ────────────────────────────────────────────────── */
+
+/*
+ * Drawn at real paper size so the preview is the thing being printed rather
+ * than an approximation of it. Before this the on-screen cell was roughly
+ * 600px and the printed one roughly 370px, so the card's internal grids
+ * resolved to different column counts, the card grew taller on paper, and
+ * `overflow: hidden` clipped the photo, the badges and the footer — none of it
+ * visible until the print dialog opened.
+ *
+ * CSS inches are a fixed 96px regardless of screen DPI, so these are faithful.
+ * Letter, less the 0.4in @page margins. A4 is 8.27in wide, so an A4 shelter
+ * previews about 3% narrow — closer than the old preview was by an order of
+ * magnitude, and the printed output is unaffected either way.
+ */
+.petsync-kennel--print .petsync-cards__page {
+	box-sizing: border-box;
+	width: 7.7in;
+	height: 10.2in;
+	margin: 0 auto 0.4in;
+	padding: 0;
+	overflow: hidden;
+	background: #fff;
+	box-shadow: 0 1px 8px rgb(0 0 0 / 25%);
+}
+
+/* Columns follow the SHEET, not the browser window — which is what makes the
+   preview and the paper agree. The cell heights below then divide the page
+   exactly: 2 × 5in and 2 × 5.2in both fit inside 10.2in. */
+.petsync-kennel--print .petsync-cards {
+	display: grid;
+	gap: 0;
+	height: 100%;
+	margin: 0;
+}
+
+.petsync-kennel--print .petsync-cards--index {
+	grid-template-columns: repeat( 2, 1fr );
+	grid-template-rows: repeat( 2, 5in );
+}
+
+.petsync-kennel--print .petsync-cards--half {
+	grid-template-columns: 1fr;
+	grid-template-rows: repeat( 2, 5.1in );
+}
+
+.petsync-kennel--print .petsync-cards--full {
+	grid-template-columns: 1fr;
+	grid-template-rows: 10.2in;
+}
+
+.petsync-kennel--print .petsync-cards__cell {
+	box-sizing: border-box;
+	overflow: hidden;
+	border: 1px dashed #c3c4c7;
+}
+
+/* ── The card is not a page ──────────────────────────────────────────────── */
+
+/*
+ * The card's root is a wp:group, so it arrives carrying `has-global-padding`
+ * and `is-layout-constrained`. Both are right for a group on a page and wrong
+ * for one inside a 3.85in cell: the padding eats horizontal space the card does
+ * not have, and the constrained layout caps its children at the theme's content
+ * width. Neither is visible in a harness without the theme's global styles,
+ * which is why this took a real print to spot.
+ */
+
+/* Block spacing. The card's sections are siblings in a group, so core puts a
+ * full --wp--style--block-gap between each — about 24px a time, roughly 72px of
+ * a 478px card spent on gaps between four sections. Set on the card so every
+ * child inherits it, rather than overriding margins one selector at a time. */
+.petsync-cards .kennel-card > * + * {
+	margin-block-start: 0.375rem !important;
+}
+
+.petsync-cards .kennel-card.has-global-padding {
+	padding-right: 0 !important;
+	padding-left: 0 !important;
+}
+
+.petsync-cards .is-layout-constrained > * {
+	max-width: none;
+}
+
+/* The banner is a paragraph, not a button block — which is why an earlier
+   `white-space: nowrap` aimed at .wp-block-button__link did nothing at all, and
+   "Adopt me!" kept printing one letter per line in a narrow column. */
+.petsync-cards .kennel-card__banner {
+	white-space: nowrap;
+	word-break: keep-all;
+}
+
+/* And the name, for the same reason a label broke mid-word in #78: several
+   themes set word-break: break-word, which lets "Elmira" become "Elmir" + "a". */
+.petsync-cards .kennel-card__name {
+	word-break: normal;
+	overflow-wrap: break-word;
+}
+
+/* ── Attributes, on a card ───────────────────────────────────────────────── */
+
+/*
+ * A kennel card is 3.85 × 5in at four to a sheet. The attributes block is built
+ * for a website column and costs about 85px a row there — eight rows is 680px
+ * in a 480px cell, so the health badges and the whole shelter footer were being
+ * clipped by overflow: hidden with nothing to indicate they had gone.
+ *
+ * Both rules below are scoped to .petsync-cards, so the pet's own page on the
+ * website is untouched. They apply on screen as well as in print, because the
+ * preview is now drawn at paper size and the two must agree.
+ */
+
+/* The card's columns must not stack.
+ *
+ * Core stacks every wp-block-columns below 782px:
+ *
+ *   @media (max-width:781px) {
+ *     .wp-block-columns:not(.is-not-stacked-on-mobile) > .wp-block-column {
+ *       flex-basis: 100% !important;
+ *     }
+ *   }
+ *
+ * A Letter page with 0.4in margins is 739px of content, so PRINT is below that
+ * breakpoint and a browser window is not. The card therefore printed a
+ * different layout from the one on screen — photo dropped full width below the
+ * attributes and cropped at the cell edge — which is the worst kind of bug
+ * here, because the design you approve is not the design that comes out.
+ *
+ * parts/kennel-card.html now sets isStackedOnMobile:false, which is core's own
+ * opt-out and shows up as the "Stack on mobile" toggle in the Site Editor. This
+ * rule is the belt to that braces, for a card customised before the change:
+ * a shelter's saved copy keeps the old markup and would still stack. */
+@media (max-width: 781px) {
+
+	.petsync-cards .wp-block-columns:not(.is-not-stacked-on-mobile) {
+		flex-wrap: nowrap;
+	}
+}
+
+/* The button and the photo share a narrow column, so nothing in it may break
+   mid-word — "Adopt me!" came out one letter per line when that column was
+   squeezed. */
+.petsync-cards .wp-block-button__link {
+	white-space: nowrap;
+	word-break: keep-all;
+}
+
+.petsync-cards .pet-attributes {
+	grid-template-columns: repeat( auto-fill, minmax( 150px, 1fr ) );
+	gap: 0.35rem;
+}
+
+/* Label beside the value rather than above it.
+ *
+ * Checked against the real data before relying on it: of the seven fields a
+ * card shows, six have values of nine characters or fewer — only breed runs
+ * long, up to "Coonhound (Unknown Type)". flex-wrap means those six sit on one
+ * line and breed drops below its label, which is precisely the current layout.
+ * So this can only ever reduce the height, never add to it. */
+.petsync-cards .pet-attributes__item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 0.4em;
+	padding: 0.18rem 0.42rem;
+}
+
+.petsync-cards .pet-attributes__label {
+	margin-bottom: 0;
+}
+
+.petsync-cards .pet-health__item {
+	padding: 0.3rem 0.5rem;
+}
+
+.petsync-cards .pet-health {
+	gap: 0.3rem;
+}
+
+/* Measured budget for a 4-up cell (370 x 480px), on the richest pet on the
+ * test site, before these rules:
+ *
+ *   top row     230px   <- the photo alone was 188
+ *   attributes  136px
+ *   health      128px
+ *   footer       79px
+ *   total       648px   against 478px of usable cell
+ *
+ * The photo was taking nearly 40% of a card that also has to carry the data
+ * someone reads from a corridor. It is now constrained by the width of the
+ * column it sits in rather than by a height cap, which buys the same vertical
+ * space without flattening the picture. The rest is trimmed proportionally.
+ *
+ * Current worst case across all 43 published pets: 444px against 460px usable. */
+
+/* The height cap that used to live here is gone, and must not come back: with
+   aspect-ratio set, a max-height smaller than the column width silently wins
+   and the photo goes back to being a letterbox. The square's size is now
+   governed by the column it sits in (29% of the card, 96px at index size),
+   which is the same 0.8in of vertical space the cap was defending — bought
+   without flattening the picture.
+
+   For the record, since two earlier attempts were wasted here: a PERCENTAGE
+   max-height never worked at all. It resolves against a parent that has no
+   height, so it is dropped, and the photo stayed at its natural 188px through
+   both tries. */
+
+.petsync-cards .pet-health {
+	gap: 0.25rem;
+}
+
+.petsync-cards .pet-health__item {
+	padding: 0.2rem 0.45rem;
+	font-size: 0.95em;
+}
+
+.petsync-cards .kennel-card__org,
+.petsync-cards .kennel-card__contact,
+.petsync-cards .kennel-card__more,
+.petsync-cards .kennel-card__url {
+	font-size: 0.9em;
+	line-height: 1.25;
+}
+
+/* The cell's own padding costs 32px of the 480px height. Ten is enough to keep
+ * a card clear of the cut line, and buys back 12px for content. */
+.petsync-cards--index .petsync-cards__cell {
+	padding: 10px;
+}
+
+/* The row already has 8px from the next section's margin; its own 12px on top
+   is just doubling up. */
+.petsync-cards .kennel-card__top {
+	margin-bottom: 0;
+}
+
+/* Card sizing lives OUT here, not in @media print.
+ *
+ * The preview is drawn at paper size so that what you see is what prints — but
+ * while these rules were print-only, the preview still rendered the card at
+ * screen sizes and showed a different amount of clipping from the real thing.
+ * A preview that disagrees with the paper is worse than none, because it is
+ * trusted. `.petsync-cards` only exists on the print sheet, so scoping here is
+ * enough. */
+.petsync-cards__cell .kennel-card {
+	font-size: 0.72em;
+	line-height: 1.3;
+}
+
+.petsync-cards--index .kennel-card__name {
+	margin-bottom: 0.2em;
+	font-size: 1.5em;
 }
 
 /* ── Print ──────────────────────────────────────────────────────────────── */
@@ -218,6 +478,24 @@
 		margin: 0;
 	}
 
+	/* On paper the page box IS the sheet, so the on-screen simulation is
+	   dropped and each chunk simply breaks after itself. Deterministic, rather
+	   than relying on the browser to infer where a grid should divide. */
+	.petsync-kennel--print .petsync-cards__page {
+		width: auto;
+		height: auto;
+		margin: 0;
+		box-shadow: none;
+		overflow: visible;
+		break-after: page;
+		page-break-after: always;
+	}
+
+	.petsync-kennel--print .petsync-cards__page:last-child {
+		break-after: auto;
+		page-break-after: auto;
+	}
+
 	.petsync-cards__cell {
 		border: 1px dashed #999;
 		box-sizing: border-box;
@@ -247,9 +525,33 @@
 		page-break-after: always;
 	}
 
-	.kennel-card__photo img {
-		max-height: 45%;
+
+	/* Browsers drop background colours when printing unless told otherwise, so
+	   every grey attribute pill, every health badge and the adoption button
+	   print as flat white — the card loses the structure that makes it readable
+	   across a room, which is the whole point of a kennel card. */
+	.petsync-cards,
+	.petsync-cards *,
+	.petsync-cards *::before,
+	.petsync-cards *::after {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
 	}
+
+	/* A print cell is about half a page wide; the same cell on screen is
+	   roughly twice that. The attribute grid is
+	   `repeat(auto-fill, minmax(140px, 1fr))`, so at print width it silently
+	   collapses from two columns to one, which doubles the card's height —
+	   and the card is inside `overflow: hidden`, so everything past 5in is
+	   CLIPPED rather than pushed to another page. The photo, the health
+	   badges and the entire shelter footer disappear with no indication that
+	   anything is missing.
+	   
+	   Pinned rather than widened, because the cell width is fixed by the sheet
+	   size and cannot grow. */
+
+
+
 }
 
 .petsync-kennel__filter {
