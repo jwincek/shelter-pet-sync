@@ -19,7 +19,7 @@ DB_NAME="${1:-}"
 DB_USER="${2:-}"
 DB_PASS="${3:-}"
 DB_HOST="${4:-localhost}"
-WP_VERSION="${5:-7.0}"
+WP_VERSION="${5:-7.1}"
 
 if [ -z "$DB_NAME" ] || [ -z "$DB_USER" ]; then
 	echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version]" >&2
