@@ -250,6 +250,64 @@
 	.kennel-card__photo img {
 		max-height: 45%;
 	}
+
+	/* Browsers drop background colours when printing unless told otherwise, so
+	   every grey attribute pill, every health badge and the adoption button
+	   print as flat white — the card loses the structure that makes it readable
+	   across a room, which is the whole point of a kennel card. */
+	.petsync-cards,
+	.petsync-cards *,
+	.petsync-cards *::before,
+	.petsync-cards *::after {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	/* A print cell is about half a page wide; the same cell on screen is
+	   roughly twice that. The attribute grid is
+	   `repeat(auto-fill, minmax(140px, 1fr))`, so at print width it silently
+	   collapses from two columns to one, which doubles the card's height —
+	   and the card is inside `overflow: hidden`, so everything past 5in is
+	   CLIPPED rather than pushed to another page. The photo, the health
+	   badges and the entire shelter footer disappear with no indication that
+	   anything is missing.
+	   
+	   Pinned rather than widened, because the cell width is fixed by the sheet
+	   size and cannot grow. */
+	.petsync-cards .pet-attributes {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+		gap: 0.35rem;
+	}
+
+	.petsync-cards .pet-attributes__item,
+	.petsync-cards .pet-health__item {
+		padding: 0.3rem 0.5rem;
+	}
+
+	.petsync-cards .pet-health {
+		gap: 0.3rem;
+	}
+
+	/* The card is sized for a screen column, so everything is scaled down to the
+	   printed cell. Measured under print emulation, a data-rich pet came to
+	   549px against a 480px (5in) cell before this; the reductions below and
+	   the two-column grid above are what bring it inside.
+	   
+	   The 4-up size is the tightest, so it gets the most reduction. Half and
+	   full sheets have room to spare and only need the grid fix. */
+	.petsync-cards__cell .kennel-card {
+		font-size: 0.74em;
+		line-height: 1.35;
+	}
+
+	.petsync-cards--index .kennel-card__name {
+		font-size: 1.5em;
+		margin-bottom: 0.2em;
+	}
+
+	.petsync-cards--index .kennel-card__photo img {
+		max-height: 32%;
+	}
 }
 
 .petsync-kennel__filter {
