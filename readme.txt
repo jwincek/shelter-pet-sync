@@ -4,7 +4,7 @@ Tags: pets, adoption, animal shelter, rescue, animals
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.3.1
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,13 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 
 == Changelog ==
 
+= 1.4.0 =
+* Fixed: printed kennel cards were cut off at the bottom, losing the shelter's name, address and phone number — the part of the card someone needs most. Reprint any cards you have already made.
+* Fixed: photographs cut off the animal's head. Photos on cards are now square and cropped from the top, which keeps the face.
+* Changed: the coat row no longer appears on printed cards. It was blank for every dog and repeated the breed for nearly every cat. It is unchanged on the animal's own page, and can be switched back on for cards in the Site Editor.
+* Changed: more room for long names on the card, and the "Adopt me!" badge now sits under the name.
+* Tested against WordPress 7.1.
+
 = 1.3.1 =
 * Fixed: the "Search engines" setting under Pets → Shelter Details would not save, so the structured data added in 1.3.0 could not be switched on. If you tried, turn it on again.
 
@@ -157,6 +164,9 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 * Built on the WordPress Abilities API and Block Bindings.
 
 == Upgrade Notice ==
+
+= 1.4.0 =
+Printed kennel cards were being cut off at the bottom, losing your shelter's name, address and phone number, and photographs were cutting off the animal's head. Both are fixed — reprint any cards you have already made. Also drops the coat row from cards, which repeated the breed, and adds WordPress 7.1 support.
 
 = 1.3.1 =
 The "Search engines" setting added in 1.3.0 would not save. If you tried to switch structured data on and it did not stick, this is why — update and switch it on again.

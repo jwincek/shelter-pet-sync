@@ -3,7 +3,7 @@
  * Plugin Name: ShelterKit Pets
  * Plugin URI: https://github.com/jwincek/shelterkit-pets
  * Description: Adoptable pet listings for animal shelters — blocks for cards, grids, filters, galleries, favorites and comparison, with sync from Petstablished.
- * Version: 1.3.1
+ * Version: 1.4.0
  * Requires at least: 6.9
  * Requires PHP: 8.1
  * Author: Jerome Wincek
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants.
-define( 'PETSYNC_VERSION', '1.3.1' );
+define( 'PETSYNC_VERSION', '1.4.0' );
 define( 'PETSYNC_FILE', __FILE__ );
 define( 'PETSYNC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PETSYNC_URL', plugin_dir_url( __FILE__ ) );

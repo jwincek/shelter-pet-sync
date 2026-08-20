@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-08-20
+
+### Fixed
+- **Printed kennel cards were cut off at the bottom.** Card content overflowed
+  the cell and was clipped without warning — and because the shelter's name,
+  address and phone number sit at the foot of the card, they were the first
+  thing lost. A card that does not say who to call is the one thing a kennel
+  card must never be.
+
+  Four separate causes, each of which alone was enough: the Group block's
+  default padding and width constraints, columns stacking below 782px, a
+  section-gap rule inheriting from the theme, and two earlier height caps
+  written as percentages, which a browser drops when the parent has no height.
+
+  Every published animal on the test shelter is now measured on each change.
+  The worst card is 444px against 460px of usable space. **Reprint any cards
+  you have already made.**
+
+- **Photographs cut off the animal's head.** Every photo the sync downloads is
+  portrait — roughly 3:4 — and the card was placing them in a box close to 2:1.
+  The crop discarded about 60% of each image's height, taken from the centre,
+  which is exactly where a standing animal's head is not. It was not bad luck
+  on particular photos; every portrait photograph lost the head.
+
+  Photos are now square and cropped from the top.
+
+### Changed
+- **The coat row no longer appears on printed cards.** It was blank on every
+  dog, and on the cats that had it, the breed already said the same thing —
+  "Domestic Short Hair" contains "Short". Across the test shelter it added
+  something new to two cards out of forty-three.
+
+  Coat is untouched on the animal's own page, where it is worth showing, and
+  can be switched back on for cards in the Site Editor.
+
+- The card's photo column is narrower and the name column wider, so long names
+  have more room. The "Adopt me!" badge sits under the name rather than beside
+  the photo, which is where the wasted space was.
+
+### Compatibility
+- **Tested against WordPress 7.1**, including the changes to the Abilities API.
+  All twelve of the plugin's abilities were verified against the output
+  validation that WordPress 7.1 introduced, which did not exist in 6.9 and is
+  now enforced for every caller. Nothing changed for existing sites, and REST
+  exposure is unchanged.
+
+### Internal
+- The test suite now runs against **both** ends of the supported range, 6.9 and
+  7.1, on every push. The floor had never been tested — "Requires at least" was
+  an assertion rather than a measurement, and it is the claim that breaks
+  someone's site rather than merely affecting search results.
+- Config validator check 12 holds `Requires at least` and `Tested up to` to the
+  versions CI actually runs, so neither header can drift ahead of the evidence.
+- Abilities are now tested through `WP_Ability::execute()` rather than by
+  calling their handlers directly, so the contract WordPress validates is the
+  contract the suite checks.
+
 ## [1.3.1] - 2026-08-18
 
 ### Fixed
