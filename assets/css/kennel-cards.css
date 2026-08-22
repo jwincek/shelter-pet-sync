@@ -219,19 +219,45 @@
 	margin: 0;
 }
 
+/*
+ * Cell height is declared ONCE per size and used by both the on-screen sheet
+ * and the printed one. They used to be two separate declarations, and they
+ * drifted: the preview said a half-page cell was 5.1in while print said 5.2in.
+ * Two of those need 10.4in, a Letter page with 0.4in margins offers 10.2in,
+ * and so the second card was pushed onto a sheet of its own — but only in the
+ * browser's print preview, because the on-screen preview used the value that
+ * fitted. A preview disagreeing with the printer is now the second bug this
+ * file has produced that way.
+ *
+ * Budget: Letter is 11in tall, less 0.8in of @page margins, leaving 10.2in.
+ * Each size leaves slack rather than filling that exactly, because an exact
+ * fit spills a whole card onto a new sheet on any rounding.
+ */
+.petsync-cards--index {
+	--petsync-cell-height: 5in;    /* 2 rows = 10in, 0.2in spare */
+}
+
+.petsync-cards--half {
+	--petsync-cell-height: 5in;    /* 2 rows = 10in, 0.2in spare */
+}
+
+.petsync-cards--full {
+	--petsync-cell-height: 10.2in; /* 1 row, the whole page box */
+}
+
 .petsync-kennel--print .petsync-cards--index {
 	grid-template-columns: repeat( 2, 1fr );
-	grid-template-rows: repeat( 2, 5in );
+	grid-template-rows: repeat( 2, var( --petsync-cell-height ) );
 }
 
 .petsync-kennel--print .petsync-cards--half {
 	grid-template-columns: 1fr;
-	grid-template-rows: repeat( 2, 5.1in );
+	grid-template-rows: repeat( 2, var( --petsync-cell-height ) );
 }
 
 .petsync-kennel--print .petsync-cards--full {
 	grid-template-columns: 1fr;
-	grid-template-rows: 10.2in;
+	grid-template-rows: var( --petsync-cell-height );
 }
 
 .petsync-kennel--print .petsync-cards__cell {
@@ -438,6 +464,42 @@
 	font-size: 1.5em;
 }
 
+/*
+ * A full page is not a bigger index card, it is a poster — and it was
+ * being drawn as neither: the same card as the half-page size, filling
+ * 46% of the sheet with the rest blank. That is what made the two sizes
+ * look alike. At 7.7in wide they ARE the same card; only the empty space
+ * below it differed.
+ *
+ * Letting the top row wrap gives the photograph the full width of the
+ * page. Scaling the text does almost nothing by comparison: 0.85em to
+ * 1.05em moved the tallest card by 13px, because the photograph sets the
+ * height, not the type.
+ */
+
+/* !important because core sets flex-wrap: nowrap !important on
+   .is-not-stacked-on-mobile, which the card carries so that index cards
+   do NOT stack. A full page wants the opposite. */
+.petsync-cards--full .kennel-card .wp-block-columns {
+	flex-wrap: wrap !important;
+}
+
+.petsync-cards--full .kennel-card__top > .wp-block-column {
+	flex-basis: 100% !important;
+}
+
+/*
+ * Uncapped, a full-width square photograph is 7.7in tall on its own and
+ * 40 of 92 cards overflowed. Capped at 5.5in every card fits, the
+ * tallest at 91% of the sheet.
+ */
+.petsync-cards--full .kennel-card__photo img {
+	display: block;
+	width: auto;
+	max-height: 5.5in;
+	margin-inline: auto;
+}
+
 /* ── Print ──────────────────────────────────────────────────────────────── */
 
 @media print {
@@ -509,21 +571,21 @@
 		grid-template-columns: repeat( 2, 1fr );
 	}
 
-	.petsync-cards--index .petsync-cards__cell {
-		height: 5in;
+	/* Every size takes its height from the one variable declared above, so
+	   paper and preview cannot disagree again. The per-page break already
+	   lives on .petsync-cards__page; repeating it on a full-page cell meant
+	   two forced breaks in a row for a size that has one cell per sheet. */
+	.petsync-cards__cell {
+		height: var( --petsync-cell-height, auto );
 	}
 
-	/* 2 to a sheet. */
+	/* Half-page cells take the index card's tighter padding, which buys back
+	   the room the shorter cell gives up: 460px usable against a tallest
+	   card of 430px. */
 	.petsync-cards--half .petsync-cards__cell {
-		height: 5.2in;
+		padding: 10px;
 	}
 
-	/* 1 to a sheet. */
-	.petsync-cards--full .petsync-cards__cell {
-		height: 10.2in;
-		break-after: page;
-		page-break-after: always;
-	}
 
 
 	/* Browsers drop background colours when printing unless told otherwise, so

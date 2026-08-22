@@ -1339,6 +1339,7 @@
 			showSize: { type: 'boolean', default: true },
 			showColor: { type: 'boolean', default: true },
 			showCoat: { type: 'boolean', default: true },
+			showCoatPattern: { type: 'boolean', default: true },
 			showWeight: { type: 'boolean', default: true },
 		},
 		edit( props ) {
@@ -1396,6 +1397,12 @@
 							checked: attributes.showCoat,
 							onChange: ( val ) =>
 								setAttributes( { showCoat: val } ),
+						} ),
+						el( ToggleControl, {
+							label: __( 'Coat Pattern', 'shelterkit-pets' ),
+							checked: attributes.showCoatPattern,
+							onChange: ( val ) =>
+								setAttributes( { showCoatPattern: val } ),
 						} ),
 						el( ToggleControl, {
 							label: __( 'Weight', 'shelterkit-pets' ),
@@ -1794,10 +1801,23 @@
 		parent: [ 'petsync/pet-details' ],
 		usesContext: [ 'postId', 'postType' ],
 		supports: { html: false, reusable: false },
+		/*
+		 * These must match block.json. The server reads all of them in
+		 * render.php, but only three were declared here — so the other five had
+		 * no control, could not be set, and the fields they gate were on
+		 * permanently. An attribute the editor does not declare is one the
+		 * editor cannot serialise, so adding a toggle without the declaration
+		 * would have looked like it worked and saved nothing.
+		 */
 		attributes: {
+			displayMode: { type: 'string', default: 'known' },
 			showVaccinations: { type: 'boolean', default: true },
 			showSpayedNeutered: { type: 'boolean', default: true },
 			showHousebroken: { type: 'boolean', default: true },
+			showSpecialNeeds: { type: 'boolean', default: true },
+			showHypoallergenic: { type: 'boolean', default: true },
+			showDeclawed: { type: 'boolean', default: true },
+			showStatusText: { type: 'boolean', default: true },
 		},
 		edit( props ) {
 			const { attributes, setAttributes } = props;
@@ -1839,6 +1859,76 @@
 							checked: attributes.showHousebroken,
 							onChange: ( val ) =>
 								setAttributes( { showHousebroken: val } ),
+						} ),
+						el( ToggleControl, {
+							label: __(
+								'Show Special Needs',
+								'shelterkit-pets'
+							),
+							checked: attributes.showSpecialNeeds,
+							onChange: ( val ) =>
+								setAttributes( { showSpecialNeeds: val } ),
+						} ),
+						el( ToggleControl, {
+							label: __(
+								'Show Hypoallergenic',
+								'shelterkit-pets'
+							),
+							checked: attributes.showHypoallergenic,
+							onChange: ( val ) =>
+								setAttributes( { showHypoallergenic: val } ),
+						} ),
+						el( ToggleControl, {
+							label: __( 'Show Declawed', 'shelterkit-pets' ),
+							help: __(
+								'Cats only — hidden for other animals regardless.',
+								'shelterkit-pets'
+							),
+							checked: attributes.showDeclawed,
+							onChange: ( val ) =>
+								setAttributes( { showDeclawed: val } ),
+						} ),
+						el( SelectControl, {
+							label: __( 'Which to show', 'shelterkit-pets' ),
+							value: attributes.displayMode,
+							options: [
+								{
+									label: __(
+										'Known answers only',
+										'shelterkit-pets'
+									),
+									value: 'known',
+								},
+								{
+									label: __(
+										'Everything, including unknown',
+										'shelterkit-pets'
+									),
+									value: 'all',
+								},
+								{
+									label: __(
+										'Only what is true',
+										'shelterkit-pets'
+									),
+									value: 'positive',
+								},
+							],
+							onChange: ( val ) =>
+								setAttributes( { displayMode: val } ),
+						} ),
+						el( ToggleControl, {
+							label: __(
+								'Show Yes/No wording',
+								'shelterkit-pets'
+							),
+							help: __(
+								'Turn off to rely on the icons alone — useful on printed kennel cards. Screen readers are unaffected either way.',
+								'shelterkit-pets'
+							),
+							checked: attributes.showStatusText,
+							onChange: ( val ) =>
+								setAttributes( { showStatusText: val } ),
 						} )
 					)
 				),

@@ -21,7 +21,8 @@
 		"showHousebroken": { "type": "boolean", "default": true },
 		"showSpecialNeeds": { "type": "boolean", "default": true },
 		"showHypoallergenic": { "type": "boolean", "default": true },
-		"showDeclawed": { "type": "boolean", "default": true }
+		"showDeclawed": { "type": "boolean", "default": true },
+		"showStatusText": { "type": "boolean", "default": true }
 	},
 	"supports": {
 		"html": false,

@@ -382,6 +382,22 @@ class Petsync_Kennel_Cards {
 				<button type="button" class="button button-primary" onclick="window.print()"><?php esc_html_e( 'Print', 'shelterkit-pets' ); ?></button>
 			</p>
 
+			<?php
+			/*
+			 * Admin notices are moved by wp-admin/js/common.js, which looks for
+			 * `.wp-header-end` and falls back to the first heading inside `.wrap`.
+			 * This screen has no <h1>, so the first heading it found was a PET'S
+			 * NAME — and the shelter's "some pets may no longer be available"
+			 * notice was inserted inside that pet's card, pushing the card's own
+			 * content past the bottom of the cell where it was clipped.
+			 *
+			 * The marker gives the notices somewhere to land. They are hidden in
+			 * @media print regardless; this is about the on-screen preview, which
+			 * is only useful while it shows what will actually print.
+			 */
+			?>
+			<hr class="wp-header-end" />
+
 			<?php if ( ! $ids ) : ?>
 				<div class="notice notice-warning"><p><?php esc_html_e( 'No pets were selected.', 'shelterkit-pets' ); ?></p></div>
 				<?php return; ?>
