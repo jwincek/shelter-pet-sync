@@ -25,6 +25,9 @@
  *  12. wp-tested    — readme.txt's "Requires at least" and "Tested up to"
  *                     match the floor and ceiling of the CI matrix, so both
  *                     claims are backed by a suite that actually ran.
+ *  13. block-controls — every block attribute render.php honours is declared
+ *                     and controllable in that block's editor registration,
+ *                     so a toggle the server reads is one an editor can set.
  *   7. hash-coverage — every literal $data['key'] the sync reads is in
  *                     get_consumed_api_keys(), so the change-detection hash
  *                     can't silently miss a field (stale-display risk).
@@ -937,6 +940,166 @@ if ( $matrix ) {
 			"readme.txt says \"Requires at least: $requires_at_least\" but the lowest WordPress in the CI matrix is $ci_floor. "
 			. 'A floor nothing runs against is a guess, and it is the claim that fatals for real users rather than only affecting search.'
 		);
+	}
+}
+
+
+// ── Check 13: a server-honoured block attribute must be settable ─────────────
+// render.php reading an attribute the editor never declares means the field it
+// gates is stuck on its default forever. Nothing fails: the block renders, the
+// attribute has a default, and the control simply is not there — so it reads as
+// a design decision rather than an omission.
+//
+// Declaring the attribute and adding a control are BOTH required, and the
+// declaration is the half that is easy to miss: an attribute the editor does
+// not declare is one it cannot serialise, so a toggle without it appears to
+// work and saves nothing.
+//
+// Attributes genuinely meant to be internal go in $block_control_exempt with a
+// reason, so "no control" is a decision on the record rather than an oversight.
+$block_control_exempt = [
+	// 'petsync/example' => [ 'someAttribute' => 'why it has no control' ],
+];
+
+/*
+ * The backlog, as a RATCHET rather than a suppression list.
+ *
+ * 45 attributes were unreachable when this check was written. Five that the
+ * kennel card depends on were fixed straight away; these are the rest, and
+ * fixing them all at once was not worth blocking a release for.
+ *
+ * The list can only shrink. An entry here is a warning, not an error — but a
+ * gap NOT listed here is an error, so no new one can be introduced, and an
+ * entry that no longer describes a real gap is also an error, so the list
+ * cannot rot into a pile of stale suppressions. Delete lines as you add
+ * controls; the check will tell you when a line has to go.
+ */
+$block_control_known_gaps = [
+	'petsync/pet-comparison' => [
+		'showAdoptionFee',
+		'showAge',
+		'showBreed',
+		'showCompatibility',
+		'showImage',
+		'showSex',
+		'showSize',
+	],
+	'petsync/pet-filters' => [
+		'compatibilityCollapsed',
+		'compatibilityStyle',
+		'showCompatibility',
+		'showGoodWithCats',
+		'showGoodWithDogs',
+		'showGoodWithKids',
+		'showHousebroken',
+		'showShotsCurrent',
+		'showSpayedNeutered',
+		'showSpecialNeeds',
+		'showStatus',
+	],
+	'petsync/pet-gallery' => [
+		'columns',
+		'showBadgeAge',
+		'showBadgeBondedPair',
+		'showBadgeNew',
+		'showBadgeSpecialNeeds',
+		'showBadgeStatus',
+		'showVideos',
+	],
+	'petsync/pet-listing-grid' => [
+		'compatibilityStyle',
+		'filterAge',
+		'filterAnimal',
+		'filterBreed',
+		'filterGoodWithCats',
+		'filterGoodWithDogs',
+		'filterGoodWithKids',
+		'filterHousebroken',
+		'filterSex',
+		'filterShotsCurrent',
+		'filterSize',
+		'filterSpayedNeutered',
+		'filterSpecialNeeds',
+		'showCompatibilityFilters',
+		'showSearch',
+	],
+];
+
+$editor_js_path = $root . '/assets/js/blocks-editor.js';
+
+if ( is_file( $editor_js_path ) ) {
+	$editor_js = (string) file_get_contents( $editor_js_path );
+
+	// Slice the file per registerBlockType() call. Searching the whole file
+	// instead undercounts badly: an attribute named in ANOTHER block's section
+	// looks present, which is how displayMode hid here.
+	$sections = [];
+	if ( preg_match_all( "/registerBlockType\(\s*'([^']+)'/", $editor_js, $m, PREG_OFFSET_CAPTURE ) ) {
+		$count = count( $m[0] );
+		foreach ( $m[1] as $i => $hit ) {
+			$start           = (int) $m[0][ $i ][1];
+			$end             = ( $i + 1 < $count ) ? (int) $m[0][ $i + 1 ][1] : strlen( $editor_js );
+			$sections[ $hit[0] ] = substr( $editor_js, $start, $end - $start );
+		}
+	}
+
+	foreach ( glob( $root . '/blocks/*/block.json' ) as $block_json ) {
+		$dir  = dirname( $block_json );
+		$json = json_decode( (string) file_get_contents( $block_json ), true );
+
+		if ( ! is_array( $json ) ) {
+			continue;
+		}
+
+		$name       = (string) ( $json['name'] ?? basename( $dir ) );
+		$attributes = (array) ( $json['attributes'] ?? [] );
+		$render     = $dir . '/render.php';
+
+		if ( ! $attributes || ! is_file( $render ) ) {
+			continue;
+		}
+
+		$render_src = (string) file_get_contents( $render );
+		$section    = $sections[ $name ] ?? '';
+		$exempt     = (array) ( $block_control_exempt[ $name ] ?? [] );
+
+		foreach ( array_keys( $attributes ) as $attribute ) {
+			if ( isset( $exempt[ $attribute ] ) ) {
+				continue;
+			}
+
+			$pattern = '/\b' . preg_quote( (string) $attribute, '/' ) . '\b/';
+
+			if ( ! preg_match( $pattern, $render_src ) ) {
+				continue; // Not honoured server-side; nothing to control.
+			}
+
+			if ( '' === $section ) {
+				$add( 'warning', 'block-controls', "$name has no editor registration in blocks-editor.js, so none of its attributes can be set." );
+				break;
+			}
+
+			$known = in_array( $attribute, (array) ( $block_control_known_gaps[ $name ] ?? [] ), true );
+
+			if ( ! preg_match( $pattern, $section ) ) {
+				$add(
+					$known ? 'warning' : 'error',
+					'block-controls',
+					"$name reads '$attribute' in render.php, but its editor registration never mentions it — "
+					. 'the field it gates is stuck on its default. '
+					. ( $known
+						? 'Known gap, tracked in $block_control_known_gaps.'
+						: 'Declare it in the block\'s attributes AND give it a control, or list it in $block_control_exempt with a reason.' )
+				);
+			} elseif ( $known ) {
+				$add(
+					'error',
+					'block-controls',
+					"$name '$attribute' is listed in \$block_control_known_gaps but now HAS a control. "
+					. 'Remove the line — the list is a ratchet and must not collect stale entries.'
+				);
+			}
+		}
 	}
 }
 

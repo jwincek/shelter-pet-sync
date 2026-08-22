@@ -194,9 +194,21 @@ $wrapper_attributes = get_block_wrapper_attributes(
 				?>
 			</span>
 			<span class="pet-health__label"><?php echo esc_html( $item['label'] ); ?></span>
-			<span class="pet-health__status" aria-hidden="true">
-				<?php echo esc_html( $status_labels[ $item['status'] ] ); ?>
-			</span>
+			<?php
+			/*
+			 * The status word is aria-hidden — the value is already on the <li>
+			 * as an aria-label, so assistive technology reads it either way and
+			 * turning this off costs nothing there. It is a content choice, not
+			 * a presentation one, which is why it is an attribute rather than a
+			 * CSS rule: a kennel card printed at four to a sheet can rely on the
+			 * icon, while the pet's own page has room for the word.
+			 */
+			?>
+			<?php if ( ! empty( $attributes['showStatusText'] ) ) : ?>
+				<span class="pet-health__status" aria-hidden="true">
+					<?php echo esc_html( $status_labels[ $item['status'] ] ); ?>
+				</span>
+			<?php endif; ?>
 		</li>
 	<?php endforeach; ?>
 </ul>

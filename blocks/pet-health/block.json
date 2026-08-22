@@ -6,22 +6,61 @@
 	"title": "Pet Health",
 	"category": "petsync",
 	"description": "Display pet health information like vaccinations, spay/neuter status, and more.",
-	"keywords": ["pet", "health", "vaccinations", "spayed", "neutered", "hypoallergenic", "declawed"],
-	"ancestor": ["petsync/pet-details"],
+	"keywords": [
+		"pet",
+		"health",
+		"vaccinations",
+		"spayed",
+		"neutered",
+		"hypoallergenic",
+		"declawed"
+	],
+	"ancestor": [
+		"petsync/pet-details"
+	],
 	"textdomain": "shelterkit-pets",
-	"usesContext": ["postId", "postType"],
+	"usesContext": [
+		"postId",
+		"postType"
+	],
 	"attributes": {
 		"displayMode": {
 			"type": "string",
 			"default": "known",
-			"enum": ["all", "known", "positive"]
+			"enum": [
+				"all",
+				"known",
+				"positive"
+			]
 		},
-		"showSpayedNeutered": { "type": "boolean", "default": true },
-		"showVaccinations": { "type": "boolean", "default": true },
-		"showHousebroken": { "type": "boolean", "default": true },
-		"showSpecialNeeds": { "type": "boolean", "default": true },
-		"showHypoallergenic": { "type": "boolean", "default": true },
-		"showDeclawed": { "type": "boolean", "default": true }
+		"showSpayedNeutered": {
+			"type": "boolean",
+			"default": true
+		},
+		"showVaccinations": {
+			"type": "boolean",
+			"default": true
+		},
+		"showHousebroken": {
+			"type": "boolean",
+			"default": true
+		},
+		"showSpecialNeeds": {
+			"type": "boolean",
+			"default": true
+		},
+		"showHypoallergenic": {
+			"type": "boolean",
+			"default": true
+		},
+		"showDeclawed": {
+			"type": "boolean",
+			"default": true
+		},
+		"showStatusText": {
+			"type": "boolean",
+			"default": true
+		}
 	},
 	"supports": {
 		"html": false,
