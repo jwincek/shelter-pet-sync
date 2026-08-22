@@ -464,6 +464,42 @@
 	font-size: 1.5em;
 }
 
+/*
+ * A full page is not a bigger index card, it is a poster — and it was
+ * being drawn as neither: the same card as the half-page size, filling
+ * 46% of the sheet with the rest blank. That is what made the two sizes
+ * look alike. At 7.7in wide they ARE the same card; only the empty space
+ * below it differed.
+ *
+ * Letting the top row wrap gives the photograph the full width of the
+ * page. Scaling the text does almost nothing by comparison: 0.85em to
+ * 1.05em moved the tallest card by 13px, because the photograph sets the
+ * height, not the type.
+ */
+
+/* !important because core sets flex-wrap: nowrap !important on
+   .is-not-stacked-on-mobile, which the card carries so that index cards
+   do NOT stack. A full page wants the opposite. */
+.petsync-cards--full .kennel-card .wp-block-columns {
+	flex-wrap: wrap !important;
+}
+
+.petsync-cards--full .kennel-card__top > .wp-block-column {
+	flex-basis: 100% !important;
+}
+
+/*
+ * Uncapped, a full-width square photograph is 7.7in tall on its own and
+ * 40 of 92 cards overflowed. Capped at 5.5in every card fits, the
+ * tallest at 91% of the sheet.
+ */
+.petsync-cards--full .kennel-card__photo img {
+	display: block;
+	width: auto;
+	max-height: 5.5in;
+	margin-inline: auto;
+}
+
 /* ── Print ──────────────────────────────────────────────────────────────── */
 
 @media print {
@@ -550,41 +586,6 @@
 		padding: 10px;
 	}
 
-	/*
-	 * A full page is not a bigger index card, it is a poster — and it was
-	 * being drawn as neither: the same card as the half-page size, filling
-	 * 46% of the sheet with the rest blank. That is what made the two sizes
-	 * look alike. At 7.7in wide they ARE the same card; only the empty space
-	 * below it differed.
-	 *
-	 * Letting the top row wrap gives the photograph the full width of the
-	 * page. Scaling the text does almost nothing by comparison: 0.85em to
-	 * 1.05em moved the tallest card by 13px, because the photograph sets the
-	 * height, not the type.
-	 */
-
-	/* !important because core sets flex-wrap: nowrap !important on
-	   .is-not-stacked-on-mobile, which the card carries so that index cards
-	   do NOT stack. A full page wants the opposite. */
-	.petsync-cards--full .kennel-card .wp-block-columns {
-		flex-wrap: wrap !important;
-	}
-
-	.petsync-cards--full .kennel-card__top > .wp-block-column {
-		flex-basis: 100% !important;
-	}
-
-	/*
-	 * Uncapped, a full-width square photograph is 7.7in tall on its own and
-	 * 40 of 92 cards overflowed. Capped at 5.5in every card fits, the
-	 * tallest at 91% of the sheet.
-	 */
-	.petsync-cards--full .kennel-card__photo img {
-		display: block;
-		width: auto;
-		max-height: 5.5in;
-		margin-inline: auto;
-	}
 
 
 	/* Browsers drop background colours when printing unless told otherwise, so
