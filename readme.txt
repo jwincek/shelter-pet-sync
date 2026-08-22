@@ -4,7 +4,7 @@ Tags: pets, adoption, animal shelter, rescue, animals
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.4.0
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,14 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 
 == Changelog ==
 
+= 1.5.0 =
+* New: settings for Coat Pattern, Special Needs, Hypoallergenic and Declawed, which the blocks already honoured but the editor never offered — this is why cards kept printing Coat Pattern after Coat was switched off.
+* New: choose which health answers to show — known answers only, everything including unknown, or only what is true of the animal.
+* New: option to drop the "Yes"/"No" wording beside each health icon and rely on the icon alone. Useful on printed cards. Screen readers are unaffected either way.
+* Fixed: half-page kennel cards printed one per sheet instead of two, doubling the paper for every batch. The preview looked correct because it was using a different measurement from the printed page.
+* Fixed: a full-page card was the half-page card with the bottom half of the sheet left empty. The photograph now takes the full width of the page.
+* Fixed: the "some pets may no longer be available" notice appeared inside a pet's card on the print screen, pushing that card's details off the bottom.
+
 = 1.4.0 =
 * Fixed: printed kennel cards were cut off at the bottom, losing the shelter's name, address and phone number — the part of the card someone needs most. Reprint any cards you have already made.
 * Fixed: photographs cut off the animal's head. Photos on cards are now square and cropped from the top, which keeps the face.
@@ -164,6 +172,9 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 * Built on the WordPress Abilities API and Block Bindings.
 
 == Upgrade Notice ==
+
+= 1.5.0 =
+Half-page kennel cards were printing one per sheet instead of two, and a full-page card left the bottom half of the sheet empty. Both are fixed — reprint any cards you have made at those sizes. Also adds the missing settings for Coat Pattern, Special Needs, Hypoallergenic and Declawed.
 
 = 1.4.0 =
 Printed kennel cards were being cut off at the bottom, losing your shelter's name, address and phone number, and photographs were cutting off the animal's head. Both are fixed — reprint any cards you have already made. Also drops the coat row from cards, which repeated the breed, and adds WordPress 7.1 support.
