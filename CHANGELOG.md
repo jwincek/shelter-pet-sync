@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-08-22
+
+### Added
+- **Five settings that were missing rather than absent by design.** The Pet
+  Health and Pet Attributes blocks read these when deciding what to show, but
+  the editor never offered them, so the fields they control were on permanently:
+  **Coat Pattern**, **Special Needs**, **Hypoallergenic**, **Declawed**, and a
+  choice of which health answers to show — known ones only, everything including
+  unknown, or only what is true of the animal.
+
+  This is why a printed card kept showing Coat Pattern after Coat had been
+  switched off.
+
+- **An option to drop the "Yes"/"No" wording** beside each health icon and rely
+  on the icon alone. Useful on kennel cards printed four to a sheet, where it
+  gives back about a third of the space the health section uses. Screen readers
+  are unaffected either way: the answer is already attached to each item for
+  them, whether or not the word is on the page.
+
+### Fixed
+- **Half-page cards printed one per sheet instead of two.** Two cards needed
+  10.4in of a 10.2in page, so the second was pushed onto a sheet of its own —
+  doubling the paper for every batch. It looked correct in the preview, because
+  the preview and the printed page had been given different measurements.
+
+- **A full page now uses the page.** It was drawing the half-page card and
+  leaving the bottom half of the sheet empty, filling 46% of the paper. The
+  photograph now takes the full width, and the card fills 89%.
+
+- **The "some pets may no longer be available" notice appeared inside a pet's
+  card** on the print screen, pushing that card's own details off the bottom of
+  the cell.
+
+### Internal
+- Config validator check 13: a block attribute the server honours must be one
+  the editor can actually set. 45 were unreachable; the 5 above are fixed and
+  the remaining 40 are tracked as a ratchet — a new one is an error, a known one
+  is a warning, and a listed entry that has since been fixed is also an error,
+  so the list can only shrink.
+
 ## [1.4.0] - 2026-08-20
 
 ### Fixed
