@@ -26,6 +26,7 @@ Petstablished is the supported platform today; support for additional shelter-ma
 
 * Printable kennel cards: pick the animals, choose a size, print. Four to a sheet, two to a sheet, or one per page.
 * The card's design is a block template part — rearrange it once in the Site Editor and every card follows.
+* Choose which details each card carries: every attribute and health field has its own switch, so a card read from a corridor can drop what a web page has room for.
 * Add pets by hand in the WordPress editor — adoption fee, health, and compatibility details in grouped sidebar panels.
 * Optional batched sync from Petstablished, with an admin progress UI and WP-Cron scheduling.
 * Pet blocks: cards, listing grid, slider, filters, gallery, attributes, health, compatibility, comparison, favorites, adoption CTA, and more.
@@ -86,6 +87,28 @@ Yes. Each pet records where it came from. A sync only ever updates the pets it i
 Yes. Go to **Pets → Kennel Cards**, choose the animals and a size, and print. Cards are built from the same records that drive your website, so they cannot drift out of step with what visitors see.
 
 The design is a block template part. Open **Edit card design** to rearrange it in the Site Editor — move the photo, add or remove details, put your shelter's contact information in the footer — and every card printed afterwards follows the new layout.
+
+= Something on my kennel cards is cut off. What do I change? =
+
+A card prints in a fixed space, so if an animal's details run longer than that space the bottom of the card is trimmed — and because the shelter's contact line sits at the foot of the card, that is usually the first thing to go. Long breed names and long age wording are the common causes.
+
+The fix is to show fewer things rather than to make them smaller. On the print screen choose **Edit card design**, select the **Pet Attributes** block, and switch off the details you do not need on a card someone reads from a corridor — Coat Pattern and Weight are the usual candidates. The **Pet Health** block has the same switches, plus two settings that save more room than anything else: **Which to show**, set to "Only what is true", and turning off **Show Yes/No wording** so the tick and cross stand on their own. Neither affects screen readers, which read the answer either way.
+
+Every card printed afterwards follows the change. If you would rather keep all the detail, printing one animal per page gives roughly twice the room.
+
+= I edited the card design. Why do card fixes in an update not reach me? =
+
+Because the design is now yours. The moment you change the kennel card in the Site Editor, WordPress saves your version to the site's database and stops using the one shipped with the plugin — that is what lets your layout survive every future update.
+
+The trade-off is the other direction: improvements we make to the shipped card, including fixes to how it fits the page, do not reach a card you have customised. If you have edited the design and an update's notes describe a printing fix you are not seeing, that is why.
+
+To take the new version, open **Appearance → Editor → Patterns → Template parts**, find **Kennel Card**, and use **Reset**. That restores the shipped design and discards your changes, so note anything you want to redo first — your shelter's contact details are stored separately under **Pets → Shelter Details** and are not affected.
+
+= Can I choose which health details appear on a pet? =
+
+Yes. Select the **Pet Health** block and use the sidebar: Spayed/Neutered, Vaccinations, House Trained, Special Needs, Hypoallergenic and Declawed each have their own switch. Declawed only ever shows for cats, whatever the switch says.
+
+**Which to show** decides how unanswered questions are treated. "Known answers only" hides anything not recorded, which is the default. "Everything" shows those as unknown, which is useful on an intake sheet. "Only what is true" lists just the answers that apply to that animal, which reads well on a printed card because everything on it is a fact about the animal in front of you.
 
 = Does the sync run automatically? =
 
@@ -174,10 +197,10 @@ By default, deleting the plugin keeps your data — imported pets, settings, and
 == Upgrade Notice ==
 
 = 1.5.0 =
-Half-page kennel cards were printing one per sheet instead of two, and a full-page card left the bottom half of the sheet empty. Both are fixed — reprint any cards you have made at those sizes. Also adds the missing settings for Coat Pattern, Special Needs, Hypoallergenic and Declawed.
+Half-page cards printed one per sheet instead of two, and a full-page card left half the sheet empty. Both fixed — reprint any cards made at those sizes. If you have edited the card design in the Site Editor, these fixes will not reach you: see the FAQ.
 
 = 1.4.0 =
-Printed kennel cards were being cut off at the bottom, losing your shelter's name, address and phone number, and photographs were cutting off the animal's head. Both are fixed — reprint any cards you have already made. Also drops the coat row from cards, which repeated the breed, and adds WordPress 7.1 support.
+Printed kennel cards were cut off at the bottom, losing your shelter's name, address and phone number, and photographs were cutting off the animal's head. Both fixed — reprint any cards you have made. Also adds WordPress 7.1 support.
 
 = 1.3.1 =
 The "Search engines" setting added in 1.3.0 would not save. If you tried to switch structured data on and it did not stick, this is why — update and switch it on again.
