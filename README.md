@@ -165,6 +165,27 @@ header, `PETSYNC_VERSION`, `readme.txt` and all 21 `block.json` files.
 
 Business logic lives in **abilities** — thin, testable operations with JSON Schema validation and permission callbacks. Blocks, REST endpoints, and admin UI are thin consumers that delegate to abilities.
 
+### Customised template parts stop receiving fixes
+
+The kennel card ships as a template part. The moment a site edits it in the Site
+Editor, WordPress stores that version in `wp_posts` and stops reading the file —
+which is what makes a shelter's layout survive updates, and also means every
+later fix to the shipped card never reaches them.
+
+That is not a bug to route around; it is the reason presentation belongs in
+`assets/css/kennel-cards.css` rather than in block attributes on the part. CSS
+ships with the plugin and reaches everyone. Anything expressed as an attribute
+in `parts/kennel-card.html` reaches only sites that have not customised it.
+
+So: **structure and content choices** (which fields appear, in what order) are
+markup; **measurements and print mechanics** are CSS. A layout fix written as an
+attribute would silently miss exactly the sites most likely to have hit the bug,
+because a shelter fighting a clipped card is a shelter who has been editing it.
+
+Migrations 4 and 5 exist because these parts carry a `wp_theme` namespace that
+changed; adding more parts multiplies that surface, which is why the three print
+sizes share one part rather than having one each.
+
 ## Key Features
 
 - **Printable kennel cards** — pick animals, choose a size, print. The card's design is a block template part, so it is rearranged in the Site Editor rather than in code, and every field on it is a block binding.
