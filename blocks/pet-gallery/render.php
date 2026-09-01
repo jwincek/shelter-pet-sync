@@ -102,7 +102,11 @@ foreach ( $all_gallery as $img ) {
 }
 
 $has_featured   = ! empty( $featured_url );
-$has_thumbnails = ! empty( $thumbnail_images );
+// Both of these had editor controls that render.php never read, so the
+// toggles moved and nothing happened. Honoured here rather than removed: a
+// gallery with the thumbnail strip switched off, or with the lightbox off so
+// photos are plain images, are both reasonable things to want.
+$has_thumbnails = ! empty( $thumbnail_images ) && ( $attributes['showThumbnails'] ?? true );
 // The lightbox gets the full gallery — all API images, no deduplication.
 // This ensures every photo is navigable even though the featured image
 // is visually presented separately as the hero.
@@ -182,7 +186,7 @@ if ( ( $attributes['showBadgeSpecialNeeds'] ?? true ) && isset( $pet['has_specia
 
 // === Interactivity context ===
 // The lightbox gets the complete gallery so every image is navigable.
-$has_lightbox = ! empty( $lightbox_images );
+$has_lightbox = ! empty( $lightbox_images ) && ( $attributes['showLightbox'] ?? true );
 $context      = array(
 	'images'       => $lightbox_images,
 	'currentIndex' => 0,

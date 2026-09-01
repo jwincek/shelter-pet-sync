@@ -529,6 +529,17 @@
 			showAge: { type: 'boolean', default: true },
 			showSex: { type: 'boolean', default: true },
 			showSize: { type: 'boolean', default: true },
+			showStatus: { type: 'boolean', default: false },
+			showCompatibility: { type: 'boolean', default: true },
+			showGoodWithDogs: { type: 'boolean', default: true },
+			showGoodWithCats: { type: 'boolean', default: true },
+			showGoodWithKids: { type: 'boolean', default: true },
+			showShotsCurrent: { type: 'boolean', default: true },
+			showSpayedNeutered: { type: 'boolean', default: true },
+			showHousebroken: { type: 'boolean', default: true },
+			showSpecialNeeds: { type: 'boolean', default: true },
+			compatibilityStyle: { type: 'string', default: 'checkboxes' },
+			compatibilityCollapsed: { type: 'boolean', default: false },
 			layout: { type: 'string', default: 'horizontal' },
 		},
 		edit( props ) {
@@ -599,6 +610,103 @@
 							checked: attributes.showSize,
 							onChange: ( val ) =>
 								setAttributes( { showSize: val } ),
+						} ),
+						el( ToggleControl, {
+							label: __( 'Status', 'shelterkit-pets' ),
+							help: __(
+								'Off by default — most listings show available animals only, so the filter has nothing to choose between.',
+								'shelterkit-pets'
+							),
+							checked: attributes.showStatus,
+							onChange: ( val ) =>
+								setAttributes( { showStatus: val } ),
+						} )
+					),
+					el(
+						PanelBody,
+						{
+							title: __(
+								'Compatibility filters',
+								'shelterkit-pets'
+							),
+							initialOpen: false,
+						},
+						el( ToggleControl, {
+							label: __(
+								'Show compatibility filters',
+								'shelterkit-pets'
+							),
+							checked: attributes.showCompatibility,
+							onChange: ( val ) =>
+								setAttributes( { showCompatibility: val } ),
+						} ),
+						[
+							[
+								'showGoodWithDogs',
+								__( 'Good with dogs', 'shelterkit-pets' ),
+							],
+							[
+								'showGoodWithCats',
+								__( 'Good with cats', 'shelterkit-pets' ),
+							],
+							[
+								'showGoodWithKids',
+								__( 'Good with kids', 'shelterkit-pets' ),
+							],
+							[
+								'showShotsCurrent',
+								__( 'Vaccinations current', 'shelterkit-pets' ),
+							],
+							[
+								'showSpayedNeutered',
+								__( 'Spayed/neutered', 'shelterkit-pets' ),
+							],
+							[
+								'showHousebroken',
+								__( 'House trained', 'shelterkit-pets' ),
+							],
+							[
+								'showSpecialNeeds',
+								__( 'Special needs', 'shelterkit-pets' ),
+							],
+						].map( ( [ key, label ] ) =>
+							el( ToggleControl, {
+								key,
+								label,
+								checked: attributes[ key ],
+								disabled: ! attributes.showCompatibility,
+								onChange: ( val ) =>
+									setAttributes( { [ key ]: val } ),
+							} )
+						),
+						el( SelectControl, {
+							label: __( 'Presented as', 'shelterkit-pets' ),
+							value: attributes.compatibilityStyle,
+							disabled: ! attributes.showCompatibility,
+							options: [
+								{
+									label: __(
+										'Checkboxes',
+										'shelterkit-pets'
+									),
+									value: 'checkboxes',
+								},
+								{
+									label: __( 'Chips', 'shelterkit-pets' ),
+									value: 'chips',
+								},
+							],
+							onChange: ( val ) =>
+								setAttributes( { compatibilityStyle: val } ),
+						} ),
+						el( ToggleControl, {
+							label: __( 'Start collapsed', 'shelterkit-pets' ),
+							checked: attributes.compatibilityCollapsed,
+							disabled: ! attributes.showCompatibility,
+							onChange: ( val ) =>
+								setAttributes( {
+									compatibilityCollapsed: val,
+								} ),
 						} )
 					)
 				),
@@ -1019,13 +1127,58 @@
 		icon: 'columns',
 		keywords: [ 'pet', 'comparison', 'compare' ],
 		supports: { html: false, align: [ 'wide', 'full' ] },
-		attributes: {},
+		/*
+		 * These must match block.json. This block declared `attributes: {}`, so
+		 * render.php honoured seven of them and the editor could set none —
+		 * a comparison table whose columns were fixed no matter what.
+		 */
+		attributes: {
+			showImage: { type: 'boolean', default: true },
+			showBreed: { type: 'boolean', default: true },
+			showAge: { type: 'boolean', default: true },
+			showSex: { type: 'boolean', default: true },
+			showSize: { type: 'boolean', default: true },
+			showCompatibility: { type: 'boolean', default: true },
+			showAdoptionFee: { type: 'boolean', default: true },
+		},
 		edit( props ) {
+			const { attributes, setAttributes } = props;
 			const blockProps = useBlockProps();
 
 			return el(
 				'div',
 				blockProps,
+				el(
+					InspectorControls,
+					{},
+					el(
+						PanelBody,
+						{ title: __( 'Rows to compare', 'shelterkit-pets' ) },
+						[
+							[ 'showImage', __( 'Photo', 'shelterkit-pets' ) ],
+							[ 'showBreed', __( 'Breed', 'shelterkit-pets' ) ],
+							[ 'showAge', __( 'Age', 'shelterkit-pets' ) ],
+							[ 'showSex', __( 'Sex', 'shelterkit-pets' ) ],
+							[ 'showSize', __( 'Size', 'shelterkit-pets' ) ],
+							[
+								'showCompatibility',
+								__( 'Good with', 'shelterkit-pets' ),
+							],
+							[
+								'showAdoptionFee',
+								__( 'Adoption fee', 'shelterkit-pets' ),
+							],
+						].map( ( [ key, label ] ) =>
+							el( ToggleControl, {
+								key,
+								label,
+								checked: attributes[ key ],
+								onChange: ( val ) =>
+									setAttributes( { [ key ]: val } ),
+							} )
+						)
+					)
+				),
 				el( ServerSideRender, {
 					block: 'petsync/pet-comparison',
 					attributes: props.attributes,
@@ -1051,8 +1204,15 @@
 		usesContext: [ 'postId', 'postType' ],
 		supports: { html: false, reusable: false },
 		attributes: {
+			columns: { type: 'integer', default: 3 },
 			showThumbnails: { type: 'boolean', default: true },
 			showLightbox: { type: 'boolean', default: true },
+			showBadgeNew: { type: 'boolean', default: true },
+			showBadgeBondedPair: { type: 'boolean', default: true },
+			showBadgeSpecialNeeds: { type: 'boolean', default: true },
+			showBadgeStatus: { type: 'boolean', default: true },
+			showBadgeAge: { type: 'boolean', default: true },
+			showVideos: { type: 'boolean', default: true },
 		},
 		edit( props ) {
 			const { attributes, setAttributes, context } = props;
@@ -1063,7 +1223,10 @@
 			// Check if we have a pet context.
 			const postId = context?.postId;
 			const postType = context?.postType;
-			const hasPetContext = postId && postType === 'pet';
+			// 'vcps_pet', not 'pet' — this compared against a post type that does
+			// not exist, so the block showed its "requires a pet context"
+			// placeholder on every screen including a pet, and never previewed.
+			const hasPetContext = postId && postType === 'vcps_pet';
 
 			if ( ! hasPetContext ) {
 				return el(
@@ -1118,7 +1281,55 @@
 							checked: attributes.showLightbox,
 							onChange: ( val ) =>
 								setAttributes( { showLightbox: val } ),
+						} ),
+						el( ToggleControl, {
+							label: __( 'Show Videos', 'shelterkit-pets' ),
+							checked: attributes.showVideos,
+							onChange: ( val ) =>
+								setAttributes( { showVideos: val } ),
+						} ),
+						el( RangeControl, {
+							label: __( 'Thumbnail columns', 'shelterkit-pets' ),
+							value: attributes.columns,
+							min: 1,
+							max: 6,
+							onChange: ( val ) =>
+								setAttributes( { columns: val } ),
 						} )
+					),
+					el(
+						PanelBody,
+						{
+							title: __( 'Badges', 'shelterkit-pets' ),
+							initialOpen: false,
+						},
+						[
+							[
+								'showBadgeStatus',
+								__( 'Status', 'shelterkit-pets' ),
+							],
+							[
+								'showBadgeNew',
+								__( 'New arrival', 'shelterkit-pets' ),
+							],
+							[
+								'showBadgeBondedPair',
+								__( 'Bonded pair', 'shelterkit-pets' ),
+							],
+							[
+								'showBadgeSpecialNeeds',
+								__( 'Special needs', 'shelterkit-pets' ),
+							],
+							[ 'showBadgeAge', __( 'Age', 'shelterkit-pets' ) ],
+						].map( ( [ key, label ] ) =>
+							el( ToggleControl, {
+								key,
+								label,
+								checked: attributes[ key ],
+								onChange: ( val ) =>
+									setAttributes( { [ key ]: val } ),
+							} )
+						)
 					)
 				),
 				el( ServerSideRender, {
