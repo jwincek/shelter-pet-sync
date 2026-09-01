@@ -25,6 +25,9 @@
  *  12. wp-tested    — readme.txt's "Requires at least" and "Tested up to"
  *                     match the floor and ceiling of the CI matrix, so both
  *                     claims are backed by a suite that actually ran.
+ *  14. post-types    — postType comparisons in editor scripts name a post
+ *                     type that actually exists.
+ *
  *  13. block-controls — attributes and their controls agree in BOTH
  *                     directions: every attribute the server honours can be
  *                     set in the editor, and every control the editor offers
@@ -1103,6 +1106,47 @@ if ( is_file( $editor_js_path ) ) {
 				);
 			}
 		}
+	}
+}
+
+
+// ── Check 14: post-type literals in editor JS must name a real post type ─────
+// Two blocks compared against 'pet' when the post type is 'vcps_pet'. Neither
+// threw: one silently showed a "requires a pet context" placeholder on every
+// screen so the block never previewed, the other told you "Pet bindings work in
+// the Pet post type" while you were editing a pet. A wrong post-type string
+// fails by being permanently false, which looks like a deliberately hidden
+// feature rather than a bug.
+$known_post_types = [
+	'vcps_pet',
+	// Core types an editor script may legitimately test against.
+	'post',
+	'page',
+	'attachment',
+	'wp_block',
+	'wp_template',
+	'wp_template_part',
+	'wp_navigation',
+];
+
+foreach ( array_merge( glob( $root . '/assets/js/*.js' ), glob( $root . '/blocks/*/*.js' ) ) as $script ) {
+	$src = (string) file_get_contents( $script );
+
+	if ( ! preg_match_all( "/postType\s*===?\s*'([^']+)'/", $src, $m ) ) {
+		continue;
+	}
+
+	foreach ( array_unique( $m[1] ) as $literal ) {
+		if ( in_array( $literal, $known_post_types, true ) ) {
+			continue;
+		}
+
+		$add(
+			'error',
+			'post-types',
+			str_replace( $root . '/', '', $script ) . " compares postType against '$literal', which is not a registered post type. "
+			. "The pet post type is 'vcps_pet'; a wrong literal here is permanently false and hides the feature it guards."
+		);
 	}
 }
 

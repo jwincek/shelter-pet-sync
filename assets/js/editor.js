@@ -167,7 +167,11 @@
 		);
 
 		// Only show for pet post type or when editing templates.
-		const isRelevant = postType === 'pet' || postType === 'wp_template';
+		// 'vcps_pet', not 'pet'. Against 'pet' this was never true on a pet,
+		// so the sidebar greeted you with "Pet bindings work in the Pet post
+		// type or templates" on the one screen where they do.
+		const isRelevant =
+			postType === 'vcps_pet' || postType === 'wp_template';
 
 		return el(
 			'div',
