@@ -240,7 +240,9 @@ function petsync_init(): void {
 		// screen. If Events won the negotiation, its menu hosts it and this
 		// call is simply not reached — the class is loaded either way, so
 		// reading the profile works regardless of who owns the UI.
-		if ( class_exists( 'ShelterKit_Profile' ) ) {
+		if ( class_exists( 'ShelterKit_Profile_Versions' )
+			&& ShelterKit_Profile_Versions::winner() === PETSYNC_DIR . 'includes/shelterkit/class-shelterkit-profile.php'
+		) {
 			add_action(
 				'admin_menu',
 				static function (): void {
