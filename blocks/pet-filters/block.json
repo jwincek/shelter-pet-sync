@@ -6,39 +6,97 @@
 	"title": "Pet Filters",
 	"category": "theme",
 	"description": "Filter form for pet listings. Works without JavaScript via URL parameters.",
-	"keywords": ["pet", "filter", "search", "adoption"],
+	"keywords": [
+		"pet",
+		"filter",
+		"search",
+		"adoption"
+	],
 	"textdomain": "shelterkit-pets",
 	"attributes": {
-		"showAnimal": { "type": "boolean", "default": true },
-		"showBreed": { "type": "boolean", "default": true },
-		"showAge": { "type": "boolean", "default": true },
-		"showSex": { "type": "boolean", "default": true },
-		"showSize": { "type": "boolean", "default": true },
-		"showStatus": { "type": "boolean", "default": false },
-		"showCompatibility": { "type": "boolean", "default": true },
-		"showGoodWithDogs": { "type": "boolean", "default": true },
-		"showGoodWithCats": { "type": "boolean", "default": true },
-		"showGoodWithKids": { "type": "boolean", "default": true },
-		"showHealth": { "type": "boolean", "default": true },
-		"showShotsCurrent": { "type": "boolean", "default": true },
-		"showSpayedNeutered": { "type": "boolean", "default": true },
-		"showHousebroken": { "type": "boolean", "default": true },
-		"showSpecialNeeds": { "type": "boolean", "default": true },
+		"showAnimal": {
+			"type": "boolean",
+			"default": true
+		},
+		"showBreed": {
+			"type": "boolean",
+			"default": true
+		},
+		"showAge": {
+			"type": "boolean",
+			"default": true
+		},
+		"showSex": {
+			"type": "boolean",
+			"default": true
+		},
+		"showSize": {
+			"type": "boolean",
+			"default": true
+		},
+		"showStatus": {
+			"type": "boolean",
+			"default": false
+		},
+		"showCompatibility": {
+			"type": "boolean",
+			"default": true
+		},
+		"showGoodWithDogs": {
+			"type": "boolean",
+			"default": true
+		},
+		"showGoodWithCats": {
+			"type": "boolean",
+			"default": true
+		},
+		"showGoodWithKids": {
+			"type": "boolean",
+			"default": true
+		},
+		"showShotsCurrent": {
+			"type": "boolean",
+			"default": true
+		},
+		"showSpayedNeutered": {
+			"type": "boolean",
+			"default": true
+		},
+		"showHousebroken": {
+			"type": "boolean",
+			"default": true
+		},
+		"showSpecialNeeds": {
+			"type": "boolean",
+			"default": true
+		},
 		"compatibilityStyle": {
 			"type": "string",
 			"default": "checkboxes",
-			"enum": ["checkboxes", "chips"]
+			"enum": [
+				"checkboxes",
+				"chips"
+			]
 		},
-		"compatibilityCollapsed": { "type": "boolean", "default": false },
+		"compatibilityCollapsed": {
+			"type": "boolean",
+			"default": false
+		},
 		"layout": {
 			"type": "string",
 			"default": "horizontal",
-			"enum": ["horizontal", "vertical"]
+			"enum": [
+				"horizontal",
+				"vertical"
+			]
 		}
 	},
 	"supports": {
 		"html": false,
-		"align": ["wide", "full"],
+		"align": [
+			"wide",
+			"full"
+		],
 		"spacing": {
 			"margin": true,
 			"padding": true

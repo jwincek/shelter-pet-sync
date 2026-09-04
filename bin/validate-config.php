@@ -25,9 +25,13 @@
  *  12. wp-tested    — readme.txt's "Requires at least" and "Tested up to"
  *                     match the floor and ceiling of the CI matrix, so both
  *                     claims are backed by a suite that actually ran.
- *  13. block-controls — every block attribute render.php honours is declared
- *                     and controllable in that block's editor registration,
- *                     so a toggle the server reads is one an editor can set.
+ *  14. post-types    — postType comparisons in editor scripts name a post
+ *                     type that actually exists.
+ *
+ *  13. block-controls — attributes and their controls agree in BOTH
+ *                     directions: every attribute the server honours can be
+ *                     set in the editor, and every control the editor offers
+ *                     is read by something.
  *   7. hash-coverage — every literal $data['key'] the sync reads is in
  *                     get_consumed_api_keys(), so the change-detection hash
  *                     can't silently miss a field (stale-display risk).
@@ -962,68 +966,22 @@ $block_control_exempt = [
 ];
 
 /*
- * The backlog, as a RATCHET rather than a suppression list.
+ * The ratchet. It is EMPTY, and that is the point — keep it that way.
  *
- * 45 attributes were unreachable when this check was written. Five that the
- * kennel card depends on were fixed straight away; these are the rest, and
- * fixing them all at once was not worth blocking a release for.
+ * 30 attributes were unreachable when this check was written. All 30 now have
+ * controls, so a gap listed here would be a stale entry and an error in its own
+ * right.
  *
- * The list can only shrink. An entry here is a warning, not an error — but a
- * gap NOT listed here is an error, so no new one can be introduced, and an
- * entry that no longer describes a real gap is also an error, so the list
- * cannot rot into a pile of stale suppressions. Delete lines as you add
- * controls; the check will tell you when a line has to go.
+ * How it behaves: a gap NOT listed here is an error, so a new one cannot be
+ * introduced. A listed gap is a warning, so a deliberate backlog does not block
+ * CI. A listed entry that HAS a control is an error, so the list cannot rot
+ * into stale suppressions. With the list empty, the first two rules collapse to
+ * the one that matters: any attribute the server honours must be settable.
+ *
+ * If a future change needs to land a gap temporarily, add it here with the
+ * issue number and delete the line when the control arrives.
  */
-$block_control_known_gaps = [
-	'petsync/pet-comparison' => [
-		'showAdoptionFee',
-		'showAge',
-		'showBreed',
-		'showCompatibility',
-		'showImage',
-		'showSex',
-		'showSize',
-	],
-	'petsync/pet-filters' => [
-		'compatibilityCollapsed',
-		'compatibilityStyle',
-		'showCompatibility',
-		'showGoodWithCats',
-		'showGoodWithDogs',
-		'showGoodWithKids',
-		'showHousebroken',
-		'showShotsCurrent',
-		'showSpayedNeutered',
-		'showSpecialNeeds',
-		'showStatus',
-	],
-	'petsync/pet-gallery' => [
-		'columns',
-		'showBadgeAge',
-		'showBadgeBondedPair',
-		'showBadgeNew',
-		'showBadgeSpecialNeeds',
-		'showBadgeStatus',
-		'showVideos',
-	],
-	'petsync/pet-listing-grid' => [
-		'compatibilityStyle',
-		'filterAge',
-		'filterAnimal',
-		'filterBreed',
-		'filterGoodWithCats',
-		'filterGoodWithDogs',
-		'filterGoodWithKids',
-		'filterHousebroken',
-		'filterSex',
-		'filterShotsCurrent',
-		'filterSize',
-		'filterSpayedNeutered',
-		'filterSpecialNeeds',
-		'showCompatibilityFilters',
-		'showSearch',
-	],
-];
+$block_control_known_gaps = [];
 
 $editor_js_path = $root . '/assets/js/blocks-editor.js';
 
@@ -1060,8 +1018,26 @@ if ( is_file( $editor_js_path ) ) {
 		}
 
 		$render_src = (string) file_get_contents( $render );
-		$section    = $sections[ $name ] ?? '';
-		$exempt     = (array) ( $block_control_exempt[ $name ] ?? [] );
+
+		/*
+		 * The editor surface for a block is its section in the shared
+		 * blocks-editor.js PLUS any per-block editor script. pet-listing-grid
+		 * keeps all 19 of its controls in blocks/pet-listing-grid/editor.js and
+		 * says so in a comment where the shared file would otherwise duplicate
+		 * them — reading only the shared file reported every one of them as an
+		 * unreachable attribute. That was 15 false positives out of 45.
+		 */
+		$section = $sections[ $name ] ?? '';
+
+		foreach ( [ 'editor.js', 'index.js' ] as $per_block ) {
+			$path = $dir . '/' . $per_block;
+
+			if ( is_file( $path ) ) {
+				$section .= "\n" . (string) file_get_contents( $path );
+			}
+		}
+
+		$exempt = (array) ( $block_control_exempt[ $name ] ?? [] );
 
 		foreach ( array_keys( $attributes ) as $attribute ) {
 			if ( isset( $exempt[ $attribute ] ) ) {
@@ -1071,11 +1047,41 @@ if ( is_file( $editor_js_path ) ) {
 			$pattern = '/\b' . preg_quote( (string) $attribute, '/' ) . '\b/';
 
 			if ( ! preg_match( $pattern, $render_src ) ) {
-				continue; // Not honoured server-side; nothing to control.
+				/*
+				 * The mirror image, and the worse of the two to ship: a control
+				 * that exists and does nothing. The gallery had two — Show
+				 * Thumbnails and Enable Lightbox — which moved, saved, and
+				 * changed nothing on the page, because render.php never read
+				 * them. A missing control looks like a decision; a dead one
+				 * looks like a broken plugin.
+				 *
+				 * Consumers are wider than render.php: an attribute may be read
+				 * by the block's view.js under the Interactivity API, or by its
+				 * stylesheet through a custom property.
+				 */
+				$consumed = false;
+
+				foreach ( array_merge( glob( $dir . '/*.php' ), glob( $dir . '/view.js' ), glob( $dir . '/*.css' ) ) as $consumer ) {
+					if ( preg_match( $pattern, (string) file_get_contents( $consumer ) ) ) {
+						$consumed = true;
+						break;
+					}
+				}
+
+				if ( ! $consumed && preg_match( $pattern, $section ) ) {
+					$add(
+						'error',
+						'block-controls',
+						"$name offers a control for '$attribute', but nothing reads it — render.php, view.js and the block stylesheet all ignore it. "
+						. 'Honour it where it is meant to apply, or remove the control and the attribute.'
+					);
+				}
+
+				continue;
 			}
 
-			if ( '' === $section ) {
-				$add( 'warning', 'block-controls', "$name has no editor registration in blocks-editor.js, so none of its attributes can be set." );
+			if ( '' === trim( $section ) ) {
+				$add( 'warning', 'block-controls', "$name has no editor registration in blocks-editor.js or a per-block editor script, so none of its attributes can be set." );
 				break;
 			}
 
@@ -1100,6 +1106,47 @@ if ( is_file( $editor_js_path ) ) {
 				);
 			}
 		}
+	}
+}
+
+
+// ── Check 14: post-type literals in editor JS must name a real post type ─────
+// Two blocks compared against 'pet' when the post type is 'vcps_pet'. Neither
+// threw: one silently showed a "requires a pet context" placeholder on every
+// screen so the block never previewed, the other told you "Pet bindings work in
+// the Pet post type" while you were editing a pet. A wrong post-type string
+// fails by being permanently false, which looks like a deliberately hidden
+// feature rather than a bug.
+$known_post_types = [
+	'vcps_pet',
+	// Core types an editor script may legitimately test against.
+	'post',
+	'page',
+	'attachment',
+	'wp_block',
+	'wp_template',
+	'wp_template_part',
+	'wp_navigation',
+];
+
+foreach ( array_merge( glob( $root . '/assets/js/*.js' ), glob( $root . '/blocks/*/*.js' ) ) as $script ) {
+	$src = (string) file_get_contents( $script );
+
+	if ( ! preg_match_all( "/postType\s*===?\s*'([^']+)'/", $src, $m ) ) {
+		continue;
+	}
+
+	foreach ( array_unique( $m[1] ) as $literal ) {
+		if ( in_array( $literal, $known_post_types, true ) ) {
+			continue;
+		}
+
+		$add(
+			'error',
+			'post-types',
+			str_replace( $root . '/', '', $script ) . " compares postType against '$literal', which is not a registered post type. "
+			. "The pet post type is 'vcps_pet'; a wrong literal here is permanently false and hides the feature it guards."
+		);
 	}
 }
 
